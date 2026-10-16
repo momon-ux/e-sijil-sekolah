@@ -1,4 +1,4 @@
-const CACHE_NAME = 'admin-esijil-v4';
+const CACHE_NAME = 'admin-esijil-v5';
 const ASSETS = [
   './',
   './index.html',
@@ -6,6 +6,7 @@ const ASSETS = [
   './icon-192.png',
   './icon-512.png',
   './skrg.png',
+  './logo-kpm.png',
   './sijil-delima.jpg'
 ];
 
