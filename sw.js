@@ -1,9 +1,10 @@
-const CACHE_NAME = 'admin-esijil-v2';
+const CACHE_NAME = 'admin-esijil-v3';
 const ASSETS = [
   './index.html',
   './manifest.json',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  './skrg.png'
 ];
 
 self.addEventListener('install', (event) => {
