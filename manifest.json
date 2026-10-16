@@ -1,8 +1,8 @@
 {
-  "name": "Admin e-Sijil Sekolah (Cikgu Momon)",
-  "short_name": "Admin e-Sijil",
-  "description": "Aplikasi Admin Khas untuk Muat Naik Gambar Sijil & Jana QR Guru",
-  "start_url": "./admin.html",
+  "name": "Sistem e-Sijil & QR Sekolah",
+  "short_name": "e-Sijil QR",
+  "description": "Aplikasi PWA Pengurusan Rekod Sijil & Penjanaan QR Unik Setiap Sijil",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
