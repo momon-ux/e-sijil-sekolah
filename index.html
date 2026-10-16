@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistem e-Sijil & QR Kursus Sekolah</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --background: #0f172a;
+      --foreground: #f8fafc;
+      --card: #1e293b;
+      --border: #334155;
+      --primary: #2563eb;
+      --primary-foreground: #ffffff;
+      --secondary: #334155;
+      --secondary-foreground: #f1f5f9;
+      --muted-foreground: #94a3b8;
+    }
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      user-select: none;
+      touch-action: none;
+    }
+    .sig-pad {
+      touch-action: none;
+      cursor: crosshair;
+    }
+  </style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased p-4 md:p-6 min-h-screen">
+  <!-- Header -->
+  <div class="max-w-6xl mx-auto space-y-6">
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]">PORTAL E-SIJIL SEKOLAH</span>
+          <span class="text-xs text-[var(--muted-foreground)]">Automasi Sijil & Kehadiran QR</span>
+        </div>
+        <h1 class="text-xl md:text-2xl font-bold mt-1 text-[var(--foreground)]">Sistem e-Sijil & Pendaftaran QR Bengkel Guru</h1>
+        <p class="text-sm text-[var(--muted-foreground)]">Muat naik templat sijil sekolah, laras kedudukan nama, jana QR pendaftaran & hantar sijil automatik ke emel.</p>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="flex flex-wrap gap-2 bg-[var(--background)] p-1.5 rounded-lg border border-[var(--border)]">
+        <button id="tabBtnAdmin" onclick="switchTab('admin')" class="px-3.5 py-2 rounded-md text-xs font-semibold transition-all bg-[var(--primary)] text-[var(--primary-foreground)]">
+          1. Panel Admin & Templat Sijil
+        </button>
+        <button id="tabBtnForm" onclick="switchTab('form')" class="px-3.5 py-2 rounded-md text-xs font-semibold transition-all text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
+          2. Borang Imbasan QR (Guru)
+        </button>
+        <button id="tabBtnRecords" onclick="switchTab('records')" class="px-3.5 py-2 rounded-md text-xs font-semibold transition-all text-[var(--muted-foreground)] hover:text-[var(--foreground)] flex items-center gap-1.5">
+          <span>3. Rekod & Emel</span>
+          <span id="badgeCount" class="px-1.5 py-0.5 text-xs rounded-full bg-[var(--secondary)] text-[var(--secondary-foreground)]">2</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 1: ADMIN PANEL (UPLOAD CERTIFICATE, POSITION ELEMENTS, GENERATE QR) -->
+    <div id="tabAdmin" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Left Settings Column -->
+      <div class="lg:col-span-5 space-y-5">
+        <!-- Step 1: Course Info -->
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base font-semibold text-[var(--foreground)]">A. Maklumat Kursus / Bengkel</h2>
+            <span class="text-xs text-[var(--muted-foreground)]">Langkah 1</span>
+          </div>
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Nama Kursus / Bengkel (LDP)</label>
+              <input id="courseTitle" type="text" value="BENGKEL DIGITALISASI & AI DALAM PDPC GURU 2026" oninput="updateCourseInfo()" class="w-full px-3 py-2 text-sm rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Tarikh</label>
+                <input id="courseDate" type="text" value="16 Oktober 2026" oninput="updateCourseInfo()" class="w-full px-3 py-2 text-sm rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Anjuran / Sekolah</label>
+                <input id="courseOrg" type="text" value="Unit LDP SK Ranggu" oninput="updateCourseInfo()" class="w-full px-3 py-2 text-sm rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Upload Certificate Image & Layout Control -->
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base font-semibold text-[var(--foreground)]">B. Gambar Sijil & Susunan Teks</h2>
+            <span class="text-xs text-[var(--muted-foreground)]">Langkah 2</span>
+          </div>
+
+          <!-- Upload Image -->
+          <div>
+            <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1.5">Muat Naik Gambar Sijil Sekolah (PNG / JPG)</label>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <label class="flex-1 cursor-pointer px-3 py-2.5 rounded-lg border border-dashed border-[var(--border)] bg-[var(--background)] hover:border-[var(--primary)] transition-colors text-center">
+                <span class="text-xs font-medium text-[var(--foreground)]">📁 Pilih Fail Gambar Sijil...</span>
+                <input id="certUpload" type="file" accept="image/*" onchange="handleCertUpload(event)" class="hidden" />
+              </label>
+              <select id="presetTemplate" onchange="changePresetTemplate(this.value)" class="px-3 py-2 text-xs rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]">
+                <option value="gold">Templat Sedia Ada: Emas Rasmi</option>
+                <option value="blue">Templat Sedia Ada: Biru Korporat</option>
+                <option value="emerald">Templat Sedia Ada: Hijau Akademik</option>
+              </select>
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)] mt-1">Anda boleh muat naik gambar sijil kosong sekolah anda atau guna templat contoh di atas.</p>
+          </div>
+
+          <!-- Auto vs Manual Drag Mode -->
+          <div class="pt-2 border-t border-[var(--border)] space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-medium text-[var(--foreground)]">Mod Kedudukan Teks & Tandatangan:</span>
+              <button onclick="resetAutoCenter()" class="px-2.5 py-1 rounded text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)] hover:opacity-90">
+                ⚡ Susun Automatik (Tengah)
+              </button>
+            </div>
+
+            <div class="p-3 rounded-lg bg-[var(--background)] border border-[var(--border)] space-y-2.5">
+              <p class="text-xs text-[var(--muted-foreground)]">
+                💡 <strong>Boleh Laras (Drag & Drop):</strong> Klik dan tarik terus kotak <span class="underline">Nama</span>, <span class="underline">No. KP</span>, <span class="underline">Kursus</span>, atau <span class="underline">Tandatangan</span> di atas pratonton sijil di sebelah kanan.
+              </p>
+              <div class="grid grid-cols-2 gap-3 pt-1">
+                <div>
+                  <label class="block text-xs text-[var(--muted-foreground)] mb-1">Saiz Fon Nama (<span id="fontSizeVal">28</span>px)</label>
+                  <input id="nameFontSize" type="range" min="18" max="46" value="28" oninput="updateStyleSettings()" class="w-full" />
+                </div>
+                <div>
+                  <label class="block text-xs text-[var(--muted-foreground)] mb-1">Warna Teks Utama</label>
+                  <div class="flex items-center gap-2">
+                    <input id="textColorPicker" type="color" value="#1e293b" oninput="updateStyleSettings()" class="h-7 w-12 rounded cursor-pointer border border-[var(--border)] bg-transparent" />
+                    <span id="textColorHex" class="text-xs text-[var(--muted-foreground)] font-mono">#1e293b</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: QR Code Generator for Teachers -->
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base font-semibold text-[var(--foreground)]">C. Kod QR Pendaftaran Guru</h2>
+            <span class="px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/15 text-emerald-500">Boleh Diimbas Telefon</span>
+          </div>
+          <div class="flex flex-col sm:flex-row items-center gap-4 bg-[var(--background)] p-4 rounded-xl border border-[var(--border)]">
+            <div class="relative shrink-0 bg-white p-2 rounded-lg border border-[var(--border)]">
+              <img id="qrImage" alt="QR Pendaftaran" class="w-32 h-32 block" />
+              <canvas id="qrCanvas" width="128" height="128" class="hidden"></canvas>
+            </div>
+            <div class="space-y-2 text-center sm:text-left">
+              <p class="text-xs text-[var(--foreground)] font-medium">Papar QR ini di skrin projektor semasa bengkel.</p>
+              <p class="text-xs text-[var(--muted-foreground)]">Apabila guru mengimbas QR ini dengan telefon, mereka terus dibawa ke Borang Kehadiran & Tandatangan Digital.</p>
+              <div class="flex flex-wrap gap-2 pt-1 justify-center sm:justify-start">
+                <button onclick="copyRegistrationLink()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)] hover:opacity-90">
+                  🔗 Salin Pautan Guru
+                </button>
+                <button onclick="switchTab('form')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90">
+                  📱 Buka Borang Guru →
+                </button>
+              </div>
+              <p id="copyToast" class="text-xs text-emerald-400 hidden">✅ Pautan pendaftaran berjaya disalin!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Certificate Live Interactive Canvas Column -->
+      <div class="lg:col-span-7 space-y-3">
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 class="text-base font-semibold text-[var(--foreground)]">Pratonton & Penyusun Kedudukan Sijil</h2>
+              <p class="text-xs text-[var(--muted-foreground)]">Tarik (Drag) mana-mana kotak biru di atas sijil untuk mengubah kedudukannya.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="flex items-center gap-1.5 text-xs text-[var(--muted-foreground)] cursor-pointer">
+                <input id="showGuidesCheckbox" type="checkbox" checked onchange="renderAdminCanvas()" class="rounded" />
+                <span>Papar Kotak Panduan</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Interactive Certificate Canvas -->
+          <div class="canvas-container border border-[var(--border)] rounded-lg overflow-hidden bg-neutral-900/20 shadow-inner">
+            <canvas id="adminCertCanvas" width="900" height="636" class="w-full h-auto block cursor-move"></canvas>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs text-[var(--muted-foreground)]">
+            <span>📌 Elemen dipilih: <strong id="selectedElementLabel" class="text-[var(--foreground)]">Tiada (Klik & tarik pada sijil)</strong></span>
+            <span>Resolusi Sijil: 900 × 636 px (Nisbah A4 Melintang)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: TEACHER QR REGISTRATION & DIGITAL SIGNATURE FORM -->
+    <div id="tabForm" class="hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Form Column -->
+        <div class="lg:col-span-6 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm space-y-4">
+          <div class="border-b border-[var(--border)] pb-3">
+            <span class="px-2 py-0.5 rounded text-xs font-medium bg-[var(--primary)] text-[var(--primary-foreground)]">BORANG KEHADIRAN QR</span>
+            <h2 id="formCourseTitle" class="text-lg font-bold text-[var(--foreground)] mt-1.5">BENGKEL DIGITALISASI & AI DALAM PDPC GURU 2026</h2>
+            <p id="formCourseMeta" class="text-xs text-[var(--muted-foreground)]">Tarikh: 16 Oktober 2026 | Unit LDP SMK Seri Wawasan</p>
+          </div>
+
+          <form id="teacherRegForm" onsubmit="submitTeacherRegistration(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-medium text-[var(--foreground)] mb-1">Nama Penuh Guru (Untuk Cetakan Sijil) *</label>
+              <input id="inputTeacherName" type="text" required placeholder="Contoh: CIKGU SITI NURHALIZA BINTI AHMAD" oninput="this.value = this.value.toUpperCase(); renderLivePreviewCert()" class="w-full px-3 py-2 text-sm rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-[var(--foreground)] mb-1">No. Kad Pengenalan (IC) *</label>
+                <input id="inputTeacherIC" type="text" required placeholder="880512-10-5432" oninput="renderLivePreviewCert()" class="w-full px-3 py-2 text-sm rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-[var(--foreground)] mb-1">Alamat Emel (Untuk Terima Sijil) *</label>
+                <input id="inputTeacherEmail" type="email" required placeholder="guru@moe-dl.edu.my" class="w-full px-3 py-2 text-sm rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+              </div>
+            </div>
+
+            <!-- Digital Signature & Attendance Confirmation -->
+            <div class="space-y-2 pt-1">
+              <div class="flex items-center justify-between">
+                <label class="block text-xs font-medium text-[var(--foreground)]">Tandatangan Digital Pengesahan Kehadiran *</label>
+                <button type="button" onclick="clearSignaturePad()" class="text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] underline">
+                  Padam Tandatangan
+                </button>
+              </div>
+              <div class="border border-[var(--border)] rounded-lg bg-white overflow-hidden">
+                <canvas id="signaturePad" width="480" height="140" class="w-full h-32 block sig-pad"></canvas>
+              </div>
+              <p class="text-xs text-[var(--muted-foreground)]">Lukis tandatangan menggunakan jari atau tetikus di ruangan putih di atas sebagai bukti pengesahan kehadiran.</p>
+            </div>
+
+            <label class="flex items-start gap-2.5 p-3 rounded-lg bg-[var(--background)] border border-[var(--border)] cursor-pointer">
+              <input id="confirmAttendanceChk" type="checkbox" required class="mt-0.5 rounded" />
+              <span class="text-xs text-[var(--foreground)]">Saya mengesahkan kehadiran saya dalam kursus/bengkel ini dan maklumat ejaan nama di atas adalah tepat untuk cetakan e-Sijil.</span>
+            </label>
+
+            <button type="submit" class="w-full py-2.5 px-4 rounded-lg text-sm font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 transition-opacity">
+              ✅ Sahkan Kehadiran, Jana Sijil & Hantar ke Emel
+            </button>
+          </form>
+        </div>
+
+        <!-- Live Generated Certificate & Email Simulation Result Column -->
+        <div class="lg:col-span-6 space-y-4">
+          <!-- Email Notification Simulation Banner (Hidden until submit) -->
+          <div id="emailSuccessBanner" class="hidden bg-[var(--card)] border-2 border-emerald-500/60 rounded-xl p-4 shadow-sm space-y-3">
+            <div class="flex items-start justify-between gap-3">
+              <div class="space-y-1">
+                <span class="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-400">✉️ SIJIL SIAP & EMEL DIHANTAR</span>
+                <h3 class="text-sm font-bold text-[var(--foreground)]" id="emailBannerTitle">Sijil telah dihantar secara automatik!</h3>
+                <p class="text-xs text-[var(--muted-foreground)]" id="emailBannerDesc"></p>
+              </div>
+              <button onclick="downloadGeneratedCert()" class="shrink-0 px-3 py-2 rounded-lg text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]">
+                ⬇️ Muat Turun Sijil (PNG)
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-base font-semibold text-[var(--foreground)]">Pratonton Sijil Guru (Masa Nyata)</h3>
+                <p class="text-xs text-[var(--muted-foreground)]">Nama, IC & tandatangan anda dipaparkan terus mengikut susunan Admin.</p>
+              </div>
+              <button onclick="downloadGeneratedCert()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)] hover:opacity-90">
+                ⬇️ Simpan Gambar Sijil
+              </button>
+            </div>
+
+            <div class="border border-[var(--border)] rounded-lg overflow-hidden bg-neutral-900/20">
+              <canvas id="previewCertCanvas" width="900" height="636" class="w-full h-auto block"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: ATTENDANCE RECORDS & AUTOMATED EMAIL LOGS -->
+    <div id="tabRecords" class="hidden space-y-4">
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h2 class="text-base font-semibold text-[var(--foreground)]">Senarai Kehadiran Guru & Status Penghantaran e-Sijil</h2>
+            <p class="text-xs text-[var(--muted-foreground)]">Rekod guru yang telah mengimbas QR, menurunkan tandatangan digital, dan menerima sijil di emel.</p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="exportCSV()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)] hover:opacity-90">
+              📊 Muat Turun CSV Kehadiran
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto border border-[var(--border)] rounded-lg">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-[var(--border)] bg-[var(--background)] text-xs font-semibold text-[var(--muted-foreground)]">
+                <th class="p-3">#</th>
+                <th class="p-3">Nama Guru</th>
+                <th class="p-3">No. KP</th>
+                <th class="p-3">Emel</th>
+                <th class="p-3">Pengesahan / Tandatangan</th>
+                <th class="p-3">Status Emel Sijil</th>
+                <th class="p-3 text-right">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody id="recordsTableBody" class="divide-y divide-[var(--border)] text-xs">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      courseTitle: 'BENGKEL DIGITALISASI & AI DALAM PDPC GURU 2026',
+      courseDate: '16 Oktober 2026',
+      courseOrg: 'Unit LDP SK Ranggu',
+      preset: 'gold',
+      customBgImage: null,
+      nameFontSize: 28,
+      textColor: '#1e293b',
+      elements: {
+        name: { id: 'name', label: 'Nama Guru', x: 450, y: 295, w: 560, h: 44 },
+        ic: { id: 'ic', label: 'No. Kad Pengenalan', x: 450, y: 340, w: 280, h: 30 },
+        course: { id: 'course', label: 'Nama Kursus & Tarikh', x: 450, y: 425, w: 620, h: 55 },
+        sig: { id: 'sig', label: 'Tandatangan Kehadiran', x: 690, y: 525, w: 180, h: 70 }
+      },
+      selectedElement: null,
+      dragging: false,
+      dragOffsetX: 0,
+      dragOffsetY: 0,
+      hasSignature: false,
+      records: JSON.parse(localStorage.getItem('esijil_records') || 'null') || [
+        {
+          id: 1,
+          name: 'CIKGU AHMAD FAIZAL BIN ZAINAL',
+          ic: '850412-14-5211',
+          email: 'faizal.zainal@moe-dl.edu.my',
+          time: '16 Okt 2026, 2:35 PTG',
+          sigDataUrl: null,
+          status: 'Terkirim ke Emel'
+        },
+        {
+          id: 2,
+          name: 'PUAN NURUL IMAN BINTI HASSAN',
+          ic: '901123-08-6142',
+          email: 'nurul.iman@moe-dl.edu.my',
+          time: '16 Okt 2026, 2:40 PTG',
+          sigDataUrl: null,
+          status: 'Terkirim ke Emel'
+        }
+      ]
+    };
+
+    const adminCanvas = document.getElementById('adminCertCanvas');
+    const adminCtx = adminCanvas.getContext('2d');
+    const previewCanvas = document.getElementById('previewCertCanvas');
+    const previewCtx = previewCanvas.getContext('2d');
+    const sigCanvas = document.getElementById('signaturePad');
+    const sigCtx = sigCanvas.getContext('2d');
+
+    function getRegistrationUrl() {
+      const isHttp = window.location.protocol === 'http:' || window.location.protocol === 'https:';
+      const base = isHttp
+        ? (window.location.origin + window.location.pathname)
+        : 'https://momon-ux.github.io/e-sijil-sekolah/';
+      const params = new URLSearchParams({
+        tab: 'form',
+        title: state.courseTitle,
+        date: state.courseDate,
+        org: state.courseOrg,
+        preset: state.preset
+      });
+      return `${base}?${params.toString()}`;
+    }
+
+    function copyRegistrationLink() {
+      const url = getRegistrationUrl();
+      navigator.clipboard.writeText(url).then(() => {
+        const toast = document.getElementById('copyToast');
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 3000);
+      });
+    }
+
+    function switchTab(tab) {
+      document.getElementById('tabAdmin').classList.toggle('hidden', tab !== 'admin');
+      document.getElementById('tabForm').classList.toggle('hidden', tab !== 'form');
+      document.getElementById('tabRecords').classList.toggle('hidden', tab !== 'records');
+
+      const tabs = [
+        { id: 'tabBtnAdmin', key: 'admin' },
+        { id: 'tabBtnForm', key: 'form' },
+        { id: 'tabBtnRecords', key: 'records' }
+      ];
+      tabs.forEach(t => {
+        const btn = document.getElementById(t.id);
+        if (t.key === tab) {
+          btn.className = 'px-3.5 py-2 rounded-md text-xs font-semibold transition-all bg-[var(--primary)] text-[var(--primary-foreground)] flex items-center gap-1.5';
+        } else {
+          btn.className = 'px-3.5 py-2 rounded-md text-xs font-semibold transition-all text-[var(--muted-foreground)] hover:text-[var(--foreground)] flex items-center gap-1.5';
+        }
+      });
+
+      if (tab === 'admin') renderAdminCanvas();
+      if (tab === 'form') renderLivePreviewCert();
+      if (tab === 'records') renderRecordsTable();
+    }
+
+    function drawCertificateBackground(ctx, width, height) {
+      if (state.customBgImage) {
+        ctx.drawImage(state.customBgImage, 0, 0, width, height);
+        return;
+      }
+
+      const palettes = {
+        gold: { bg1: '#fffdf7', bg2: '#fef9e7', border: '#b45309', accent: '#d97706', title: '#78350f' },
+        blue: { bg1: '#f8fafc', bg2: '#eff6ff', border: '#1e40af', accent: '#2563eb', title: '#1e3a8a' },
+        emerald: { bg1: '#f8fafc', bg2: '#ecfdf5', border: '#065f46', accent: '#059669', title: '#064e3b' }
+      };
+      const pal = palettes[state.preset] || palettes.gold;
+
+      const grad = ctx.createLinearGradient(0, 0, width, height);
+      grad.addColorStop(0, pal.bg1);
+      grad.addColorStop(1, pal.bg2);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.strokeStyle = pal.border;
+      ctx.lineWidth = 8;
+      ctx.strokeRect(28, 28, width - 56, height - 56);
+
+      ctx.strokeStyle = pal.accent;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(40, 40, width - 80, height - 80);
+
+      const corners = [
+        [28, 28], [width - 28, 28], [28, height - 28], [width - 28, height - 28]
+      ];
+      ctx.fillStyle = pal.border;
+      corners.forEach(([cx, cy]) => {
+        ctx.beginPath();
+        ctx.arc(cx, cy, 10, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      ctx.save();
+      ctx.translate(width / 2, 105);
+      ctx.beginPath();
+      ctx.arc(0, 0, 34, 0, Math.PI * 2);
+      ctx.fillStyle = pal.accent;
+      ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#ffffff';
+      ctx.stroke();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 14px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('LDP', 0, -2);
+      ctx.font = '10px sans-serif';
+      ctx.fillText('SEKOLAH', 0, 12);
+      ctx.restore();
+
+      ctx.fillStyle = pal.title;
+      ctx.font = 'bold 34px Georgia, serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('SIJIL PENYERTAAN & PENGHARGAAN', width / 2, 185);
+
+      ctx.fillStyle = '#475569';
+      ctx.font = 'italic 16px Georgia, serif';
+      ctx.fillText('Dengan ini diperakui bahawa', width / 2, 235);
+
+      ctx.fillStyle = '#475569';
+      ctx.font = 'italic 16px Georgia, serif';
+      ctx.fillText('telah hadir dan menyertai dengan jayanya kursus / bengkel:', width / 2, 385);
+
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(130, 560);
+      ctx.lineTo(330, 560);
+      ctx.stroke();
+      ctx.fillStyle = '#334155';
+      ctx.font = 'bold 13px sans-serif';
+      ctx.fillText('PENGETUA / GURU BESAR', 230, 580);
+      ctx.font = '12px sans-serif';
+      ctx.fillStyle = '#64748b';
+      ctx.fillText(state.courseOrg, 230, 598);
+
+      ctx.beginPath();
+      ctx.moveTo(state.elements.sig.x - 95, state.elements.sig.y + 35);
+      ctx.lineTo(state.elements.sig.x + 95, state.elements.sig.y + 35);
+      ctx.stroke();
+      ctx.fillStyle = '#334155';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText('PENGESAHAN KEHADIRAN DIGITAL', state.elements.sig.x, state.elements.sig.y + 53);
+    }
+
+    function drawDynamicElements(ctx, data, showGuides = false) {
+      const { name, ic, sigImage } = data;
+      const el = state.elements;
+
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      ctx.fillStyle = state.textColor;
+      ctx.font = `bold ${state.nameFontSize}px sans-serif`;
+      ctx.fillText(name || 'CIKGU SITI NURHALIZA BINTI AHMAD', el.name.x, el.name.y);
+
+      ctx.fillStyle = state.textColor;
+      ctx.font = `600 ${Math.max(14, state.nameFontSize - 9)}px monospace`;
+      ctx.fillText(`(${ic || '880512-10-5432'})`, el.ic.x, el.ic.y);
+
+      ctx.fillStyle = state.textColor;
+      ctx.font = 'bold 20px sans-serif';
+      ctx.fillText(state.courseTitle, el.course.x, el.course.y - 10);
+      ctx.font = '14px sans-serif';
+      ctx.fillStyle = '#475569';
+      ctx.fillText(`Pada ${state.courseDate} | Anjuran ${state.courseOrg}`, el.course.x, el.course.y + 16);
+
+      if (sigImage) {
+        ctx.drawImage(sigImage, el.sig.x - el.sig.w / 2, el.sig.y - el.sig.h / 2, el.sig.w, el.sig.h);
+      } else {
+        ctx.strokeStyle = '#1d4ed8';
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(el.sig.x - 45, el.sig.y + 10);
+        ctx.bezierCurveTo(el.sig.x - 20, el.sig.y - 25, el.sig.x + 10, el.sig.y + 20, el.sig.x + 45, el.sig.y - 8);
+        ctx.stroke();
+      }
+
+      if (showGuides) {
+        Object.values(el).forEach(item => {
+          const isSelected = state.selectedElement === item.id;
+          ctx.strokeStyle = isSelected ? '#2563eb' : 'rgba(37, 99, 235, 0.55)';
+          ctx.lineWidth = isSelected ? 2.5 : 1.5;
+          ctx.setLineDash([5, 4]);
+          ctx.strokeRect(item.x - item.w / 2, item.y - item.h / 2, item.w, item.h);
+          ctx.setLineDash([]);
+
+          ctx.fillStyle = isSelected ? '#2563eb' : 'rgba(30, 64, 175, 0.85)';
+          const tagWidth = ctx.measureText(item.label).width + 14;
+          ctx.fillRect(item.x - item.w / 2, item.y - item.h / 2 - 18, tagWidth, 18);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 10px sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText(item.label, item.x - item.w / 2 + 6, item.y - item.h / 2 - 9);
+          ctx.textAlign = 'center';
+        });
+      }
+
+      ctx.restore();
+    }
+
+    function renderAdminCanvas() {
+      const showGuides = document.getElementById('showGuidesCheckbox').checked;
+      adminCtx.clearRect(0, 0, adminCanvas.width, adminCanvas.height);
+      drawCertificateBackground(adminCtx, adminCanvas.width, adminCanvas.height);
+      drawDynamicElements(adminCtx, {
+        name: 'CIKGU SITI NURHALIZA BINTI AHMAD',
+        ic: '880512-10-5432',
+        sigImage: null
+      }, showGuides);
+    }
+
+    function renderLivePreviewCert() {
+      const nameVal = document.getElementById('inputTeacherName').value.trim() || 'NAMA PENUH GURU';
+      const icVal = document.getElementById('inputTeacherIC').value.trim() || 'NO. KAD PENGENALAN';
+
+      previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+      drawCertificateBackground(previewCtx, previewCanvas.width, previewCanvas.height);
+      drawDynamicElements(previewCtx, {
+        name: nameVal,
+        ic: icVal,
+        sigImage: state.hasSignature ? sigCanvas : null
+      }, false);
+    }
+
+    function getCanvasCoords(canvas, evt) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      return {
+        x: (evt.clientX - rect.left) * scaleX,
+        y: (evt.clientY - rect.top) * scaleY
+      };
+    }
+
+    adminCanvas.addEventListener('pointerdown', (e) => {
+      const pos = getCanvasCoords(adminCanvas, e);
+      const items = Object.values(state.elements).reverse();
+      const hit = items.find(item =>
+        pos.x >= item.x - item.w / 2 &&
+        pos.x <= item.x + item.w / 2 &&
+        pos.y >= item.y - item.h / 2 &&
+        pos.y <= item.y + item.h / 2
+      );
+
+      if (hit) {
+        state.selectedElement = hit.id;
+        state.dragging = true;
+        state.dragOffsetX = pos.x - hit.x;
+        state.dragOffsetY = pos.y - hit.y;
+        document.getElementById('selectedElementLabel').textContent = hit.label;
+        adminCanvas.setPointerCapture(e.pointerId);
+      } else {
+        state.selectedElement = null;
+        document.getElementById('selectedElementLabel').textContent = 'Tiada (Klik & tarik pada sijil)';
+      }
+      renderAdminCanvas();
+    });
+
+    adminCanvas.addEventListener('pointermove', (e) => {
+      if (!state.dragging || !state.selectedElement) return;
+      const pos = getCanvasCoords(adminCanvas, e);
+      const el = state.elements[state.selectedElement];
+      el.x = Math.max(80, Math.min(adminCanvas.width - 80, Math.round(pos.x - state.dragOffsetX)));
+      el.y = Math.max(50, Math.min(adminCanvas.height - 40, Math.round(pos.y - state.dragOffsetY)));
+      renderAdminCanvas();
+    });
+
+    adminCanvas.addEventListener('pointerup', () => {
+      state.dragging = false;
+    });
+
+    function resetAutoCenter() {
+      state.elements.name = { id: 'name', label: 'Nama Guru', x: 450, y: 295, w: 560, h: 44 };
+      state.elements.ic = { id: 'ic', label: 'No. Kad Pengenalan', x: 450, y: 340, w: 280, h: 30 };
+      state.elements.course = { id: 'course', label: 'Nama Kursus & Tarikh', x: 450, y: 425, w: 620, h: 55 };
+      state.elements.sig = { id: 'sig', label: 'Tandatangan Kehadiran', x: 690, y: 525, w: 180, h: 70 };
+      state.selectedElement = null;
+      document.getElementById('selectedElementLabel').textContent = 'Disusun Automatik di Tengah';
+      renderAdminCanvas();
+    }
+
+    function updateCourseInfo() {
+      state.courseTitle = document.getElementById('courseTitle').value;
+      state.courseDate = document.getElementById('courseDate').value;
+      state.courseOrg = document.getElementById('courseOrg').value;
+
+      document.getElementById('formCourseTitle').textContent = state.courseTitle;
+      document.getElementById('formCourseMeta').textContent = `Tarikh: ${state.courseDate} | ${state.courseOrg}`;
+
+      renderAdminCanvas();
+      drawQRCode();
+    }
+
+    function updateStyleSettings() {
+      state.nameFontSize = parseInt(document.getElementById('nameFontSize').value, 10);
+      state.textColor = document.getElementById('textColorPicker').value;
+      document.getElementById('fontSizeVal').textContent = state.nameFontSize;
+      document.getElementById('textColorHex').textContent = state.textColor;
+      renderAdminCanvas();
+    }
+
+    function changePresetTemplate(val) {
+      state.preset = val;
+      state.customBgImage = null;
+      renderAdminCanvas();
+      drawQRCode();
+    }
+
+    function handleCertUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          state.customBgImage = img;
+          renderAdminCanvas();
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function drawQRCode() {
+      const qrImg = document.getElementById('qrImage');
+      const targetUrl = getRegistrationUrl();
+      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(targetUrl)}`;
+    }
+
+    let sigDrawing = false;
+    sigCtx.strokeStyle = '#1d4ed8';
+    sigCtx.lineWidth = 2.8;
+    sigCtx.lineCap = 'round';
+    sigCtx.lineJoin = 'round';
+
+    sigCanvas.addEventListener('pointerdown', (e) => {
+      sigDrawing = true;
+      state.hasSignature = true;
+      const pos = getCanvasCoords(sigCanvas, e);
+      sigCtx.beginPath();
+      sigCtx.moveTo(pos.x, pos.y);
+      sigCanvas.setPointerCapture(e.pointerId);
+    });
+
+    sigCanvas.addEventListener('pointermove', (e) => {
+      if (!sigDrawing) return;
+      const pos = getCanvasCoords(sigCanvas, e);
+      sigCtx.lineTo(pos.x, pos.y);
+      sigCtx.stroke();
+      renderLivePreviewCert();
+    });
+
+    sigCanvas.addEventListener('pointerup', () => {
+      sigDrawing = false;
+      renderLivePreviewCert();
+    });
+
+    function clearSignaturePad() {
+      sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+      state.hasSignature = false;
+      renderLivePreviewCert();
+    }
+
+    function submitTeacherRegistration(e) {
+      e.preventDefault();
+      const name = document.getElementById('inputTeacherName').value.trim().toUpperCase();
+      const ic = document.getElementById('inputTeacherIC').value.trim();
+      const email = document.getElementById('inputTeacherEmail').value.trim();
+
+      if (!state.hasSignature) {
+        alert('Sila turunkan tandatangan digital anda pada ruangan yang disediakan untuk pengesahan kehadiran.');
+        return;
+      }
+
+      renderLivePreviewCert();
+
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit' });
+      state.records.unshift({
+        id: Date.now(),
+        name,
+        ic,
+        email,
+        time: `Hari ini, ${timeStr}`,
+        status: 'Terkirim ke Emel'
+      });
+
+      localStorage.setItem('esijil_records', JSON.stringify(state.records));
+      document.getElementById('badgeCount').textContent = state.records.length;
+
+      const banner = document.getElementById('emailSuccessBanner');
+      banner.classList.remove('hidden');
+      document.getElementById('emailBannerTitle').textContent = `e-Sijil telah dihantar ke ${email}`;
+      document.getElementById('emailBannerDesc').textContent = `Kehadiran ${name} (${ic}) telah direkodkan. Salinan sijil PDF/PNG telah dihantar secara automatik ke peti masuk emel anda.`;
+    }
+
+    function downloadGeneratedCert() {
+      renderLivePreviewCert();
+      const name = (document.getElementById('inputTeacherName').value.trim() || 'guru').toLowerCase().replace(/[^a-z0-9]/g, '-');
+      const link = document.createElement('a');
+      link.download = `e-sijil-${name}.png`;
+      link.href = previewCanvas.toDataURL('image/png');
+      link.click();
+    }
+
+    function renderRecordsTable() {
+      const tbody = document.getElementById('recordsTableBody');
+      tbody.innerHTML = '';
+
+      state.records.forEach((rec, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-[var(--background)] transition-colors';
+        tr.innerHTML = `
+          <td class="p-3 font-medium text-[var(--muted-foreground)]">${idx + 1}</td>
+          <td class="p-3 font-semibold text-[var(--foreground)]">${rec.name}</td>
+          <td class="p-3 font-mono text-[var(--muted-foreground)]">${rec.ic}</td>
+          <td class="p-3 text-[var(--muted-foreground)]">${rec.email}</td>
+          <td class="p-3">
+            <span class="px-2 py-0.5 rounded bg-blue-500/15 text-blue-400 font-medium">✍️ Ditandatangani (${rec.time})</span>
+          </td>
+          <td class="p-3">
+            <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-medium">✅ ${rec.status}</span>
+          </td>
+          <td class="p-3 text-right">
+            <button onclick="previewRecordCert(${idx})" class="px-2.5 py-1 rounded text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)] hover:opacity-90">
+              Lihat Sijil
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function previewRecordCert(idx) {
+      const rec = state.records[idx];
+      if (!rec) return;
+      document.getElementById('inputTeacherName').value = rec.name;
+      document.getElementById('inputTeacherIC').value = rec.ic;
+      document.getElementById('inputTeacherEmail').value = rec.email;
+      switchTab('form');
+    }
+
+    function exportCSV() {
+      const headers = ['Bil', 'Nama Guru', 'No KP', 'Emel', 'Masa Pengesahan', 'Status Emel'];
+      const rows = state.records.map((r, i) => [
+        i + 1,
+        `"${r.name}"`,
+        `"${r.ic}"`,
+        `"${r.email}"`,
+        `"${r.time}"`,
+        `"${r.status}"`
+      ]);
+      const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'rekod-kehadiran-esijil.csv';
+      a.click();
+    }
+
+    // Check URL parameters if opened via QR scan
+    function initFromUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('title')) {
+        state.courseTitle = params.get('title');
+        document.getElementById('courseTitle').value = state.courseTitle;
+      }
+      if (params.get('date')) {
+        state.courseDate = params.get('date');
+        document.getElementById('courseDate').value = state.courseDate;
+      }
+      if (params.get('org')) {
+        state.courseOrg = params.get('org');
+        document.getElementById('courseOrg').value = state.courseOrg;
+      }
+      if (params.get('preset')) {
+        state.preset = params.get('preset');
+        document.getElementById('presetTemplate').value = state.preset;
+      }
+
+      document.getElementById('formCourseTitle').textContent = state.courseTitle;
+      document.getElementById('formCourseMeta').textContent = `Tarikh: ${state.courseDate} | ${state.courseOrg}`;
+      document.getElementById('badgeCount').textContent = state.records.length;
+
+      drawQRCode();
+      renderAdminCanvas();
+      renderLivePreviewCert();
+
+      if (params.get('tab') === 'form') {
+        switchTab('form');
+      }
+    }
+
+    initFromUrlParams();
+  </script>
+</body>
+</html>
