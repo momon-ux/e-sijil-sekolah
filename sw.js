@@ -1,4 +1,4 @@
-const CACHE_NAME = 'esijil-skrg-v8';
+const CACHE_NAME = 'esijil-skrg-v9';
 const ASSETS = [
   './',
   './index.html',
@@ -6,8 +6,7 @@ const ASSETS = [
   './icon-192.png',
   './icon-512.png',
   './skrg.png',
-  './logo-kpm.png',
-  './sijil-delima.jpg'
+  './logo-kpm.png'
 ];
 
 self.addEventListener('install', (event) => {
