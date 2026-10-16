@@ -1,10 +1,11 @@
-const CACHE_NAME = 'esijil-skrg-v28';
+const CACHE_NAME = 'esijil-skrg-v29';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
+  './e-sijil-logo.png',
   './skrg.png',
   './logo-kpm.png'
 ];

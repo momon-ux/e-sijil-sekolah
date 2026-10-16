@@ -7,7 +7,7 @@
 
   <!-- PWA Manifest & Mobile App Meta Tags (Single Unified Link) -->
   <link rel="manifest" href="./manifest.json" />
-  <meta name="theme-color" content="#2563eb" />
+  <meta name="theme-color" content="#0b1f48" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="e-Sijil SKRG" />
@@ -107,6 +107,16 @@
     }
 
     .logo-cutout.school { height: 4rem; }
+
+    .app-logo-mark {
+      width: 4.15rem;
+      height: 4.15rem;
+      flex: 0 0 auto;
+      object-fit: cover;
+      border-radius: 1rem;
+      border: 2px solid #d6a541;
+      box-shadow: 0 7px 18px rgba(11,31,72,.24);
+    }
 
     .top-subtitle {
       color: #52627a;
@@ -724,6 +734,7 @@
       .brand-lockup { gap: .22rem; padding: .08rem; }
       .logo-cutout { height: 2.45rem; }
       .logo-cutout.school { height: 2.6rem; }
+      .app-logo-mark { width: 3rem; height: 3rem; border-radius: .78rem; }
       .school-identity { width: 100%; text-align: center; }
       .school-title { max-width: none; font-size: .72rem !important; line-height: .86rem !important; }
       .top-subtitle { max-width: none; margin-top: .1rem; font-size: .56rem !important; line-height: .7rem !important; }
@@ -789,10 +800,8 @@
   <header class="app-header sticky top-0 z-30 backdrop-blur border-b border-[var(--border)] px-3 sm:px-4 py-2.5 shadow-sm">
     <div class="app-header-inner max-w-6xl mx-auto flex items-center justify-between gap-2">
       <div class="school-brand-area flex items-center gap-2.5">
-        <div class="brand-lockup" aria-label="Logo rasmi Kementerian Pendidikan Malaysia dan Sekolah Kebangsaan Ranggu">
-          <img src="./logo-kpm.png" alt="Logo Kementerian Pendidikan Malaysia" class="logo-cutout" />
-          <span class="h-7 w-px bg-slate-300" aria-hidden="true"></span>
-          <img src="./skrg.png" alt="Logo Sekolah Kebangsaan Ranggu" class="logo-cutout school" />
+        <div class="brand-lockup" aria-label="Logo Sistem e-Sijil QR Sekolah Kebangsaan Ranggu">
+          <img src="./e-sijil-logo.png" alt="Logo e-Sijil QR SK Ranggu Tawau" class="app-logo-mark" />
         </div>
         <div class="school-identity">
           <div class="flex items-center gap-1.5">
