@@ -31,11 +31,16 @@
 
     body {
       -webkit-tap-highlight-color: transparent;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
       background:
         radial-gradient(circle at 5% 0%, rgba(23, 78, 166, 0.10), transparent 28rem),
         radial-gradient(circle at 95% 12%, rgba(214, 155, 45, 0.10), transparent 24rem),
         var(--background);
     }
+
+    button, input, select, textarea { font: inherit; }
 
     button, a, input, select {
       transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease, background-color .18s ease;
@@ -121,7 +126,7 @@
       padding: .78rem .85rem;
       border-radius: .8rem;
       color: #52627a;
-      font-size: .78rem;
+      font-size: .82rem;
       font-weight: 800;
       text-align: left;
     }
@@ -374,12 +379,12 @@
       .brand-lockup { gap: .28rem; padding: .12rem; }
       .logo-cutout { height: 1.8rem; }
       .logo-cutout.school { height: 1.95rem; }
-      .school-title { max-width: 150px; font-size: .68rem !important; line-height: .85rem !important; }
+      .school-title { max-width: 160px; font-size: .75rem !important; line-height: .95rem !important; }
       .live-clock { min-width: 72px; padding: .35rem .45rem !important; }
       .live-clock-date { display: none; }
-      .live-clock-time { font-size: .72rem !important; }
+      .live-clock-time { font-size: .78rem !important; }
       .quick-actions { grid-template-columns: 1fr; }
-      .quick-action-button { font-size: .72rem; padding-left: .75rem; padding-right: .75rem; }
+      .quick-action-button { font-size: .78rem; padding-left: .75rem; padding-right: .75rem; }
       .hero-panel { border-radius: 1.25rem !important; }
       .hero-graphic { right: -18px; top: 31%; width: 112px; height: 78px; opacity: .1; }
     }
@@ -397,7 +402,7 @@
         border-radius: .9rem;
       }
       .dashboard-sidebar-title { display: none; }
-      .side-nav-button { justify-content: center; padding: .7rem .35rem; font-size: .68rem; gap: .3rem; text-align: center; }
+      .side-nav-button { justify-content: center; padding: .72rem .35rem; font-size: .75rem; gap: .3rem; text-align: center; }
       .side-nav-icon { width: auto; font-size: .9rem; }
     }
   </style>
@@ -527,7 +532,7 @@
           <div class="app-card bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 space-y-4">
             <div class="flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-blue-400">LANGKAH ADMIN</span>
+                <span class="text-sm font-bold uppercase tracking-wider text-blue-500">LANGKAH ADMIN</span>
                 <h2 class="text-base font-bold text-[var(--foreground)]">1. Masukkan Rekod Sijil Baharu</h2>
               </div>
               <span class="px-2 py-0.5 rounded text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]">Jana QR Unik</span>
@@ -535,74 +540,58 @@
 
             <div class="space-y-3">
               <div>
-                <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Nama / Tajuk Rekod Sijil (Program / Bengkel)</label>
+                <label class="block text-sm font-semibold text-[var(--muted-foreground)] mb-1">Nama / Tajuk Rekod Sijil (Program / Bengkel)</label>
                 <input id="certRecordTitle" type="text" value="PROGRAM / BENGKEL SEKOLAH" required maxlength="120" oninput="updateDraftCert()" class="w-full px-3 py-2.5 text-sm font-semibold rounded-xl bg-white border border-[var(--border)] text-[var(--foreground)]" />
               </div>
 
               <div class="mobile-stack grid grid-cols-2 gap-3">
                 <div>
-                  <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Awalan No. Siri Sijil</label>
-                  <input id="serialPrefix" type="text" value="SKR/842/2026/" required maxlength="40" oninput="updateDraftCert()" class="w-full px-3 py-2 text-xs font-mono rounded-xl bg-white border border-[var(--border)] text-[var(--foreground)]" />
+                  <label class="block text-sm font-semibold text-[var(--muted-foreground)] mb-1">Awalan No. Siri Sijil</label>
+                  <input id="serialPrefix" type="text" value="SKR/842/2026/" required maxlength="40" oninput="updateDraftCert()" class="w-full px-3 py-2 text-sm font-mono rounded-xl bg-white border border-[var(--border)] text-[var(--foreground)]" />
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Contoh No. Siri Pertama</label>
-                  <div id="draftSerialPreview" class="px-3 py-2 text-xs font-mono font-bold rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                  <label class="block text-sm font-semibold text-[var(--muted-foreground)] mb-1">Contoh No. Siri Pertama</label>
+                  <div id="draftSerialPreview" class="px-3 py-2 text-sm font-mono font-bold rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-700">
                     SKR/842/2026/0001
                   </div>
                 </div>
               </div>
 
+              <!-- Muat naik sijil ialah langkah utama, bukan tetapan tersembunyi -->
+              <label id="certUploadCard" class="block cursor-pointer rounded-2xl border-2 border-dashed border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 p-5 text-center shadow-sm transition hover:border-blue-700 hover:shadow-md">
+                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-700 text-2xl font-black text-white shadow-lg shadow-blue-700/20">↑</div>
+                <div class="mt-3 text-sm font-extrabold text-blue-950">Muat Naik Gambar Sijil</div>
+                <div id="uploadStatusText" class="mt-1 text-xs leading-5 font-medium text-slate-600">Wajib • PNG atau JPG • Sistem hanya menambah nama dan nombor sijil</div>
+                <span class="mt-3 inline-flex rounded-lg bg-blue-700 px-4 py-2 text-sm font-bold text-white">Pilih Gambar Sijil</span>
+                <input id="certUpload" type="file" accept="image/png,image/jpeg,image/webp" onchange="handleCertUpload(event)" class="hidden" required />
+              </label>
+
+              <input id="showSchoolHeaderCheckbox" type="checkbox" class="hidden" />
+              <input id="certDateInput" type="hidden" value="16 Oktober 2026" />
+              <input id="certTimeInput" type="hidden" value="2.30 Petang" />
+              <input id="certVenueInput" type="hidden" value="SK Ranggu Tawau" />
+
               <details class="advanced-settings rounded-xl border border-[var(--border)] bg-slate-50">
-                <summary class="flex items-center justify-between gap-3 px-3.5 py-3 text-xs font-extrabold text-slate-700">
+                <summary class="flex items-center justify-between gap-3 px-3.5 py-3 text-sm font-extrabold text-slate-700">
                   <span>⚙ Tetapan lanjutan <span class="font-medium text-slate-400">(pilihan)</span></span>
                   <span class="advanced-chevron text-slate-400 transition-transform">⌄</span>
                 </summary>
                 <div class="space-y-3 border-t border-[var(--border)] p-3.5">
-              <!-- Upload Image Box -->
-              <label class="block cursor-pointer p-3.5 rounded-xl border-2 border-dashed border-blue-500/60 bg-blue-500/10 hover:bg-blue-500/15 transition-colors text-center space-y-1">
-                <div class="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-lg font-black text-blue-700">+</div>
-                <div class="text-xs font-bold text-[var(--foreground)]">Klik Untuk Muat Naik Gambar Sijil Lain (PNG / JPG)</div>
-                <div class="text-[11px] text-[var(--muted-foreground)]">Pilihan sahaja — gambar tidak akan dipaparkan sehingga anda memilih fail</div>
-                <input id="certUpload" type="file" accept="image/*" onchange="handleCertUpload(event)" class="hidden" />
-              </label>
-
-              <div class="space-y-1 text-xs">
-                <span class="text-[var(--muted-foreground)]">Reka bentuk sijil:</span>
-                <select id="presetTemplate" onchange="changePresetTemplate(this.value)" class="w-full px-2.5 py-2 rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] font-medium">
-                  <option value="modern" selected>Sijil Korporat Moden SK Ranggu & KPM</option>
-                </select>
-              </div>
-
-              <!-- Custom Event Details Box (Shown when skrg_moden is selected) -->
-              <div id="customEventFields" class="hidden p-3 rounded-xl bg-blue-50 border border-blue-200 space-y-2">
-                <p class="text-[11px] font-bold text-blue-300 uppercase">Butiran Kursus / Bengkel Pada Sijil:</p>
-                <div class="mobile-stack grid grid-cols-3 gap-2">
-                  <input id="certDateInput" type="text" value="16 Oktober 2026" placeholder="Tarikh" oninput="updateDraftCert()" class="px-2.5 py-1.5 text-xs rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
-                  <input id="certTimeInput" type="text" value="2.30 Petang" placeholder="Masa" oninput="updateDraftCert()" class="px-2.5 py-1.5 text-xs rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
-                  <input id="certVenueInput" type="text" value="SK Ranggu Tawau" placeholder="Tempat" oninput="updateDraftCert()" class="px-2.5 py-1.5 text-xs rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
-                </div>
-              </div>
-
-              <!-- Official Header & Cover Existing Name Toggles -->
-              <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 space-y-2">
-                <label class="flex items-center gap-2 text-xs font-semibold text-amber-800 cursor-pointer">
-                  <input id="showSchoolHeaderCheckbox" type="checkbox" checked onchange="updateDraftCert()" class="rounded" />
-                  <span>🏫 Papar Logo KPM & SK Ranggu (Peti Surat 842, 91008 Tawau)</span>
-                </label>
-                <label class="flex items-center gap-2 text-xs font-semibold text-emerald-700 cursor-pointer">
+              <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 space-y-2">
+                <label class="flex items-center gap-2 text-sm font-semibold text-emerald-700 cursor-pointer">
                   <input id="coverOldNameCheckbox" type="checkbox" onchange="updateDraftCert()" class="rounded" />
-                  <span>✨ Tutup Nama Asal Atas Gambar Sijil Dimuat Naik</span>
+                  <span>Tutup ruang nama asal pada gambar sijil</span>
                 </label>
               </div>
 
               <!-- Font & Color Controls -->
               <div class="mobile-stack grid grid-cols-2 gap-3 pt-2 border-t border-[var(--border)]">
                 <div>
-                  <label class="block text-xs text-[var(--muted-foreground)] mb-1">Saiz Fon Nama (<span id="fontSizeVal">22</span>px)</label>
+                  <label class="block text-sm font-medium text-[var(--muted-foreground)] mb-1">Saiz Fon Nama (<span id="fontSizeVal">22</span>px)</label>
                   <input id="nameFontSize" type="range" min="14" max="44" value="22" oninput="updateDraftCert()" class="w-full" />
                 </div>
                 <div>
-                  <label class="block text-xs text-[var(--muted-foreground)] mb-1">Warna Teks Nama</label>
+                  <label class="block text-sm font-medium text-[var(--muted-foreground)] mb-1">Warna Teks Nama</label>
                   <div class="flex items-center gap-2">
                     <input id="textColorPicker" type="color" value="#0f2952" oninput="updateDraftCert()" class="h-8 w-12 rounded cursor-pointer border border-[var(--border)] bg-transparent" />
                     <button type="button" onclick="resetAutoCenter()" class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)]">
@@ -616,7 +605,7 @@
 
               <!-- Save Certificate Record & Generate Unique QR Button -->
               <button type="button" onclick="saveNewCertificateRecord()" class="w-full py-3 px-4 rounded-xl text-sm font-bold bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-95 shadow-lg shadow-blue-600/30 transition-all">
-                💾 Simpan Rekod Sijil & Jana QR Unik
+                Simpan Rekod & Jana QR
               </button>
               <p id="saveRecordToast" class="text-xs font-semibold text-emerald-700 text-center hidden" role="status" aria-live="polite"></p>
             </div>
@@ -628,10 +617,10 @@
           <div class="app-card bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 space-y-3">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <h3 class="text-base font-bold text-[var(--foreground)]">Pratonton Sijil SK Ranggu & Kedudukan Nama</h3>
-                <p class="text-xs text-[var(--muted-foreground)]">Sentuh & tarik kotak biru <strong>Nama Guru</strong> atau <strong>No. Siri Sijil</strong> di atas gambar sijil.</p>
+                <h3 class="text-base font-bold text-[var(--foreground)]">Pratonton Gambar Sijil</h3>
+                <p class="text-sm leading-5 text-[var(--muted-foreground)]">Selepas gambar dimuat naik, sentuh dan tarik kotak biru <strong>Nama Guru</strong> atau <strong>No. Siri Sijil</strong> ke kedudukan yang betul.</p>
               </div>
-              <label class="flex items-center gap-1.5 text-xs text-[var(--muted-foreground)] cursor-pointer">
+              <label class="flex items-center gap-1.5 text-sm text-[var(--muted-foreground)] cursor-pointer">
                 <input id="showGuidesCheckbox" type="checkbox" checked onchange="renderAdminCanvas()" class="rounded" />
                 <span>Kotak Panduan</span>
               </label>
@@ -964,29 +953,7 @@
     kpmLogoImg.src = './logo-kpm.png';
 
     // --- DEFAULT CERTIFICATE UNITS DATABASE ---
-    const defaultCertUnits = [
-      {
-        id: 'cert-program-skrg-2026',
-        title: 'PROGRAM / BENGKEL SEKOLAH',
-        serialPrefix: 'SKR/842/2026/',
-        preset: 'modern',
-        canvasW: 900,
-        canvasH: 636,
-        customBgDataUrl: null,
-        showSchoolHeader: true,
-        coverOldName: false,
-        eventDate: '12 Oktober 2026',
-        eventTime: '2.30 petang',
-        eventVenue: 'SK Ranggu Tawau',
-        nameFontSize: 22,
-        textColor: '#0f2952',
-        elements: {
-          serial: { id: 'serial', label: 'No. Siri Sijil', x: 730, y: 68, w: 230, h: 28 },
-          name: { id: 'name', label: 'Nama Guru', x: 450, y: 320, w: 600, h: 50 }
-        },
-        recipients: []
-      }
-    ];
+    const defaultCertUnits = [];
 
     const STORAGE_KEY = 'esijil_units_v7';
 
@@ -1017,6 +984,7 @@
         canvasW,
         canvasH,
         customBgDataUrl: /^data:image\/(png|jpeg|webp);base64,/i.test(unit.customBgDataUrl || '') ? unit.customBgDataUrl : null,
+        showSchoolHeader: false,
         eventDate: cleanText(unit.eventDate, 60),
         eventTime: cleanText(unit.eventTime, 40),
         eventVenue: cleanText(unit.eventVenue, 80),
@@ -1032,7 +1000,7 @@
           name: cleanText(r.name, 120),
           email: cleanText(r.email, 160),
           time: cleanText(r.time, 80)
-        })).filter((r) => r.email.toLowerCase() !== 'fikrey@moe-dl.edu.my') : []
+        })) : []
       };
     }
 
@@ -1040,7 +1008,12 @@
       try {
         const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('esijil_units_v6');
         const saved = JSON.parse(raw || 'null');
-        if (Array.isArray(saved) && saved.length > 0) return saved.map(safeUnit).filter(Boolean);
+        if (Array.isArray(saved)) {
+          return saved
+            .map(safeUnit)
+            .filter(Boolean)
+            .filter((unit) => unit.customBgDataUrl || unit.recipients.length > 0);
+        }
       } catch (e) {}
       return defaultCertUnits.map(safeUnit);
     }
@@ -1064,7 +1037,7 @@
         canvasH: 636,
         customBgDataUrl: null,
         customBgImage: null,
-        showSchoolHeader: true,
+        showSchoolHeader: false,
         coverOldName: false,
         eventDate: '16 Oktober 2026',
         eventTime: '2.30 Petang',
@@ -1258,8 +1231,6 @@
 
     // --- DRAWING CERTIFICATE BACKGROUND & OVERLAY ---
     function drawCertBg(ctx, width, height, cfg, bgImg) {
-      const certTitle = cfg.title || 'PROGRAM RASMI SEKOLAH';
-
       if (bgImg) {
         ctx.drawImage(bgImg, 0, 0, width, height);
         if (cfg.showSchoolHeader) {
@@ -1273,84 +1244,39 @@
         return;
       }
 
-      // Reka bentuk korporat moden — menggantikan sepenuhnya templat emas lama.
+      // Ruang kosong sehingga admin memuat naik sijil asal.
       const grad = ctx.createLinearGradient(0, 0, width, height);
-      grad.addColorStop(0, '#ffffff');
-      grad.addColorStop(0.62, '#f8fbff');
-      grad.addColorStop(1, '#eaf2ff');
+      grad.addColorStop(0, '#f8fafc');
+      grad.addColorStop(1, '#e8eef8');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, width, height);
 
-      ctx.fillStyle = '#12366b';
-      ctx.fillRect(0, 0, 18, height);
-      ctx.fillStyle = '#1f62b5';
-      ctx.fillRect(18, 0, 7, height);
-      ctx.fillStyle = '#d6a541';
-      ctx.fillRect(25, 0, 3, height);
-
       ctx.save();
-      ctx.globalAlpha = 0.08;
-      ctx.fillStyle = '#174ea6';
-      ctx.beginPath();
-      ctx.moveTo(width - 260, 0);
-      ctx.lineTo(width, 0);
-      ctx.lineTo(width, 210);
-      ctx.closePath();
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(width - 55, height - 40, 150, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-
-      ctx.strokeStyle = '#cbd8ea';
-      ctx.lineWidth = 1.5;
-      ctx.strokeRect(46, 28, width - 74, height - 56);
-      ctx.fillStyle = '#d6a541';
-      ctx.fillRect(64, 45, 90, 4);
-      ctx.fillRect(width - 154, height - 49, 90, 4);
-
-      drawOfficialKpmSkrgHeader(ctx, width / 2, 42);
-
-      drawRoundedRect(ctx, width / 2 - 88, 164, 176, 25, 13);
-      ctx.fillStyle = '#e9f1fb';
-      ctx.fill();
-      ctx.fillStyle = '#174ea6';
-      ctx.font = '800 10px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('SIJIL RASMI • SK RANGGU', width / 2, 177);
-
-      ctx.fillStyle = '#102f5f';
-      ctx.font = '900 33px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('SIJIL PENYERTAAN', width / 2, 226);
-
-      ctx.fillStyle = '#d6a541';
-      ctx.fillRect(width / 2 - 45, 244, 90, 3);
-
-      ctx.fillStyle = '#475569';
-      ctx.font = '500 15px sans-serif';
-      ctx.fillText('Dengan ini diperakui bahawa', width / 2, 277);
-
-      ctx.fillStyle = '#475569';
-      ctx.font = '500 14px sans-serif';
-      ctx.fillText('telah menyertai dengan jayanya', width / 2, 388);
-
-      ctx.font = '800 20px sans-serif';
-      ctx.fillStyle = '#174ea6';
-      ctx.fillText(certTitle, width / 2, 424);
-
-      ctx.strokeStyle = '#9aa9bc';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(width / 2 - 115, height - 88);
-      ctx.lineTo(width / 2 + 115, height - 88);
+      ctx.strokeStyle = '#8aabd7';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([12, 9]);
+      drawRoundedRect(ctx, 42, 42, width - 84, height - 84, 22);
       ctx.stroke();
-      ctx.fillStyle = '#102f5f';
-      ctx.font = '800 11px sans-serif';
-      ctx.fillText('GURU BESAR', width / 2, height - 69);
+      ctx.setLineDash([]);
+
+      const iconY = height / 2 - 76;
+      drawRoundedRect(ctx, width / 2 - 38, iconY - 38, 76, 76, 20);
+      ctx.fillStyle = '#1d4ed8';
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 44px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('↑', width / 2, iconY - 2);
+      ctx.fillStyle = '#15315b';
+      ctx.font = '900 26px sans-serif';
+      ctx.fillText('MUAT NAIK GAMBAR SIJIL', width / 2, height / 2 + 5);
       ctx.fillStyle = '#64748b';
-      ctx.font = '600 9.5px sans-serif';
-      ctx.fillText('SEKOLAH KEBANGSAAN RANGGU • TAWAU, SABAH', width / 2, height - 52);
+      ctx.font = '600 15px sans-serif';
+      ctx.fillText('Pratonton sijil asal akan dipaparkan di sini', width / 2, height / 2 + 38);
+      ctx.font = '500 13px sans-serif';
+      ctx.fillText('Sistem hanya menambah nama guru dan nombor siri', width / 2, height / 2 + 65);
+      ctx.restore();
     }
 
     function drawWrappedName(ctx, text, x, y, maxWidth, fontSize, color) {
@@ -1473,7 +1399,9 @@
 
       adminCtx.clearRect(0, 0, adminCanvas.width, adminCanvas.height);
       drawCertBg(adminCtx, adminCanvas.width, adminCanvas.height, d, d.customBgImage);
-      drawCertOverlay(adminCtx, d, 'NAMA PENUH GURU', sampleSerial, showGuides);
+      if (d.customBgImage) {
+        drawCertOverlay(adminCtx, d, 'NAMA PENUH GURU', sampleSerial, showGuides);
+      }
     }
 
     function updateDraftCert() {
@@ -1487,24 +1415,6 @@
       state.draft.eventTime = document.getElementById('certTimeInput').value;
       state.draft.eventVenue = document.getElementById('certVenueInput').value;
       document.getElementById('fontSizeVal').textContent = state.draft.nameFontSize;
-      renderAdminCanvas();
-    }
-
-    function changePresetTemplate(val) {
-      state.draft.preset = val;
-      state.draft.customBgImage = null;
-      state.draft.customBgDataUrl = null;
-
-      document.getElementById('customEventFields').classList.add('hidden');
-      state.draft.canvasW = 900;
-      state.draft.canvasH = 636;
-      state.draft.nameFontSize = 28;
-      state.draft.textColor = '#1e293b';
-      document.getElementById('nameFontSize').value = 28;
-      document.getElementById('fontSizeVal').textContent = 28;
-      document.getElementById('textColorPicker').value = '#1e293b';
-      state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: 730, y: 68, w: 230, h: 28 };
-      state.draft.elements.name = { id: 'name', label: 'Nama Guru', x: 450, y: 320, w: 600, h: 50 };
       renderAdminCanvas();
     }
 
@@ -1538,6 +1448,10 @@
             state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: Math.round(targetW * 0.8), y: 55, w: 230, h: 28 };
             state.draft.elements.name = { id: 'name', label: 'Nama Guru', x: Math.round(targetW / 2), y: Math.round(targetH * 0.5), w: Math.round(targetW * 0.65), h: 50 };
           }
+          const status = document.getElementById('uploadStatusText');
+          status.textContent = `✓ ${cleanText(file.name, 80)} berjaya dimuat naik`;
+          status.className = 'mt-1 text-xs leading-5 font-bold text-emerald-700';
+          showToast('Gambar sijil berjaya dimuat naik. Laraskan kedudukan nama dan nombor siri pada pratonton.', 'success');
           renderAdminCanvas();
         };
         img.src = e.target.result;
@@ -1611,6 +1525,14 @@
         (!title ? document.getElementById('certRecordTitle') : document.getElementById('serialPrefix')).focus();
         return;
       }
+      if (!d.customBgDataUrl) {
+        showToast('Muat naik gambar sijil dahulu sebelum menyimpan rekod.', 'error');
+        const uploadCard = document.getElementById('certUploadCard');
+        uploadCard.classList.add('ring-4', 'ring-red-300', 'border-red-500');
+        uploadCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => uploadCard.classList.remove('ring-4', 'ring-red-300', 'border-red-500'), 2200);
+        return;
+      }
       if (state.certUnits.some((unit) => unit.title.toLowerCase() === title.toLowerCase() && unit.serialPrefix === serialPrefix)) {
         showToast('Rekod dengan tajuk dan awalan nombor siri yang sama sudah wujud.', 'error');
         return;
@@ -1624,7 +1546,7 @@
         canvasW: d.canvasW,
         canvasH: d.canvasH,
         customBgDataUrl: d.customBgDataUrl,
-        showSchoolHeader: d.showSchoolHeader,
+        showSchoolHeader: false,
         coverOldName: d.coverOldName,
         eventDate: d.eventDate,
         eventTime: d.eventTime,
@@ -2118,7 +2040,7 @@
           canvasW: parseInt(params.get('cw') || '900', 10),
           canvasH: parseInt(params.get('ch') || '636', 10),
           customBgDataUrl: null,
-          showSchoolHeader: params.get('hdr') !== '0',
+          showSchoolHeader: false,
           coverOldName: params.get('cov') === '1',
           eventDate: params.get('dt') || '16 Oktober 2026',
           eventTime: params.get('tm') || '2.30 Petang',
