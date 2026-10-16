@@ -2,8 +2,18 @@
 <html lang="ms">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>e-Sijil Sekolah — Imbas & Jana Sijil</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Sistem e-Sijil & QR Sekolah</title>
+
+  <!-- PWA Manifest & Mobile App Meta Tags (Single Unified Link) -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="e-Sijil QR" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <link rel="icon" type="image/png" href="./icon-192.png" />
+
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root {
@@ -18,6 +28,10 @@
       --muted-foreground: #94a3b8;
     }
 
+    body {
+      -webkit-tap-highlight-color: transparent;
+    }
+
     .canvas-container {
       position: relative;
       width: 100%;
@@ -25,7 +39,7 @@
       touch-action: none;
     }
 
-    /* 3D Spinning Certificate Stage for Teachers */
+    /* 3D Spinning Certificate Stage when Teacher Scans QR */
     .stage-3d {
       perspective: 1300px;
       width: 100%;
@@ -51,21 +65,11 @@
     }
 
     @keyframes rotateCert3D {
-      0% {
-        transform: rotateY(0deg) rotateX(4deg) translateY(0px);
-      }
-      25% {
-        transform: rotateY(90deg) rotateX(0deg) translateY(-6px);
-      }
-      50% {
-        transform: rotateY(180deg) rotateX(-4deg) translateY(0px);
-      }
-      75% {
-        transform: rotateY(270deg) rotateX(0deg) translateY(6px);
-      }
-      100% {
-        transform: rotateY(360deg) rotateX(4deg) translateY(0px);
-      }
+      0%   { transform: rotateY(0deg) rotateX(4deg) translateY(0px); }
+      25%  { transform: rotateY(90deg) rotateX(0deg) translateY(-6px); }
+      50%  { transform: rotateY(180deg) rotateX(-4deg) translateY(0px); }
+      75%  { transform: rotateY(270deg) rotateX(0deg) translateY(6px); }
+      100% { transform: rotateY(360deg) rotateX(4deg) translateY(0px); }
     }
 
     .cert-face-front {
@@ -94,7 +98,6 @@
       text-align: center;
     }
 
-    /* Shimmer overlay */
     .shimmer-overlay {
       position: absolute;
       inset: 0;
@@ -116,75 +119,226 @@
     }
   </style>
 </head>
-<body class="bg-[var(--background)] text-[var(--foreground)] antialiased p-4 md:p-6 min-h-screen">
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased min-h-screen pb-12">
 
-  <div class="max-w-5xl mx-auto space-y-6">
-    <!-- Top Bar: Minimalist for Teachers, with Admin Lock Button for Momon -->
-    <div class="flex items-center justify-between bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 shadow-sm">
+  <!-- Top Header -->
+  <header class="sticky top-0 z-30 bg-[var(--card)]/95 backdrop-blur border-b border-[var(--border)] px-4 py-3">
+    <div class="max-w-5xl mx-auto flex items-center justify-between gap-2">
       <div class="flex items-center gap-2.5">
-        <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-[var(--primary)] text-[var(--primary-foreground)]">e-SIJIL SEKOLAH</span>
-        <span id="headerSubtitle" class="text-xs text-[var(--muted-foreground)]">Portal Penjanaan Sijil Automatik</span>
+        <img src="./icon-192.png" alt="Logo" class="w-9 h-9 rounded-xl border border-amber-400/40" />
+        <div>
+          <div class="flex items-center gap-1.5">
+            <h1 class="text-sm md:text-base font-bold text-[var(--foreground)]">Sistem e-Sijil & QR Sekolah</h1>
+            <span id="standaloneBadge" class="hidden px-1.5 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-300">PWA</span>
+          </div>
+          <p id="topSubtitle" class="text-xs text-[var(--muted-foreground)]">Pengurusan Rekod Sijil & QR Unik Setiap Sijil</p>
+        </div>
       </div>
 
-      <!-- Clean Teacher Header Badge -->
       <div class="flex items-center gap-2">
-        <span class="px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-500/15 text-emerald-400">Imbasan QR Rasmi</span>
+        <!-- Install PWA Button -->
+        <button id="btnInstallPwa" onclick="triggerInstallApp()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 shadow-sm hover:opacity-90 flex items-center gap-1">
+          <span>📲 Simpan App di Fon</span>
+        </button>
+        <!-- Back to Admin List Button (Only shown when Admin previews a QR scan) -->
+        <button id="btnBackToAdmin" onclick="exitQrScanView()" class="hidden px-3 py-1.5 rounded-xl text-xs font-semibold bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--border)]">
+          ⚙️ Panel Admin
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto p-4 md:p-6 space-y-6">
+
+    <!-- PWA Install Guide Modal for iPhone / Android -->
+    <div id="installHelpModal" class="hidden bg-blue-950/90 border-2 border-blue-500/50 rounded-2xl p-4 space-y-3">
+      <div class="flex items-start justify-between">
+        <h3 class="text-sm font-bold text-white">📲 Cara Simpan App Ini Dalam Telefon Anda:</h3>
+        <button onclick="document.getElementById('installHelpModal').classList.add('hidden')" class="text-xs text-slate-300 underline">Tutup</button>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+        <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-700 space-y-1">
+          <p class="font-bold text-amber-300">🍏 iPhone (Safari):</p>
+          <p class="text-slate-300">1. Tekan butang <strong>Share (Kongsi ⬆️)</strong> di bawah pelayar.</p>
+          <p class="text-slate-300">2. Pilih <strong>"Add to Home Screen" (Tambah ke Skrin Utama)</strong>.</p>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-700 space-y-1">
+          <p class="font-bold text-emerald-300">🤖 Android (Chrome):</p>
+          <p class="text-slate-300">1. Tekan menu <strong>3 titik (⋮)</strong> di penjuru atas Chrome.</p>
+          <p class="text-slate-300">2. Pilih <strong>"Install App" (Pasang Aplikasi)</strong>.</p>
+        </div>
       </div>
     </div>
 
-    <!-- =================================================================== -->
-    <!-- VIEW 1: TEACHER QR SCAN VIEW (DEFAULT WHEN TEACHERS SCAN QR)        -->
-    <!-- Spinning 3D Certificate + Single Name Input + Auto Serial Number    -->
-    <!-- =================================================================== -->
-    <div id="viewTeacher" class="space-y-6">
-      <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 md:p-8 shadow-lg text-center space-y-2">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-semibold">
-          <span>✨ SIJIL DIGITAL RASMI</span>
-          <span>•</span>
-          <span id="teacherSerialBadge" class="font-mono">No. Sijil: SKR/2026/0003</span>
+    <!-- ===================================================================== -->
+    <!-- MODE A: ADMIN PWA VIEW (CREATE CERTIFICATE RECORDS & UNIQUE QR CODES) -->
+    <!-- ===================================================================== -->
+    <div id="viewAdminApp" class="space-y-6">
+
+      <!-- Section 1: Create / Edit Certificate Record & Upload Certificate Image -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-5 space-y-4">
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-md space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-blue-400">LANGKAH ADMIN</span>
+                <h2 class="text-base font-bold text-[var(--foreground)]">1. Masukkan Rekod Sijil Baharu</h2>
+              </div>
+              <span class="px-2 py-0.5 rounded text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]">Jana QR Unik</span>
+            </div>
+
+            <div class="space-y-3">
+              <div>
+                <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Nama / Tajuk Rekod Sijil (Program / Bengkel)</label>
+                <input id="certRecordTitle" type="text" value="SIJIL BENGKEL DIGITALISASI & AI 2026" oninput="updateDraftCert()" class="w-full px-3 py-2.5 text-sm font-semibold rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Awalan No. Siri Sijil</label>
+                  <input id="serialPrefix" type="text" value="SKR/AI/2026/" oninput="updateDraftCert()" class="w-full px-3 py-2 text-xs font-mono rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Contoh No. Siri Pertama</label>
+                  <div id="draftSerialPreview" class="px-3 py-2 text-xs font-mono font-bold rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                    SKR/AI/2026/0001
+                  </div>
+                </div>
+              </div>
+
+              <!-- Upload Image Box -->
+              <label class="block cursor-pointer p-4 rounded-xl border-2 border-dashed border-blue-500/60 bg-blue-500/10 hover:bg-blue-500/15 transition-colors text-center space-y-1">
+                <div class="text-2xl">🖼️</div>
+                <div class="text-xs font-bold text-[var(--foreground)]">Klik Untuk Muat Naik Gambar Sijil Ini (PNG / JPG)</div>
+                <div class="text-xs text-[var(--muted-foreground)]">Pilih gambar sijil kosong dari telefon / komputer anda</div>
+                <input id="certUpload" type="file" accept="image/*" onchange="handleCertUpload(event)" class="hidden" />
+              </label>
+
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-[var(--muted-foreground)]">Atau guna templat:</span>
+                <select id="presetTemplate" onchange="changePresetTemplate(this.value)" class="px-2.5 py-1.5 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]">
+                  <option value="gold">Templat Emas Rasmi</option>
+                  <option value="blue">Templat Biru Korporat</option>
+                  <option value="emerald">Templat Hijau Akademik</option>
+                </select>
+              </div>
+
+              <!-- Font & Color Controls -->
+              <div class="grid grid-cols-2 gap-3 pt-2 border-t border-[var(--border)]">
+                <div>
+                  <label class="block text-xs text-[var(--muted-foreground)] mb-1">Saiz Fon Nama (<span id="fontSizeVal">30</span>px)</label>
+                  <input id="nameFontSize" type="range" min="18" max="52" value="30" oninput="updateDraftCert()" class="w-full" />
+                </div>
+                <div>
+                  <label class="block text-xs text-[var(--muted-foreground)] mb-1">Warna Teks Nama</label>
+                  <div class="flex items-center gap-2">
+                    <input id="textColorPicker" type="color" value="#1e293b" oninput="updateDraftCert()" class="h-8 w-12 rounded cursor-pointer border border-[var(--border)] bg-transparent" />
+                    <button type="button" onclick="resetAutoCenter()" class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)]">
+                      ⚡ Tengah
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Save Certificate Record & Generate Unique QR Button -->
+              <button type="button" onclick="saveNewCertificateRecord()" class="w-full py-3 px-4 rounded-xl text-sm font-bold bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-95 shadow-lg shadow-blue-600/30 transition-all">
+                💾 Simpan Rekod Sijil & Jana QR Unik
+              </button>
+              <p id="saveRecordToast" class="text-xs font-semibold text-emerald-400 text-center hidden"></p>
+            </div>
+          </div>
         </div>
 
-        <h1 class="text-xl md:text-2xl font-bold text-[var(--foreground)] pt-1">
+        <!-- Right Column: Interactive Certificate Position Canvas -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-md space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h3 class="text-base font-bold text-[var(--foreground)]">Pratonton & Kedudukan Nama / No. Siri</h3>
+                <p class="text-xs text-[var(--muted-foreground)]">Sentuh & tarik kotak biru <strong>Nama Guru</strong> atau <strong>No. Siri Sijil</strong> di atas gambar sijil.</p>
+              </div>
+              <label class="flex items-center gap-1.5 text-xs text-[var(--muted-foreground)] cursor-pointer">
+                <input id="showGuidesCheckbox" type="checkbox" checked onchange="renderAdminCanvas()" class="rounded" />
+                <span>Kotak Panduan</span>
+              </label>
+            </div>
+
+            <div class="canvas-container border border-[var(--border)] rounded-xl overflow-hidden bg-neutral-950">
+              <canvas id="adminCertCanvas" width="900" height="636" class="w-full h-auto block cursor-move"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: List of Saved Certificate Units & Their Unique QR Codes -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-md space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <h2 class="text-base font-bold text-[var(--foreground)]">2. Senarai Unit Sijil & Kod QR Unik Setiap Sijil</h2>
+            <p class="text-xs text-[var(--muted-foreground)]">
+              Setiap rekod sijil di bawah mempunyai <strong>Kod QR uniknya sendiri</strong>. Bila guru imbas QR mana-mana sijil, mereka akan nampak sijil tersebut berpusing-pusing dalam animasi 3D dan hanya perlu masukkan nama.
+            </p>
+          </div>
+        </div>
+
+        <div id="certUnitsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Populated dynamically by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODE B: TEACHER QR SCAN VIEW FOR A SPECIFIC CERTIFICATE UNIT          -->
+    <!-- (Opened automatically when scanning any certificate's unique QR code) -->
+    <!-- ===================================================================== -->
+    <div id="viewTeacherScan" class="hidden space-y-6">
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 md:p-8 shadow-lg text-center space-y-3">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-semibold">
+          <span id="scanCertUnitTitle">SIJIL RASMI SEKOLAH</span>
+          <span>•</span>
+          <span id="teacherSerialBadge" class="font-mono">No. Sijil: SKR/AI/2026/0001</span>
+        </div>
+
+        <h2 class="text-xl md:text-2xl font-bold text-[var(--foreground)]">
           Pratonton Sijil Anda
-        </h1>
+        </h2>
         <p class="text-xs md:text-sm text-[var(--muted-foreground)] max-w-lg mx-auto">
-          Masukkan <strong>Nama Penuh</strong> anda di bawah. Nama dan No. Siri Sijil akan tertera secara automatik di atas sijil di bawah.
+          Masukkan <strong>Nama Penuh</strong> anda sahaja di bawah. Sijil anda sedang berpusing di bawah bersama No. Siri mengikut urutan pendaftaran.
         </p>
 
         <!-- 3D Rotating Certificate Showcase -->
         <div class="stage-3d">
           <div id="cert3dBox" class="cert-3d-wrapper">
-            <!-- Front of Certificate (Live Canvas with Uploaded Image + Teacher Name + Serial No) -->
+            <!-- Front Face -->
             <div class="cert-face-front">
               <canvas id="teacherCertCanvas" width="900" height="636" class="w-full h-auto block"></canvas>
               <div class="shimmer-overlay"></div>
             </div>
-            <!-- Back of Certificate (Visible when spinning 180 deg) -->
+            <!-- Back Face -->
             <div class="cert-face-back">
               <div class="w-16 h-16 rounded-full bg-amber-400/20 border-2 border-amber-400 flex items-center justify-center text-2xl mb-3">
                 🏅
               </div>
               <p class="text-xs font-mono uppercase tracking-widest text-amber-300">Sijil Digital Disahkan</p>
-              <h3 class="text-lg font-bold text-white mt-1">SISTEM e-SIJIL SEKOLAH</h3>
+              <h3 id="backCertTitle" class="text-base font-bold text-white mt-1">SISTEM e-SIJIL SEKOLAH</h3>
               <p id="backCertSerial" class="text-xs font-mono text-slate-300 mt-2 px-3 py-1 rounded bg-white/10">
-                No. Siri: SKR/2026/0003
+                No. Siri: SKR/AI/2026/0001
               </p>
             </div>
           </div>
         </div>
 
-        <!-- Spin Control Toggle -->
-        <div class="flex justify-center pb-2">
+        <div class="flex justify-center pb-1">
           <button type="button" id="btnToggleSpin" onclick="toggleSpinAnimation()" class="px-3 py-1 rounded-full text-xs font-medium bg-[var(--secondary)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] border border-[var(--border)]">
             ⏸️ Hentikan Putaran Sekejap (Lihat Jelas)
           </button>
         </div>
 
-        <!-- Simple 1-Field Teacher Input Form -->
+        <!-- Single Name Input for Teacher -->
         <form onsubmit="handleTeacherGenerate(event)" class="max-w-md mx-auto space-y-4 pt-2 text-left">
           <div>
             <label class="block text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-1.5 text-center">
-              Masukkan Nama Penuh Anda (Untuk Cetakan Sijil)
+              Masukkan Nama Penuh Anda Sahaja
             </label>
             <input
               id="inputTeacherName"
@@ -204,7 +358,7 @@
           </button>
         </form>
 
-        <!-- Success Banner after Generating -->
+        <!-- Success Box -->
         <div id="teacherSuccessBox" class="hidden max-w-md mx-auto mt-4 p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-center space-y-2">
           <p class="text-sm font-bold text-emerald-300" id="teacherSuccessTitle">✅ Sijil Anda Telah Dijana!</p>
           <p class="text-xs text-[var(--muted-foreground)]" id="teacherSuccessDesc"></p>
@@ -215,277 +369,153 @@
       </div>
     </div>
 
-    <!-- =================================================================== -->
-    <!-- VIEW 2: ADMIN PANEL (ONLY FOR CIKGU MOMON)                          -->
-    <!-- Upload Certificate Image Only + Position Name & Serial + QR         -->
-    <!-- =================================================================== -->
-    <div id="viewAdmin" class="hidden space-y-6">
-      <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-amber-400">🛠️ MOD ADMIN (CIKGU MOMON SAHAJA)</span>
-          <p class="text-xs text-[var(--muted-foreground)] mt-0.5">
-            Muat naik gambar sijil kosong anda di bawah. Guru yang mengimbas QR hanya akan melihat animasi sijil berpusing dan memasukkan nama mereka sahaja.
-          </p>
-        </div>
-        <button onclick="setViewMode('teacher')" class="shrink-0 px-3.5 py-2 rounded-lg text-xs font-bold bg-[var(--primary)] text-[var(--primary-foreground)]">
-          📱 Cuba Paparan Imbasan QR Guru →
-        </button>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Left Column: Upload Certificate Image + QR Code -->
-        <div class="lg:col-span-5 space-y-5">
-          <!-- Step 1: Upload Certificate Image -->
-          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm space-y-4">
-            <div class="flex items-center justify-between">
-              <h2 class="text-base font-bold text-[var(--foreground)]">1. Masukkan Gambar Sijil</h2>
-              <span class="px-2 py-0.5 rounded text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]">Admin Sahaja</span>
-            </div>
-
-            <label class="block cursor-pointer p-5 rounded-xl border-2 border-dashed border-blue-500/60 bg-blue-500/5 hover:bg-blue-500/10 transition-colors text-center space-y-2">
-              <div class="text-2xl">🖼️</div>
-              <div class="text-sm font-bold text-[var(--foreground)]">Klik Untuk Muat Naik Gambar Sijil</div>
-              <div class="text-xs text-[var(--muted-foreground)]">Sokongan fail PNG / JPG (Rekaan sijil dari Canva / Photoshop)</div>
-              <input id="certUpload" type="file" accept="image/*" onchange="handleCertUpload(event)" class="hidden" />
-            </label>
-
-            <div class="flex items-center justify-between text-xs pt-1">
-              <span class="text-[var(--muted-foreground)]">Atau pilih contoh templat:</span>
-              <select id="presetTemplate" onchange="changePresetTemplate(this.value)" class="px-2.5 py-1.5 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]">
-                <option value="gold">Templat Emas Rasmi</option>
-                <option value="blue">Templat Biru Korporat</option>
-                <option value="emerald">Templat Hijau Akademik</option>
-              </select>
-            </div>
-
-            <!-- Serial Number Prefix & Font Controls -->
-            <div class="pt-3 border-t border-[var(--border)] space-y-3">
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Awalan No. Siri Sijil</label>
-                  <input id="serialPrefix" type="text" value="SKR/2026/" oninput="updateAdminSettings()" class="w-full px-3 py-2 text-xs font-mono rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
-                </div>
-                <div>
-                  <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">No. Sijil Seterusnya</label>
-                  <div id="adminNextSerial" class="px-3 py-2 text-xs font-mono font-bold rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
-                    SKR/2026/0003
-                  </div>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-xs text-[var(--muted-foreground)] mb-1">Saiz Fon Nama (<span id="fontSizeVal">30</span>px)</label>
-                  <input id="nameFontSize" type="range" min="18" max="52" value="30" oninput="updateAdminSettings()" class="w-full" />
-                </div>
-                <div>
-                  <label class="block text-xs text-[var(--muted-foreground)] mb-1">Warna Nama Guru</label>
-                  <div class="flex items-center gap-2">
-                    <input id="textColorPicker" type="color" value="#1e293b" oninput="updateAdminSettings()" class="h-8 w-14 rounded cursor-pointer border border-[var(--border)] bg-transparent" />
-                    <button type="button" onclick="resetAutoCenter()" class="px-2.5 py-1.5 rounded text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)]">
-                      ⚡ Tengah
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Step 2: QR Code for Teachers -->
-          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm space-y-4">
-            <div class="flex items-center justify-between">
-              <h2 class="text-base font-bold text-[var(--foreground)]">2. Kod QR Untuk Guru Imbas</h2>
-              <span class="px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/15 text-emerald-400">Siap Diimbas</span>
-            </div>
-
-            <div class="flex flex-col sm:flex-row items-center gap-4 bg-[var(--background)] p-4 rounded-xl border border-[var(--border)]">
-              <div class="bg-white p-2 rounded-lg border border-[var(--border)] shrink-0">
-                <img id="qrImage" alt="QR Guru" class="w-32 h-32 block" />
-              </div>
-              <div class="space-y-2 text-center sm:text-left">
-                <p class="text-xs font-semibold text-[var(--foreground)]">Bila guru imbas QR ini:</p>
-                <p class="text-xs text-[var(--muted-foreground)]">
-                  Mereka terus nampak <strong>gambar sijil ini berpusing-pusing dalam animasi 3D</strong> dan hanya perlu taip nama sahaja.
-                </p>
-                <div class="flex flex-wrap gap-2 pt-1 justify-center sm:justify-start">
-                  <button onclick="copyTeacherQrLink()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]">
-                    🔗 Salin Pautan Guru
-                  </button>
-                  <button onclick="publishTemplateToCloud()" id="btnSaveCloud" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30">
-                    ☁️ Simpan Gambar Sijil
-                  </button>
-                </div>
-                <p id="adminToast" class="text-xs text-emerald-400 hidden"></p>
-              </div>
-            </div>
-          </div>
+    <!-- Modal: Enlarge QR & View Recipients for a Specific Certificate Unit -->
+    <div id="qrModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl max-w-lg w-full p-6 space-y-4 text-center shadow-2xl">
+        <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
+          <h3 id="modalCertTitle" class="text-sm font-bold text-[var(--foreground)] truncate">Kod QR Sijil</h3>
+          <button onclick="closeQrModal()" class="text-xs px-2.5 py-1 rounded-lg bg-[var(--secondary)] text-[var(--foreground)]">✕ Tutup</button>
         </div>
 
-        <!-- Right Column: Drag & Drop Position of Name & Serial Number on Uploaded Certificate -->
-        <div class="lg:col-span-7 space-y-5">
-          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm space-y-3">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <h2 class="text-base font-bold text-[var(--foreground)]">Laraskan Kedudukan Nama & No. Siri Sijil</h2>
-                <p class="text-xs text-[var(--muted-foreground)]">Klik dan tarik kotak biru <strong>Nama Guru</strong> atau <strong>No. Siri Sijil</strong> di atas gambar sijil anda.</p>
-              </div>
-              <label class="flex items-center gap-1.5 text-xs text-[var(--muted-foreground)] cursor-pointer">
-                <input id="showGuidesCheckbox" type="checkbox" checked onchange="renderAdminCanvas()" class="rounded" />
-                <span>Papar Kotak Panduan</span>
-              </label>
-            </div>
+        <p class="text-xs text-[var(--muted-foreground)]">
+          Guru yang mengimbas QR ini akan terus melihat sijil unit ini berpusing dalam animasi 3D dan hanya perlu memasukkan nama.
+        </p>
 
-            <div class="canvas-container border border-[var(--border)] rounded-lg overflow-hidden bg-neutral-900/40">
-              <canvas id="adminCertCanvas" width="900" height="636" class="w-full h-auto block cursor-move"></canvas>
-            </div>
+        <div class="inline-block bg-white p-4 rounded-2xl border-4 border-blue-500/30">
+          <img id="modalQrImg" alt="QR Sijil" class="w-56 h-56 mx-auto block" />
+        </div>
 
-            <div class="flex items-center justify-between text-xs text-[var(--muted-foreground)]">
-              <span>📌 Dipilih: <strong id="selectedElementLabel" class="text-[var(--foreground)]">Klik & tarik kotak biru pada sijil</strong></span>
-              <span>Saiz Kanvas: 900 × 636 px</span>
-            </div>
+        <div class="flex flex-wrap justify-center gap-2">
+          <button id="modalBtnSimulate" class="px-4 py-2 rounded-xl text-xs font-bold bg-[var(--primary)] text-[var(--primary-foreground)]">
+            📱 Cuba Scan QR Ini (Paparan Guru)
+          </button>
+          <button id="modalBtnCopy" class="px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--border)]">
+            🔗 Salin Link QR Sijil Ini
+          </button>
+        </div>
+
+        <!-- Recipients List for this Certificate Unit -->
+        <div class="text-left border-t border-[var(--border)] pt-3 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-[var(--foreground)]">Senarai Penerima & Urutan No. Siri Sijil Ini:</span>
+            <button id="modalBtnCsv" class="text-xs text-blue-400 underline">Muat Turun CSV</button>
           </div>
-
-          <!-- Sequential Records Table inside Admin -->
-          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm space-y-3">
-            <div class="flex items-center justify-between">
-              <div>
-                <h3 class="text-sm font-bold text-[var(--foreground)]">Rekod Urutan No. Sijil Yang Dikeluarkan</h3>
-                <p class="text-xs text-[var(--muted-foreground)]">Senarai guru yang telah menjana sijil mengikut urutan nombor siri.</p>
-              </div>
-              <button onclick="exportCSV()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)]">
-                📊 Muat Turun CSV
-              </button>
-            </div>
-
-            <div class="overflow-x-auto border border-[var(--border)] rounded-lg max-h-56">
-              <table class="w-full text-left border-collapse">
-                <thead>
-                  <tr class="border-b border-[var(--border)] bg-[var(--background)] text-xs font-semibold text-[var(--muted-foreground)]">
-                    <th class="p-2.5">Urutan</th>
-                    <th class="p-2.5">No. Siri Sijil</th>
-                    <th class="p-2.5">Nama Guru</th>
-                    <th class="p-2.5">Masa Dijana</th>
-                  </tr>
-                </thead>
-                <tbody id="recordsTableBody" class="divide-y divide-[var(--border)] text-xs"></tbody>
-              </table>
-            </div>
+          <div id="modalRecipientsList" class="max-h-36 overflow-y-auto divide-y divide-[var(--border)] border border-[var(--border)] rounded-xl bg-[var(--background)] text-xs">
           </div>
         </div>
       </div>
     </div>
-  </div>
+
+  </main>
 
   <script>
-    const defaultRecords = [
-      { id: 1, seqNum: 1, serialNo: 'SKR/2026/0001', name: 'CIKGU AHMAD FAIZAL BIN ZAINAL', time: '16 Okt 2026, 2:35 PTG' },
-      { id: 2, seqNum: 2, serialNo: 'SKR/2026/0002', name: 'PUAN NURUL IMAN BINTI HASSAN', time: '16 Okt 2026, 2:40 PTG' }
-    ];
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
 
-    function loadSavedConfig() {
-      try {
-        return JSON.parse(localStorage.getItem('esijil_admin_config_v3') || 'null') || {};
-      } catch (e) {
-        return {};
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+      document.getElementById('standaloneBadge').classList.remove('hidden');
+      document.getElementById('btnInstallPwa').classList.add('hidden');
+    }
+
+    function triggerInstallApp() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+      } else {
+        document.getElementById('installHelpModal').classList.toggle('hidden');
       }
     }
 
-    function loadSavedRecords() {
+    // --- DEFAULT CERTIFICATE UNITS DATABASE ---
+    const defaultCertUnits = [
+      {
+        id: 'cert-ai-2026',
+        title: 'SIJIL BENGKEL DIGITALISASI & AI 2026',
+        serialPrefix: 'SKR/AI/2026/',
+        preset: 'gold',
+        customBgDataUrl: null,
+        nameFontSize: 30,
+        textColor: '#1e293b',
+        elements: {
+          serial: { id: 'serial', label: 'No. Siri Sijil', x: 730, y: 68, w: 230, h: 28 },
+          name: { id: 'name', label: 'Nama Guru', x: 450, y: 320, w: 620, h: 50 }
+        },
+        recipients: [
+          { seqNum: 1, serialNo: 'SKR/AI/2026/0001', name: 'CIKGU AHMAD FAIZAL BIN ZAINAL', time: '16 Okt 2026, 2:35 PTG' },
+          { seqNum: 2, serialNo: 'SKR/AI/2026/0002', name: 'PUAN NURUL IMAN BINTI HASSAN', time: '16 Okt 2026, 2:40 PTG' }
+        ]
+      }
+    ];
+
+    function loadCertUnits() {
       try {
-        const r = JSON.parse(localStorage.getItem('esijil_records_v3') || 'null');
-        if (Array.isArray(r) && r.length > 0) return r;
+        const saved = JSON.parse(localStorage.getItem('esijil_units_v4') || 'null');
+        if (Array.isArray(saved) && saved.length > 0) return saved;
       } catch (e) {}
-      return defaultRecords;
+      return defaultCertUnits;
     }
 
-    const savedCfg = loadSavedConfig();
+    function saveCertUnits() {
+      try {
+        localStorage.setItem('esijil_units_v4', JSON.stringify(state.certUnits));
+      } catch (e) {}
+    }
 
     const state = {
-      viewMode: 'teacher', // Default view is Teacher QR Scan view!
-      preset: savedCfg.preset || 'gold',
-      customBgDataUrl: savedCfg.customBgDataUrl || null,
-      customBgImage: null,
-      serialPrefix: savedCfg.serialPrefix || 'SKR/2026/',
-      nameFontSize: savedCfg.nameFontSize || 30,
-      textColor: savedCfg.textColor || '#1e293b',
-      elements: savedCfg.elements || {
-        serial: { id: 'serial', label: 'No. Siri Sijil', x: 730, y: 68, w: 230, h: 28 },
-        name: { id: 'name', label: 'Nama Guru', x: 450, y: 320, w: 620, h: 50 }
+      certUnits: loadCertUnits(),
+      // Current draft in Admin editor
+      draft: {
+        title: 'SIJIL BENGKEL DIGITALISASI & AI 2026',
+        serialPrefix: 'SKR/AI/2026/',
+        preset: 'gold',
+        customBgDataUrl: null,
+        customBgImage: null,
+        nameFontSize: 30,
+        textColor: '#1e293b',
+        elements: {
+          serial: { id: 'serial', label: 'No. Siri Sijil', x: 730, y: 68, w: 230, h: 28 },
+          name: { id: 'name', label: 'Nama Guru', x: 450, y: 320, w: 620, h: 50 }
+        }
       },
       selectedElement: null,
       dragging: false,
       dragOffsetX: 0,
       dragOffsetY: 0,
-      spinPaused: false,
-      issuedSerialForCurrentSession: null,
-      records: loadSavedRecords()
+      // Active Certificate Unit when Teacher Scans QR
+      activeScanUnit: null,
+      activeScanBgImg: null,
+      issuedSerialForSession: null,
+      spinPaused: false
     };
 
-    const teacherCanvas = document.getElementById('teacherCertCanvas');
-    const teacherCtx = teacherCanvas.getContext('2d');
     const adminCanvas = document.getElementById('adminCertCanvas');
     const adminCtx = adminCanvas.getContext('2d');
+    const teacherCanvas = document.getElementById('teacherCertCanvas');
+    const teacherCtx = teacherCanvas.getContext('2d');
 
-    function saveConfigToLocal() {
-      try {
-        localStorage.setItem('esijil_admin_config_v3', JSON.stringify({
-          preset: state.preset,
-          customBgDataUrl: state.customBgDataUrl,
-          serialPrefix: state.serialPrefix,
-          nameFontSize: state.nameFontSize,
-          textColor: state.textColor,
-          elements: state.elements
-        }));
-      } catch (e) {}
+    function formatSerial(prefix, seq) {
+      return `${prefix}${String(seq).padStart(4, '0')}`;
     }
 
-    function formatSerialNumber(seqNumber) {
-      return `${state.serialPrefix}${String(seqNumber).padStart(4, '0')}`;
+    function getUnitNextSeq(unit) {
+      if (!unit.recipients || unit.recipients.length === 0) return 1;
+      return unit.recipients.reduce((m, r, idx) => Math.max(m, r.seqNum || (idx + 1)), 0) + 1;
     }
 
-    function getNextSequenceNumber() {
-      if (!state.records || state.records.length === 0) return 1;
-      const maxSeq = state.records.reduce((max, r, i) => Math.max(max, r.seqNum || (i + 1)), 0);
-      return maxSeq + 1;
-    }
-
-    function getNextSerialString() {
-      return formatSerialNumber(getNextSequenceNumber());
-    }
-
-    // --- SWITCH BETWEEN TEACHER QR VIEW AND ADMIN VIEW ---
-    function setViewMode(mode) {
-      if (mode === 'admin') {
-        window.location.href = './admin.html';
-        return;
-      }
-      state.viewMode = 'teacher';
-      document.getElementById('viewTeacher').classList.remove('hidden');
-      renderTeacherSpinningCanvas();
-    }
-
-    function handleAdminAccess() {
-      if (state.viewMode === 'admin') {
-        setViewMode('teacher');
-        return;
-      }
-      setViewMode('admin');
-    }
-
-    function toggleSpinAnimation() {
-      state.spinPaused = !state.spinPaused;
-      const box = document.getElementById('cert3dBox');
-      const btn = document.getElementById('btnToggleSpin');
-      box.classList.toggle('paused', state.spinPaused);
-      btn.textContent = state.spinPaused
-        ? '🔄 Pusingkan Semula Animasi Sijil 3D'
-        : '⏸️ Hentikan Putaran Sekejap (Lihat Jelas)';
-    }
-
-    // --- CERTIFICATE DRAWING ---
-    function drawCertificateBackground(ctx, width, height) {
-      if (state.customBgImage) {
-        ctx.drawImage(state.customBgImage, 0, 0, width, height);
+    // --- DRAWING CERTIFICATE BACKGROUND & OVERLAY ---
+    function drawCertBg(ctx, width, height, preset, bgImg, certTitle) {
+      if (bgImg) {
+        ctx.drawImage(bgImg, 0, 0, width, height);
         return;
       }
 
@@ -494,7 +524,7 @@
         blue: { bg1: '#f8fafc', bg2: '#eff6ff', border: '#1e40af', accent: '#2563eb', title: '#1e3a8a' },
         emerald: { bg1: '#f8fafc', bg2: '#ecfdf5', border: '#065f46', accent: '#059669', title: '#064e3b' }
       };
-      const pal = palettes[state.preset] || palettes.gold;
+      const pal = palettes[preset] || palettes.gold;
 
       const grad = ctx.createLinearGradient(0, 0, width, height);
       grad.addColorStop(0, pal.bg1);
@@ -510,9 +540,7 @@
       ctx.lineWidth = 2;
       ctx.strokeRect(40, 40, width - 80, height - 80);
 
-      const corners = [
-        [28, 28], [width - 28, 28], [28, height - 28], [width - 28, height - 28]
-      ];
+      const corners = [[28, 28], [width - 28, 28], [28, height - 28], [width - 28, height - 28]];
       ctx.fillStyle = pal.border;
       corners.forEach(([cx, cy]) => {
         ctx.beginPath();
@@ -538,7 +566,7 @@
       ctx.restore();
 
       ctx.fillStyle = pal.title;
-      ctx.font = 'bold 34px Georgia, serif';
+      ctx.font = 'bold 32px Georgia, serif';
       ctx.textAlign = 'center';
       ctx.fillText('SIJIL PENGHARGAAN & PENYERTAAN', width / 2, 195);
 
@@ -548,10 +576,11 @@
 
       ctx.fillStyle = '#475569';
       ctx.font = '15px sans-serif';
-      ctx.fillText('telah menyertai dengan jayanya program / bengkel rasmi sekolah.', width / 2, 400);
-      ctx.font = 'bold 18px sans-serif';
+      ctx.fillText('telah menyertai dengan jayanya:', width / 2, 395);
+
+      ctx.font = 'bold 20px sans-serif';
       ctx.fillStyle = pal.title;
-      ctx.fillText('UNIT LATIHAN DALAM PERKHIDMATAN (LDP) SK RANGGU', width / 2, 435);
+      ctx.fillText(certTitle || 'PROGRAM RASMI SEKOLAH', width / 2, 430);
 
       ctx.strokeStyle = '#64748b';
       ctx.lineWidth = 1.5;
@@ -564,26 +593,24 @@
       ctx.fillText('GURU BESAR SK RANGGU', width / 2, 568);
     }
 
-    function drawDynamicOverlay(ctx, nameText, serialText, showGuides = false) {
-      const el = state.elements;
+    function drawCertOverlay(ctx, cfg, nameText, serialText, showGuides) {
+      const el = cfg.elements;
       ctx.save();
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      // 1. Sequential Serial Number
       ctx.fillStyle = '#334155';
       ctx.font = 'bold 14px monospace';
       ctx.fillText(`No. Sijil: ${serialText}`, el.serial.x, el.serial.y);
 
-      // 2. Teacher Name
-      ctx.fillStyle = state.textColor;
-      ctx.font = `bold ${state.nameFontSize}px sans-serif`;
+      ctx.fillStyle = cfg.textColor;
+      ctx.font = `bold ${cfg.nameFontSize}px sans-serif`;
       ctx.fillText(nameText || 'NAMA PENUH ANDA DI SINI', el.name.x, el.name.y);
 
       if (showGuides) {
         Object.values(el).forEach(item => {
           const isSelected = state.selectedElement === item.id;
-          ctx.strokeStyle = isSelected ? '#2563eb' : 'rgba(37, 99, 235, 0.7)';
+          ctx.strokeStyle = isSelected ? '#2563eb' : 'rgba(37, 99, 235, 0.75)';
           ctx.lineWidth = isSelected ? 3 : 2;
           ctx.setLineDash([6, 4]);
           ctx.strokeRect(item.x - item.w / 2, item.y - item.h / 2, item.w, item.h);
@@ -599,70 +626,357 @@
           ctx.textAlign = 'center';
         });
       }
-
       ctx.restore();
     }
 
+    function renderAdminCanvas() {
+      const d = state.draft;
+      const showGuides = document.getElementById('showGuidesCheckbox').checked;
+      const sampleSerial = formatSerial(d.serialPrefix, 1);
+      document.getElementById('draftSerialPreview').textContent = sampleSerial;
+
+      adminCtx.clearRect(0, 0, adminCanvas.width, adminCanvas.height);
+      drawCertBg(adminCtx, adminCanvas.width, adminCanvas.height, d.preset, d.customBgImage, d.title);
+      drawCertOverlay(adminCtx, d, 'CONTOH NAMA GURU PENERIMA', sampleSerial, showGuides);
+    }
+
+    function updateDraftCert() {
+      state.draft.title = document.getElementById('certRecordTitle').value;
+      state.draft.serialPrefix = document.getElementById('serialPrefix').value;
+      state.draft.nameFontSize = parseInt(document.getElementById('nameFontSize').value, 10);
+      state.draft.textColor = document.getElementById('textColorPicker').value;
+      document.getElementById('fontSizeVal').textContent = state.draft.nameFontSize;
+      renderAdminCanvas();
+    }
+
+    function changePresetTemplate(val) {
+      state.draft.preset = val;
+      state.draft.customBgImage = null;
+      state.draft.customBgDataUrl = null;
+      renderAdminCanvas();
+    }
+
+    function handleCertUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const off = document.createElement('canvas');
+          off.width = 900;
+          off.height = 636;
+          off.getContext('2d').drawImage(img, 0, 0, 900, 636);
+          state.draft.customBgDataUrl = off.toDataURL('image/jpeg', 0.82);
+          state.draft.customBgImage = img;
+          renderAdminCanvas();
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function resetAutoCenter() {
+      state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: 730, y: 68, w: 230, h: 28 };
+      state.draft.elements.name = { id: 'name', label: 'Nama Guru', x: 450, y: 320, w: 620, h: 50 };
+      renderAdminCanvas();
+    }
+
+    // Drag and Drop on Admin Canvas
+    function getCanvasCoords(canvas, evt) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: (evt.clientX - rect.left) * (canvas.width / rect.width),
+        y: (evt.clientY - rect.top) * (canvas.height / rect.height)
+      };
+    }
+
+    adminCanvas.addEventListener('pointerdown', (e) => {
+      const pos = getCanvasCoords(adminCanvas, e);
+      const items = Object.values(state.draft.elements).reverse();
+      const hit = items.find(item =>
+        pos.x >= item.x - item.w / 2 &&
+        pos.x <= item.x + item.w / 2 &&
+        pos.y >= item.y - item.h / 2 &&
+        pos.y <= item.y + item.h / 2
+      );
+      if (hit) {
+        state.selectedElement = hit.id;
+        state.dragging = true;
+        state.dragOffsetX = pos.x - hit.x;
+        state.dragOffsetY = pos.y - hit.y;
+        adminCanvas.setPointerCapture(e.pointerId);
+      } else {
+        state.selectedElement = null;
+      }
+      renderAdminCanvas();
+    });
+
+    adminCanvas.addEventListener('pointermove', (e) => {
+      if (!state.dragging || !state.selectedElement) return;
+      const pos = getCanvasCoords(adminCanvas, e);
+      const el = state.draft.elements[state.selectedElement];
+      el.x = Math.max(80, Math.min(adminCanvas.width - 80, Math.round(pos.x - state.dragOffsetX)));
+      el.y = Math.max(40, Math.min(adminCanvas.height - 40, Math.round(pos.y - state.dragOffsetY)));
+      renderAdminCanvas();
+    });
+
+    adminCanvas.addEventListener('pointerup', () => {
+      state.dragging = false;
+    });
+
+    // --- SAVE NEW CERTIFICATE RECORD & GENERATE ITS UNIQUE QR ---
+    function saveNewCertificateRecord() {
+      const d = state.draft;
+      const newId = 'sijil-' + Date.now().toString(36);
+      const newUnit = {
+        id: newId,
+        title: d.title.trim() || 'SIJIL PROGRAM SEKOLAH',
+        serialPrefix: d.serialPrefix.trim() || 'SKR/2026/',
+        preset: d.preset,
+        customBgDataUrl: d.customBgDataUrl,
+        nameFontSize: d.nameFontSize,
+        textColor: d.textColor,
+        elements: JSON.parse(JSON.stringify(d.elements)),
+        recipients: []
+      };
+
+      state.certUnits.unshift(newUnit);
+      saveCertUnits();
+      renderCertUnitsList();
+
+      const toast = document.getElementById('saveRecordToast');
+      toast.textContent = `✅ Rekod "${newUnit.title}" disimpan & QR Unik telah dijana di bawah!`;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 4000);
+
+      // Open QR modal immediately so Admin sees the unique QR code for this new certificate!
+      openQrModal(newId);
+    }
+
+    // Build Unique URL for a Specific Certificate Unit
+    function buildUnitQrUrl(unit) {
+      const isHttp = window.location.protocol === 'http:' || window.location.protocol === 'https:';
+      const base = isHttp
+        ? (window.location.origin + window.location.pathname)
+        : 'https://momon-ux.github.io/e-sijil-sekolah/';
+      const params = new URLSearchParams({
+        certId: unit.id,
+        title: unit.title,
+        prefix: unit.serialPrefix,
+        preset: unit.preset,
+        fs: unit.nameFontSize,
+        col: unit.textColor,
+        nx: unit.elements.name.x,
+        ny: unit.elements.name.y,
+        sx: unit.elements.serial.x,
+        sy: unit.elements.serial.y
+      });
+      return `${base}?${params.toString()}`;
+    }
+
+    function renderCertUnitsList() {
+      const grid = document.getElementById('certUnitsGrid');
+      grid.innerHTML = '';
+
+      state.certUnits.forEach((unit) => {
+        const qrUrl = buildUnitQrUrl(unit);
+        const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrUrl)}`;
+        const nextSerial = formatSerial(unit.serialPrefix, getUnitNextSeq(unit));
+        const count = (unit.recipients || []).length;
+
+        const card = document.createElement('div');
+        card.className = 'bg-[var(--background)] border border-[var(--border)] rounded-xl p-4 flex flex-col sm:flex-row items-center gap-4';
+        card.innerHTML = `
+          <div class="bg-white p-2 rounded-xl border border-[var(--border)] shrink-0 cursor-pointer" onclick="openQrModal('${unit.id}')">
+            <img src="${qrImgSrc}" alt="QR ${unit.title}" class="w-24 h-24 block" />
+          </div>
+          <div class="flex-1 space-y-1.5 text-center sm:text-left">
+            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-1.5">
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-amber-500/15 text-amber-300">
+                Giliran: ${nextSerial}
+              </span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-500/15 text-emerald-300">
+                ${count} Sijil Dijana
+              </span>
+            </div>
+            <h3 class="text-sm font-bold text-[var(--foreground)]">${unit.title}</h3>
+            <div class="flex flex-wrap gap-2 pt-1 justify-center sm:justify-start">
+              <button onclick="openQrModal('${unit.id}')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[var(--primary)] text-[var(--primary-foreground)]">
+                📱 Papar QR & Rekod
+              </button>
+              <button onclick="enterTeacherQrScanMode('${unit.id}')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--border)]">
+                👁️ Uji Scan QR Ini
+              </button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function openQrModal(unitId) {
+      const unit = state.certUnits.find(u => u.id === unitId);
+      if (!unit) return;
+      const qrUrl = buildUnitQrUrl(unit);
+      document.getElementById('modalCertTitle').textContent = unit.title;
+      document.getElementById('modalQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(qrUrl)}`;
+
+      document.getElementById('modalBtnSimulate').onclick = () => {
+        closeQrModal();
+        enterTeacherQrScanMode(unit.id);
+      };
+      document.getElementById('modalBtnCopy').onclick = () => {
+        navigator.clipboard.writeText(qrUrl);
+        document.getElementById('modalBtnCopy').textContent = '✅ Link QR Disalin!';
+        setTimeout(() => {
+          document.getElementById('modalBtnCopy').textContent = '🔗 Salin Link QR Sijil Ini';
+        }, 2000);
+      };
+      document.getElementById('modalBtnCsv').onclick = () => exportUnitCsv(unit);
+
+      const listEl = document.getElementById('modalRecipientsList');
+      const recs = unit.recipients || [];
+      if (recs.length === 0) {
+        listEl.innerHTML = `<div class="p-3 text-center text-[var(--muted-foreground)]">Belum ada guru menjana sijil bagi unit ini.</div>`;
+      } else {
+        listEl.innerHTML = recs.map(r => `
+          <div class="p-2.5 flex items-center justify-between gap-2">
+            <div>
+              <span class="font-mono font-bold text-amber-300 mr-2">${r.serialNo}</span>
+              <span class="font-semibold text-[var(--foreground)]">${r.name}</span>
+            </div>
+            <span class="text-[var(--muted-foreground)] shrink-0">${r.time}</span>
+          </div>
+        `).join('');
+      }
+
+      document.getElementById('qrModal').classList.remove('hidden');
+    }
+
+    function closeQrModal() {
+      document.getElementById('qrModal').classList.add('hidden');
+    }
+
+    function exportUnitCsv(unit) {
+      const headers = ['Urutan', 'No Siri Sijil', 'Nama Guru', 'Masa Dijana'];
+      const rows = (unit.recipients || []).map((r, i) => [
+        r.seqNum || (i + 1),
+        `"${r.serialNo}"`,
+        `"${r.name}"`,
+        `"${r.time}"`
+      ]);
+      const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `rekod-${unit.id}.csv`;
+      a.click();
+    }
+
+    // --- TEACHER QR SCAN VIEW FOR A SPECIFIC CERTIFICATE UNIT ---
+    function enterTeacherQrScanMode(unitId, urlFallbackUnit = null) {
+      let unit = state.certUnits.find(u => u.id === unitId);
+      if (!unit && urlFallbackUnit) {
+        unit = urlFallbackUnit;
+        state.certUnits.unshift(unit);
+      }
+      if (!unit) unit = state.certUnits[0];
+
+      state.activeScanUnit = unit;
+      state.issuedSerialForSession = null;
+      document.getElementById('inputTeacherName').value = '';
+      document.getElementById('teacherSuccessBox').classList.add('hidden');
+
+      document.getElementById('viewAdminApp').classList.add('hidden');
+      document.getElementById('viewTeacherScan').classList.remove('hidden');
+      document.getElementById('btnBackToAdmin').classList.remove('hidden');
+
+      document.getElementById('scanCertUnitTitle').textContent = unit.title;
+      document.getElementById('backCertTitle').textContent = unit.title;
+
+      if (unit.customBgDataUrl) {
+        const img = new Image();
+        img.onload = function() {
+          state.activeScanBgImg = img;
+          renderTeacherSpinningCanvas();
+        };
+        img.src = unit.customBgDataUrl;
+      } else {
+        state.activeScanBgImg = null;
+        renderTeacherSpinningCanvas();
+      }
+    }
+
+    function exitQrScanView() {
+      document.getElementById('viewTeacherScan').classList.add('hidden');
+      document.getElementById('viewAdminApp').classList.remove('hidden');
+      document.getElementById('btnBackToAdmin').classList.add('hidden');
+      renderCertUnitsList();
+      // Clean URL query params without reloading
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    }
+
     function renderTeacherSpinningCanvas() {
+      const unit = state.activeScanUnit;
+      if (!unit) return;
       const typedName = document.getElementById('inputTeacherName').value.trim().toUpperCase();
-      const activeSerial = state.issuedSerialForCurrentSession || getNextSerialString();
+      const activeSerial = state.issuedSerialForSession || formatSerial(unit.serialPrefix, getUnitNextSeq(unit));
 
       document.getElementById('teacherSerialBadge').textContent = `No. Sijil: ${activeSerial}`;
       document.getElementById('backCertSerial').textContent = `No. Siri: ${activeSerial}`;
-      document.getElementById('adminNextSerial').textContent = getNextSerialString();
 
       teacherCtx.clearRect(0, 0, teacherCanvas.width, teacherCanvas.height);
-      drawCertificateBackground(teacherCtx, teacherCanvas.width, teacherCanvas.height);
-      drawDynamicOverlay(teacherCtx, typedName || 'NAMA PENUH ANDA DI SINI', activeSerial, false);
-    }
-
-    function renderAdminCanvas() {
-      const showGuides = document.getElementById('showGuidesCheckbox').checked;
-      const nextSerial = getNextSerialString();
-      document.getElementById('adminNextSerial').textContent = nextSerial;
-
-      adminCtx.clearRect(0, 0, adminCanvas.width, adminCanvas.height);
-      drawCertificateBackground(adminCtx, adminCanvas.width, adminCanvas.height);
-      drawDynamicOverlay(adminCtx, 'CONTOH NAMA GURU PENERIMA', nextSerial, showGuides);
+      drawCertBg(teacherCtx, teacherCanvas.width, teacherCanvas.height, unit.preset, state.activeScanBgImg, unit.title);
+      drawCertOverlay(teacherCtx, unit, typedName || 'NAMA PENUH ANDA DI SINI', activeSerial, false);
     }
 
     function onTeacherTypeName(val) {
       const input = document.getElementById('inputTeacherName');
       input.value = val.toUpperCase();
-      state.issuedSerialForCurrentSession = null;
+      state.issuedSerialForSession = null;
       document.getElementById('teacherSuccessBox').classList.add('hidden');
       renderTeacherSpinningCanvas();
     }
 
-    // --- TEACHER GENERATE & DOWNLOAD ---
+    function toggleSpinAnimation() {
+      state.spinPaused = !state.spinPaused;
+      const box = document.getElementById('cert3dBox');
+      const btn = document.getElementById('btnToggleSpin');
+      box.classList.toggle('paused', state.spinPaused);
+      btn.textContent = state.spinPaused
+        ? '🔄 Pusingkan Semula Animasi Sijil 3D'
+        : '⏸️ Hentikan Putaran Sekejap (Lihat Jelas)';
+    }
+
     function handleTeacherGenerate(e) {
       e.preventDefault();
+      const unit = state.activeScanUnit;
+      if (!unit) return;
       const name = document.getElementById('inputTeacherName').value.trim().toUpperCase();
       if (!name) return;
 
-      const nextSeq = getNextSequenceNumber();
-      const issuedSerial = formatSerialNumber(nextSeq);
-      state.issuedSerialForCurrentSession = issuedSerial;
+      const nextSeq = getUnitNextSeq(unit);
+      const issuedSerial = formatSerial(unit.serialPrefix, nextSeq);
+      state.issuedSerialForSession = issuedSerial;
 
       const now = new Date();
       const timeStr = now.toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit' });
-      state.records.push({
-        id: Date.now(),
+      unit.recipients = unit.recipients || [];
+      unit.recipients.push({
         seqNum: nextSeq,
         serialNo: issuedSerial,
         name,
         time: `Hari ini, ${timeStr}`
       });
-
-      try {
-        localStorage.setItem('esijil_records_v3', JSON.stringify(state.records));
-      } catch (err) {}
+      saveCertUnits();
 
       renderTeacherSpinningCanvas();
 
-      // Pause 3D spin briefly so teacher sees their finished certificate clearly, and trigger download
-      const box = document.getElementById('cert3dBox');
-      box.classList.add('paused');
+      // Pause 3D rotation so teacher can see their finished certificate clearly
+      document.getElementById('cert3dBox').classList.add('paused');
       state.spinPaused = true;
       document.getElementById('btnToggleSpin').textContent = '🔄 Pusingkan Semula Animasi Sijil 3D';
 
@@ -676,7 +990,7 @@
 
     function downloadTeacherCertAgain() {
       renderTeacherSpinningCanvas();
-      const serialSlug = (state.issuedSerialForCurrentSession || getNextSerialString()).replace(/[^a-zA-Z0-9]/g, '-');
+      const serialSlug = (state.issuedSerialForSession || 'sijil').replace(/[^a-zA-Z0-9]/g, '-');
       const nameSlug = (document.getElementById('inputTeacherName').value.trim() || 'guru').toLowerCase().replace(/[^a-z0-9]/g, '-');
       const link = document.createElement('a');
       link.download = `e-sijil-${serialSlug}-${nameSlug}.png`;
@@ -684,230 +998,43 @@
       link.click();
     }
 
-    // --- ADMIN UPLOAD & DRAG-AND-DROP ---
-    function handleCertUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          // Compress/fit onto a 900x636 offscreen canvas so it can be saved in localStorage & shared
-          const off = document.createElement('canvas');
-          off.width = 900;
-          off.height = 636;
-          off.getContext('2d').drawImage(img, 0, 0, 900, 636);
-          const dataUrl = off.toDataURL('image/jpeg', 0.85);
-
-          state.customBgDataUrl = dataUrl;
-          state.customBgImage = img;
-          saveConfigToLocal();
-          renderAdminCanvas();
-          renderTeacherSpinningCanvas();
-          showAdminToast('✅ Gambar sijil berjaya dimuat naik & diaktifkan!');
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function changePresetTemplate(val) {
-      state.preset = val;
-      state.customBgImage = null;
-      state.customBgDataUrl = null;
-      saveConfigToLocal();
-      renderAdminCanvas();
-      renderTeacherSpinningCanvas();
-      drawQRCode();
-    }
-
-    function updateAdminSettings() {
-      state.serialPrefix = document.getElementById('serialPrefix').value;
-      state.nameFontSize = parseInt(document.getElementById('nameFontSize').value, 10);
-      state.textColor = document.getElementById('textColorPicker').value;
-      document.getElementById('fontSizeVal').textContent = state.nameFontSize;
-      saveConfigToLocal();
-      renderAdminCanvas();
-      renderTeacherSpinningCanvas();
-      drawQRCode();
-    }
-
-    function resetAutoCenter() {
-      state.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: 730, y: 68, w: 230, h: 28 };
-      state.elements.name = { id: 'name', label: 'Nama Guru', x: 450, y: 320, w: 620, h: 50 };
-      saveConfigToLocal();
-      renderAdminCanvas();
-      renderTeacherSpinningCanvas();
-    }
-
-    function getCanvasCoords(canvas, evt) {
-      const rect = canvas.getBoundingClientRect();
-      return {
-        x: (evt.clientX - rect.left) * (canvas.width / rect.width),
-        y: (evt.clientY - rect.top) * (canvas.height / rect.height)
-      };
-    }
-
-    adminCanvas.addEventListener('pointerdown', (e) => {
-      const pos = getCanvasCoords(adminCanvas, e);
-      const items = Object.values(state.elements).reverse();
-      const hit = items.find(item =>
-        pos.x >= item.x - item.w / 2 &&
-        pos.x <= item.x + item.w / 2 &&
-        pos.y >= item.y - item.h / 2 &&
-        pos.y <= item.y + item.h / 2
-      );
-
-      if (hit) {
-        state.selectedElement = hit.id;
-        state.dragging = true;
-        state.dragOffsetX = pos.x - hit.x;
-        state.dragOffsetY = pos.y - hit.y;
-        document.getElementById('selectedElementLabel').textContent = hit.label;
-        adminCanvas.setPointerCapture(e.pointerId);
-      } else {
-        state.selectedElement = null;
-        document.getElementById('selectedElementLabel').textContent = 'Klik & tarik kotak biru pada sijil';
-      }
-      renderAdminCanvas();
-    });
-
-    adminCanvas.addEventListener('pointermove', (e) => {
-      if (!state.dragging || !state.selectedElement) return;
-      const pos = getCanvasCoords(adminCanvas, e);
-      const el = state.elements[state.selectedElement];
-      el.x = Math.max(80, Math.min(adminCanvas.width - 80, Math.round(pos.x - state.dragOffsetX)));
-      el.y = Math.max(40, Math.min(adminCanvas.height - 40, Math.round(pos.y - state.dragOffsetY)));
-      renderAdminCanvas();
-    });
-
-    adminCanvas.addEventListener('pointerup', () => {
-      if (state.dragging) {
-        state.dragging = false;
-        saveConfigToLocal();
-        renderTeacherSpinningCanvas();
-        drawQRCode();
-      }
-    });
-
-    // --- QR CODE & SHAREABLE URL ---
-    function getTeacherQrUrl() {
-      const isHttp = window.location.protocol === 'http:' || window.location.protocol === 'https:';
-      const base = isHttp
-        ? (window.location.origin + window.location.pathname)
-        : 'https://momon-ux.github.io/e-sijil-sekolah/';
-      const params = new URLSearchParams({
-        mode: 'guru',
-        prefix: state.serialPrefix,
-        preset: state.preset,
-        fs: state.nameFontSize,
-        col: state.textColor,
-        nx: state.elements.name.x,
-        ny: state.elements.name.y,
-        sx: state.elements.serial.x,
-        sy: state.elements.serial.y
-      });
-      return `${base}?${params.toString()}`;
-    }
-
-    function drawQRCode() {
-      const qrImg = document.getElementById('qrImage');
-      if (!qrImg) return;
-      const targetUrl = getTeacherQrUrl();
-      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(targetUrl)}`;
-    }
-
-    function copyTeacherQrLink() {
-      navigator.clipboard.writeText(getTeacherQrUrl()).then(() => {
-        showAdminToast('✅ Pautan QR Guru berjaya disalin!');
-      });
-    }
-
-    function publishTemplateToCloud() {
-      saveConfigToLocal();
-      showAdminToast('✅ Tetapan & gambar sijil disimpan! Sedia untuk diimbas oleh guru.');
-    }
-
-    function showAdminToast(msg) {
-      const t = document.getElementById('adminToast');
-      t.textContent = msg;
-      t.classList.remove('hidden');
-      setTimeout(() => t.classList.add('hidden'), 3500);
-    }
-
-    function renderRecordsTable() {
-      const tbody = document.getElementById('recordsTableBody');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-      const sorted = [...state.records].sort((a, b) => (a.seqNum || 0) - (b.seqNum || 0));
-      sorted.forEach((rec, i) => {
-        const seqStr = String(rec.seqNum || (i + 1)).padStart(4, '0');
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="p-2.5 font-mono font-bold text-[var(--muted-foreground)]">#${seqStr}</td>
-          <td class="p-2.5 font-mono font-semibold text-amber-300">${rec.serialNo}</td>
-          <td class="p-2.5 font-semibold text-[var(--foreground)]">${rec.name}</td>
-          <td class="p-2.5 text-[var(--muted-foreground)]">${rec.time}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function exportCSV() {
-      const sorted = [...state.records].sort((a, b) => (a.seqNum || 0) - (b.seqNum || 0));
-      const headers = ['Urutan', 'No Siri Sijil', 'Nama Guru', 'Masa Dijana'];
-      const rows = sorted.map((r, i) => [
-        r.seqNum || (i + 1),
-        `"${r.serialNo}"`,
-        `"${r.name}"`,
-        `"${r.time}"`
-      ]);
-      const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'rekod-sijil-guru.csv';
-      a.click();
-    }
-
-    // --- INITIALIZE ---
+    // --- INITIALIZE APP & CHECK IF OPENED VIA UNIT QR SCAN ---
     function initApp() {
+      renderAdminCanvas();
+      renderCertUnitsList();
+
       const params = new URLSearchParams(window.location.search);
-      if (params.get('prefix')) state.serialPrefix = params.get('prefix');
-      if (params.get('preset')) state.preset = params.get('preset');
-      if (params.get('fs')) state.nameFontSize = parseInt(params.get('fs'), 10);
-      if (params.get('col')) state.textColor = params.get('col');
-      if (params.get('nx')) state.elements.name.x = parseInt(params.get('nx'), 10);
-      if (params.get('ny')) state.elements.name.y = parseInt(params.get('ny'), 10);
-      if (params.get('sx')) state.elements.serial.x = parseInt(params.get('sx'), 10);
-      if (params.get('sy')) state.elements.serial.y = parseInt(params.get('sy'), 10);
-
-      document.getElementById('serialPrefix').value = state.serialPrefix;
-      document.getElementById('presetTemplate').value = state.preset;
-      document.getElementById('nameFontSize').value = state.nameFontSize;
-      document.getElementById('fontSizeVal').textContent = state.nameFontSize;
-      document.getElementById('textColorPicker').value = state.textColor;
-
-      if (state.customBgDataUrl) {
-        const img = new Image();
-        img.onload = function() {
-          state.customBgImage = img;
-          renderTeacherSpinningCanvas();
-          renderAdminCanvas();
+      const scannedCertId = params.get('certId');
+      if (scannedCertId) {
+        const fallbackUnit = {
+          id: scannedCertId,
+          title: params.get('title') || 'SIJIL RASMI SEKOLAH',
+          serialPrefix: params.get('prefix') || 'SKR/2026/',
+          preset: params.get('preset') || 'gold',
+          customBgDataUrl: null,
+          nameFontSize: parseInt(params.get('fs') || '30', 10),
+          textColor: params.get('col') || '#1e293b',
+          elements: {
+            serial: {
+              id: 'serial',
+              label: 'No. Siri Sijil',
+              x: parseInt(params.get('sx') || '730', 10),
+              y: parseInt(params.get('sy') || '68', 10),
+              w: 230,
+              h: 28
+            },
+            name: {
+              id: 'name',
+              label: 'Nama Guru',
+              x: parseInt(params.get('nx') || '450', 10),
+              y: parseInt(params.get('ny') || '320', 10),
+              w: 620,
+              h: 50
+            }
+          },
+          recipients: []
         };
-        img.src = state.customBgDataUrl;
-      } else {
-        renderTeacherSpinningCanvas();
-        renderAdminCanvas();
-      }
-
-      drawQRCode();
-      renderRecordsTable();
-
-      if (params.get('admin') === '1') {
-        setViewMode('admin');
-      } else {
-        setViewMode('teacher');
+        enterTeacherQrScanMode(scannedCertId, fallbackUnit);
       }
     }
 
