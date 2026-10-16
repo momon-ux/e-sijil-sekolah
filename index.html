@@ -285,15 +285,20 @@
 
     .preview-heading-row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-columns: minmax(0, 1fr);
       align-items: start;
-      gap: .75rem;
+      gap: .55rem;
     }
 
     .preview-guide-toggle {
-      white-space: nowrap;
+      width: fit-content;
+      margin-left: 3.3rem;
+      padding: .42rem .65rem;
+      border: 1px solid #dbe5f1;
+      border-radius: .72rem;
+      background: #f8fafc;
+      white-space: normal;
       align-self: start;
-      padding-top: .25rem;
     }
 
     .certificate-preview-shell {
@@ -826,8 +831,11 @@
       .side-nav-button { justify-content: center; padding: .48rem .3rem; font-size: .7rem; gap: .25rem; text-align: center; }
       .side-nav-icon { width: 1.55rem; height: 1.55rem; font-size: .78rem; border-radius: .5rem; }
       .qr-action-button { min-width: 0; }
-      .preview-heading-row { grid-template-columns: 1fr; gap: .4rem; }
-      .preview-guide-toggle { padding-top: 0; white-space: normal; }
+      .preview-heading-row { grid-template-columns: minmax(0, 1fr); gap: .45rem; }
+      .preview-guide-toggle { width: 100%; margin-left: 0; padding: .5rem .65rem; }
+      .preview-heading-row h3 { font-size: 1rem !important; line-height: 1.25rem !important; }
+      .preview-heading-row p { font-size: .82rem !important; line-height: 1.25rem !important; }
+      .preview-symbol { width: 2.3rem; height: 2.3rem; border-radius: .75rem; }
       .preview-workflow-card { padding: .85rem; }
       .certificate-preview-shell { padding: .35rem; }
     }
