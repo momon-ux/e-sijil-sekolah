@@ -36,10 +36,10 @@
       <div>
         <div class="flex items-center gap-2">
           <span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]">PORTAL E-SIJIL SEKOLAH</span>
-          <span class="text-xs text-[var(--muted-foreground)]">Automasi Sijil & Kehadiran QR</span>
+          <span class="text-xs text-[var(--muted-foreground)]">Automasi Sijil Bersiri & Kehadiran QR</span>
         </div>
         <h1 class="text-xl md:text-2xl font-bold mt-1 text-[var(--foreground)]">Sistem e-Sijil & Pendaftaran QR Bengkel Guru</h1>
-        <p class="text-sm text-[var(--muted-foreground)]">Muat naik templat sijil sekolah, laras kedudukan nama, jana QR pendaftaran & hantar sijil automatik ke emel.</p>
+        <p class="text-sm text-[var(--muted-foreground)]">Muat naik templat sijil sekolah, laras kedudukan nama & no. siri urutan, jana QR pendaftaran & hantar sijil ke emel.</p>
       </div>
 
       <!-- Navigation Tabs -->
@@ -51,7 +51,7 @@
           2. Borang Imbasan QR (Guru)
         </button>
         <button id="tabBtnRecords" onclick="switchTab('records')" class="px-3.5 py-2 rounded-md text-xs font-semibold transition-all text-[var(--muted-foreground)] hover:text-[var(--foreground)] flex items-center gap-1.5">
-          <span>3. Rekod & Emel</span>
+          <span>3. Rekod & No. Siri Sijil</span>
           <span id="badgeCount" class="px-1.5 py-0.5 text-xs rounded-full bg-[var(--secondary)] text-[var(--secondary-foreground)]">2</span>
         </button>
       </div>
@@ -61,10 +61,10 @@
     <div id="tabAdmin" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
       <!-- Left Settings Column -->
       <div class="lg:col-span-5 space-y-5">
-        <!-- Step 1: Course Info -->
+        <!-- Step 1: Course Info & Serial Number Format -->
         <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm space-y-4">
           <div class="flex items-center justify-between">
-            <h2 class="text-base font-semibold text-[var(--foreground)]">A. Maklumat Kursus / Bengkel</h2>
+            <h2 class="text-base font-semibold text-[var(--foreground)]">A. Maklumat Kursus & Format No. Sijil</h2>
             <span class="text-xs text-[var(--muted-foreground)]">Langkah 1</span>
           </div>
           <div class="space-y-3">
@@ -80,6 +80,20 @@
               <div>
                 <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Anjuran / Sekolah</label>
                 <input id="courseOrg" type="text" value="Unit LDP SK Ranggu" oninput="updateCourseInfo()" class="w-full px-3 py-2 text-sm rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+              </div>
+            </div>
+
+            <!-- Certificate Serial Prefix & Sequence Info -->
+            <div class="pt-2 border-t border-[var(--border)] grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Format Awalan No. Sijil</label>
+                <input id="serialPrefix" type="text" value="SKR/LDP/2026/" oninput="updateCourseInfo()" class="w-full px-3 py-2 text-sm font-mono rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Urutan Sijil Seterusnya</label>
+                <div id="nextSerialPreview" class="w-full px-3 py-2 text-sm font-mono font-semibold rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                  SKR/LDP/2026/0003
+                </div>
               </div>
             </div>
           </div>
@@ -112,7 +126,7 @@
           <!-- Auto vs Manual Drag Mode -->
           <div class="pt-2 border-t border-[var(--border)] space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-[var(--foreground)]">Mod Kedudukan Teks & Tandatangan:</span>
+              <span class="text-xs font-medium text-[var(--foreground)]">Mod Kedudukan Teks & No. Sijil:</span>
               <button onclick="resetAutoCenter()" class="px-2.5 py-1 rounded text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)] hover:opacity-90">
                 ⚡ Susun Automatik (Tengah)
               </button>
@@ -120,7 +134,7 @@
 
             <div class="p-3 rounded-lg bg-[var(--background)] border border-[var(--border)] space-y-2.5">
               <p class="text-xs text-[var(--muted-foreground)]">
-                💡 <strong>Boleh Laras (Drag & Drop):</strong> Klik dan tarik terus kotak <span class="underline">Nama</span>, <span class="underline">No. KP</span>, <span class="underline">Kursus</span>, atau <span class="underline">Tandatangan</span> di atas pratonton sijil di sebelah kanan.
+                💡 <strong>Boleh Laras (Drag & Drop):</strong> Klik dan tarik terus kotak <span class="underline">No. Siri Sijil</span>, <span class="underline">Nama</span>, <span class="underline">No. KP</span>, <span class="underline">Kursus</span>, atau <span class="underline">Tandatangan</span> di atas pratonton sijil.
               </p>
               <div class="grid grid-cols-2 gap-3 pt-1">
                 <div>
@@ -148,16 +162,15 @@
           <div class="flex flex-col sm:flex-row items-center gap-4 bg-[var(--background)] p-4 rounded-xl border border-[var(--border)]">
             <div class="relative shrink-0 bg-white p-2 rounded-lg border border-[var(--border)]">
               <img id="qrImage" alt="QR Pendaftaran" class="w-32 h-32 block" />
-              <canvas id="qrCanvas" width="128" height="128" class="hidden"></canvas>
             </div>
             <div class="space-y-2 text-center sm:text-left">
               <p class="text-xs text-[var(--foreground)] font-medium">Papar QR ini di skrin projektor semasa bengkel.</p>
-              <p class="text-xs text-[var(--muted-foreground)]">Apabila guru mengimbas QR ini dengan telefon, mereka terus dibawa ke Borang Kehadiran & Tandatangan Digital.</p>
+              <p class="text-xs text-[var(--muted-foreground)]">Apabila guru mengimbas QR ini dengan telefon, mereka terus dibawa ke Borang Kehadiran & setiap sijil diberi No. Siri mengikut urutan pendaftaran.</p>
               <div class="flex flex-wrap gap-2 pt-1 justify-center sm:justify-start">
                 <button onclick="copyRegistrationLink()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)] hover:opacity-90">
                   🔗 Salin Pautan Guru
                 </button>
-                <button onclick="switchTab('form')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90">
+                <button onclick="openNewTeacherForm()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90">
                   📱 Buka Borang Guru →
                 </button>
               </div>
@@ -173,7 +186,7 @@
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h2 class="text-base font-semibold text-[var(--foreground)]">Pratonton & Penyusun Kedudukan Sijil</h2>
-              <p class="text-xs text-[var(--muted-foreground)]">Tarik (Drag) mana-mana kotak biru di atas sijil untuk mengubah kedudukannya.</p>
+              <p class="text-xs text-[var(--muted-foreground)]">Tarik (Drag) mana-mana kotak biru di atas sijil (termasuk No. Siri Sijil) untuk mengubah kedudukannya.</p>
             </div>
             <div class="flex items-center gap-2">
               <label class="flex items-center gap-1.5 text-xs text-[var(--muted-foreground)] cursor-pointer">
@@ -201,22 +214,30 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- Form Column -->
         <div class="lg:col-span-6 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm space-y-4">
-          <div class="border-b border-[var(--border)] pb-3">
-            <span class="px-2 py-0.5 rounded text-xs font-medium bg-[var(--primary)] text-[var(--primary-foreground)]">BORANG KEHADIRAN QR</span>
-            <h2 id="formCourseTitle" class="text-lg font-bold text-[var(--foreground)] mt-1.5">BENGKEL DIGITALISASI & AI DALAM PDPC GURU 2026</h2>
-            <p id="formCourseMeta" class="text-xs text-[var(--muted-foreground)]">Tarikh: 16 Oktober 2026 | Unit LDP SMK Seri Wawasan</p>
+          <div class="border-b border-[var(--border)] pb-3 flex items-start justify-between gap-2">
+            <div>
+              <span class="px-2 py-0.5 rounded text-xs font-medium bg-[var(--primary)] text-[var(--primary-foreground)]">BORANG KEHADIRAN QR</span>
+              <h2 id="formCourseTitle" class="text-lg font-bold text-[var(--foreground)] mt-1.5">BENGKEL DIGITALISASI & AI DALAM PDPC GURU 2026</h2>
+              <p id="formCourseMeta" class="text-xs text-[var(--muted-foreground)]">Tarikh: 16 Oktober 2026 | Unit LDP SK Ranggu</p>
+            </div>
+            <div class="text-right shrink-0">
+              <span class="block text-xs text-[var(--muted-foreground)]">No. Giliran Sijil:</span>
+              <span id="formSerialBadge" class="inline-block mt-0.5 px-2.5 py-1 rounded text-xs font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                SKR/LDP/2026/0003
+              </span>
+            </div>
           </div>
 
           <form id="teacherRegForm" onsubmit="submitTeacherRegistration(event)" class="space-y-4">
             <div>
               <label class="block text-xs font-medium text-[var(--foreground)] mb-1">Nama Penuh Guru (Untuk Cetakan Sijil) *</label>
-              <input id="inputTeacherName" type="text" required placeholder="Contoh: CIKGU SITI NURHALIZA BINTI AHMAD" oninput="this.value = this.value.toUpperCase(); renderLivePreviewCert()" class="w-full px-3 py-2 text-sm rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+              <input id="inputTeacherName" type="text" required placeholder="Contoh: CIKGU SITI NURHALIZA BINTI AHMAD" oninput="this.value = this.value.toUpperCase(); state.viewingRecordSerial = null; renderLivePreviewCert()" class="w-full px-3 py-2 text-sm rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label class="block text-xs font-medium text-[var(--foreground)] mb-1">No. Kad Pengenalan (IC) *</label>
-                <input id="inputTeacherIC" type="text" required placeholder="880512-10-5432" oninput="renderLivePreviewCert()" class="w-full px-3 py-2 text-sm rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+                <input id="inputTeacherIC" type="text" required placeholder="880512-10-5432" oninput="state.viewingRecordSerial = null; renderLivePreviewCert()" class="w-full px-3 py-2 text-sm rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
               </div>
               <div>
                 <label class="block text-xs font-medium text-[var(--foreground)] mb-1">Alamat Emel (Untuk Terima Sijil) *</label>
@@ -244,7 +265,7 @@
             </label>
 
             <button type="submit" class="w-full py-2.5 px-4 rounded-lg text-sm font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 transition-opacity">
-              ✅ Sahkan Kehadiran, Jana Sijil & Hantar ke Emel
+              ✅ Sahkan Kehadiran, Jana No. Sijil & Hantar ke Emel
             </button>
           </form>
         </div>
@@ -255,7 +276,7 @@
           <div id="emailSuccessBanner" class="hidden bg-[var(--card)] border-2 border-emerald-500/60 rounded-xl p-4 shadow-sm space-y-3">
             <div class="flex items-start justify-between gap-3">
               <div class="space-y-1">
-                <span class="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-400">✉️ SIJIL SIAP & EMEL DIHANTAR</span>
+                <span class="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-400">✉️ SIJIL BERSIRI SIAP & EMEL DIHANTAR</span>
                 <h3 class="text-sm font-bold text-[var(--foreground)]" id="emailBannerTitle">Sijil telah dihantar secara automatik!</h3>
                 <p class="text-xs text-[var(--muted-foreground)]" id="emailBannerDesc"></p>
               </div>
@@ -269,7 +290,7 @@
             <div class="flex items-center justify-between">
               <div>
                 <h3 class="text-base font-semibold text-[var(--foreground)]">Pratonton Sijil Guru (Masa Nyata)</h3>
-                <p class="text-xs text-[var(--muted-foreground)]">Nama, IC & tandatangan anda dipaparkan terus mengikut susunan Admin.</p>
+                <p class="text-xs text-[var(--muted-foreground)]">Lengkap dengan No. Siri Sijil mengikut urutan pendaftaran.</p>
               </div>
               <button onclick="downloadGeneratedCert()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)] hover:opacity-90">
                 ⬇️ Simpan Gambar Sijil
@@ -289,12 +310,12 @@
       <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h2 class="text-base font-semibold text-[var(--foreground)]">Senarai Kehadiran Guru & Status Penghantaran e-Sijil</h2>
-            <p class="text-xs text-[var(--muted-foreground)]">Rekod guru yang telah mengimbas QR, menurunkan tandatangan digital, dan menerima sijil di emel.</p>
+            <h2 class="text-base font-semibold text-[var(--foreground)]">Senarai Kehadiran Guru & Urutan No. Siri e-Sijil</h2>
+            <p class="text-xs text-[var(--muted-foreground)]">Setiap sijil dikeluarkan mengikut urutan nombor siri yang teratur tanpa pertindihan.</p>
           </div>
           <div class="flex gap-2">
             <button onclick="exportCSV()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)] hover:opacity-90">
-              📊 Muat Turun CSV Kehadiran
+              📊 Muat Turun CSV Kehadiran & No. Sijil
             </button>
           </div>
         </div>
@@ -303,12 +324,13 @@
           <table class="w-full text-left border-collapse">
             <thead>
               <tr class="border-b border-[var(--border)] bg-[var(--background)] text-xs font-semibold text-[var(--muted-foreground)]">
-                <th class="p-3">#</th>
+                <th class="p-3">Urutan</th>
+                <th class="p-3">No. Siri Sijil</th>
                 <th class="p-3">Nama Guru</th>
                 <th class="p-3">No. KP</th>
                 <th class="p-3">Emel</th>
-                <th class="p-3">Pengesahan / Tandatangan</th>
-                <th class="p-3">Status Emel Sijil</th>
+                <th class="p-3">Pengesahan Kehadiran</th>
+                <th class="p-3">Status Emel</th>
                 <th class="p-3 text-right">Tindakan</th>
               </tr>
             </thead>
@@ -322,15 +344,49 @@
   </div>
 
   <script>
+    const defaultRecords = [
+      {
+        id: 1,
+        seqNum: 1,
+        serialNo: 'SKR/LDP/2026/0001',
+        name: 'CIKGU AHMAD FAIZAL BIN ZAINAL',
+        ic: '850412-14-5211',
+        email: 'faizal.zainal@moe-dl.edu.my',
+        time: '16 Okt 2026, 2:35 PTG',
+        status: 'Terkirim ke Emel'
+      },
+      {
+        id: 2,
+        seqNum: 2,
+        serialNo: 'SKR/LDP/2026/0002',
+        name: 'PUAN NURUL IMAN BINTI HASSAN',
+        ic: '901123-08-6142',
+        email: 'nurul.iman@moe-dl.edu.my',
+        time: '16 Okt 2026, 2:40 PTG',
+        status: 'Terkirim ke Emel'
+      }
+    ];
+
+    function loadStoredRecords() {
+      try {
+        const raw = JSON.parse(localStorage.getItem('esijil_records_v2') || 'null');
+        if (Array.isArray(raw) && raw.length > 0) return raw;
+      } catch (e) {}
+      return defaultRecords;
+    }
+
     const state = {
       courseTitle: 'BENGKEL DIGITALISASI & AI DALAM PDPC GURU 2026',
       courseDate: '16 Oktober 2026',
       courseOrg: 'Unit LDP SK Ranggu',
+      serialPrefix: 'SKR/LDP/2026/',
       preset: 'gold',
       customBgImage: null,
       nameFontSize: 28,
       textColor: '#1e293b',
+      viewingRecordSerial: null,
       elements: {
+        serial: { id: 'serial', label: 'No. Siri Sijil', x: 730, y: 68, w: 230, h: 28 },
         name: { id: 'name', label: 'Nama Guru', x: 450, y: 295, w: 560, h: 44 },
         ic: { id: 'ic', label: 'No. Kad Pengenalan', x: 450, y: 340, w: 280, h: 30 },
         course: { id: 'course', label: 'Nama Kursus & Tarikh', x: 450, y: 425, w: 620, h: 55 },
@@ -341,26 +397,7 @@
       dragOffsetX: 0,
       dragOffsetY: 0,
       hasSignature: false,
-      records: JSON.parse(localStorage.getItem('esijil_records') || 'null') || [
-        {
-          id: 1,
-          name: 'CIKGU AHMAD FAIZAL BIN ZAINAL',
-          ic: '850412-14-5211',
-          email: 'faizal.zainal@moe-dl.edu.my',
-          time: '16 Okt 2026, 2:35 PTG',
-          sigDataUrl: null,
-          status: 'Terkirim ke Emel'
-        },
-        {
-          id: 2,
-          name: 'PUAN NURUL IMAN BINTI HASSAN',
-          ic: '901123-08-6142',
-          email: 'nurul.iman@moe-dl.edu.my',
-          time: '16 Okt 2026, 2:40 PTG',
-          sigDataUrl: null,
-          status: 'Terkirim ke Emel'
-        }
-      ]
+      records: loadStoredRecords()
     };
 
     const adminCanvas = document.getElementById('adminCertCanvas');
@@ -369,6 +406,35 @@
     const previewCtx = previewCanvas.getContext('2d');
     const sigCanvas = document.getElementById('signaturePad');
     const sigCtx = sigCanvas.getContext('2d');
+
+    function formatSerialNumber(seqNumber) {
+      const padded = String(seqNumber).padStart(4, '0');
+      return `${state.serialPrefix}${padded}`;
+    }
+
+    function getNextSequenceNumber() {
+      if (!state.records || state.records.length === 0) return 1;
+      const maxSeq = state.records.reduce((max, r, idx) => {
+        const val = typeof r.seqNum === 'number' ? r.seqNum : (idx + 1);
+        return Math.max(max, val);
+      }, 0);
+      return maxSeq + 1;
+    }
+
+    function getNextSerialString() {
+      return formatSerialNumber(getNextSequenceNumber());
+    }
+
+    function updateSerialBadges() {
+      const nextSerial = getNextSerialString();
+      const nextEl = document.getElementById('nextSerialPreview');
+      if (nextEl) nextEl.textContent = nextSerial;
+
+      const formBadge = document.getElementById('formSerialBadge');
+      if (formBadge) {
+        formBadge.textContent = state.viewingRecordSerial || nextSerial;
+      }
+    }
 
     function getRegistrationUrl() {
       const isHttp = window.location.protocol === 'http:' || window.location.protocol === 'https:';
@@ -380,6 +446,7 @@
         title: state.courseTitle,
         date: state.courseDate,
         org: state.courseOrg,
+        prefix: state.serialPrefix,
         preset: state.preset
       });
       return `${base}?${params.toString()}`;
@@ -392,6 +459,12 @@
         toast.classList.remove('hidden');
         setTimeout(() => toast.classList.add('hidden'), 3000);
       });
+    }
+
+    function openNewTeacherForm() {
+      state.viewingRecordSerial = null;
+      updateSerialBadges();
+      switchTab('form');
     }
 
     function switchTab(tab) {
@@ -413,6 +486,7 @@
         }
       });
 
+      updateSerialBadges();
       if (tab === 'admin') renderAdminCanvas();
       if (tab === 'form') renderLivePreviewCert();
       if (tab === 'records') renderRecordsTable();
@@ -493,7 +567,7 @@
       ctx.stroke();
       ctx.fillStyle = '#334155';
       ctx.font = 'bold 13px sans-serif';
-      ctx.fillText('PENGETUA / GURU BESAR', 230, 580);
+      ctx.fillText('GURU BESAR / PENGETUA', 230, 580);
       ctx.font = '12px sans-serif';
       ctx.fillStyle = '#64748b';
       ctx.fillText(state.courseOrg, 230, 598);
@@ -508,21 +582,29 @@
     }
 
     function drawDynamicElements(ctx, data, showGuides = false) {
-      const { name, ic, sigImage } = data;
+      const { serialNo, name, ic, sigImage } = data;
       const el = state.elements;
 
       ctx.save();
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
+      // 0. Certificate Sequential Serial Number
+      ctx.fillStyle = '#334155';
+      ctx.font = 'bold 13px monospace';
+      ctx.fillText(`No. Sijil: ${serialNo || getNextSerialString()}`, el.serial.x, el.serial.y);
+
+      // 1. Teacher Name
       ctx.fillStyle = state.textColor;
       ctx.font = `bold ${state.nameFontSize}px sans-serif`;
       ctx.fillText(name || 'CIKGU SITI NURHALIZA BINTI AHMAD', el.name.x, el.name.y);
 
+      // 2. Teacher IC
       ctx.fillStyle = state.textColor;
       ctx.font = `600 ${Math.max(14, state.nameFontSize - 9)}px monospace`;
       ctx.fillText(`(${ic || '880512-10-5432'})`, el.ic.x, el.ic.y);
 
+      // 3. Course Name & Date
       ctx.fillStyle = state.textColor;
       ctx.font = 'bold 20px sans-serif';
       ctx.fillText(state.courseTitle, el.course.x, el.course.y - 10);
@@ -530,6 +612,7 @@
       ctx.fillStyle = '#475569';
       ctx.fillText(`Pada ${state.courseDate} | Anjuran ${state.courseOrg}`, el.course.x, el.course.y + 16);
 
+      // 4. Digital Signature
       if (sigImage) {
         ctx.drawImage(sigImage, el.sig.x - el.sig.w / 2, el.sig.y - el.sig.h / 2, el.sig.w, el.sig.h);
       } else {
@@ -569,6 +652,7 @@
       adminCtx.clearRect(0, 0, adminCanvas.width, adminCanvas.height);
       drawCertificateBackground(adminCtx, adminCanvas.width, adminCanvas.height);
       drawDynamicElements(adminCtx, {
+        serialNo: getNextSerialString(),
         name: 'CIKGU SITI NURHALIZA BINTI AHMAD',
         ic: '880512-10-5432',
         sigImage: null
@@ -578,10 +662,13 @@
     function renderLivePreviewCert() {
       const nameVal = document.getElementById('inputTeacherName').value.trim() || 'NAMA PENUH GURU';
       const icVal = document.getElementById('inputTeacherIC').value.trim() || 'NO. KAD PENGENALAN';
+      const activeSerial = state.viewingRecordSerial || getNextSerialString();
 
+      updateSerialBadges();
       previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
       drawCertificateBackground(previewCtx, previewCanvas.width, previewCanvas.height);
       drawDynamicElements(previewCtx, {
+        serialNo: activeSerial,
         name: nameVal,
         ic: icVal,
         sigImage: state.hasSignature ? sigCanvas : null
@@ -627,7 +714,7 @@
       const pos = getCanvasCoords(adminCanvas, e);
       const el = state.elements[state.selectedElement];
       el.x = Math.max(80, Math.min(adminCanvas.width - 80, Math.round(pos.x - state.dragOffsetX)));
-      el.y = Math.max(50, Math.min(adminCanvas.height - 40, Math.round(pos.y - state.dragOffsetY)));
+      el.y = Math.max(45, Math.min(adminCanvas.height - 40, Math.round(pos.y - state.dragOffsetY)));
       renderAdminCanvas();
     });
 
@@ -636,6 +723,7 @@
     });
 
     function resetAutoCenter() {
+      state.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: 730, y: 68, w: 230, h: 28 };
       state.elements.name = { id: 'name', label: 'Nama Guru', x: 450, y: 295, w: 560, h: 44 };
       state.elements.ic = { id: 'ic', label: 'No. Kad Pengenalan', x: 450, y: 340, w: 280, h: 30 };
       state.elements.course = { id: 'course', label: 'Nama Kursus & Tarikh', x: 450, y: 425, w: 620, h: 55 };
@@ -649,10 +737,12 @@
       state.courseTitle = document.getElementById('courseTitle').value;
       state.courseDate = document.getElementById('courseDate').value;
       state.courseOrg = document.getElementById('courseOrg').value;
+      state.serialPrefix = document.getElementById('serialPrefix').value;
 
       document.getElementById('formCourseTitle').textContent = state.courseTitle;
       document.getElementById('formCourseMeta').textContent = `Tarikh: ${state.courseDate} | ${state.courseOrg}`;
 
+      updateSerialBadges();
       renderAdminCanvas();
       drawQRCode();
     }
@@ -738,12 +828,19 @@
         return;
       }
 
+      // Generate sequential certificate number in strict order
+      const nextSeq = getNextSequenceNumber();
+      const issuedSerial = formatSerialNumber(nextSeq);
+      state.viewingRecordSerial = issuedSerial;
+
       renderLivePreviewCert();
 
       const now = new Date();
       const timeStr = now.toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit' });
-      state.records.unshift({
+      state.records.push({
         id: Date.now(),
+        seqNum: nextSeq,
+        serialNo: issuedSerial,
         name,
         ic,
         email,
@@ -751,20 +848,22 @@
         status: 'Terkirim ke Emel'
       });
 
-      localStorage.setItem('esijil_records', JSON.stringify(state.records));
+      localStorage.setItem('esijil_records_v2', JSON.stringify(state.records));
       document.getElementById('badgeCount').textContent = state.records.length;
+      updateSerialBadges();
 
       const banner = document.getElementById('emailSuccessBanner');
       banner.classList.remove('hidden');
-      document.getElementById('emailBannerTitle').textContent = `e-Sijil telah dihantar ke ${email}`;
-      document.getElementById('emailBannerDesc').textContent = `Kehadiran ${name} (${ic}) telah direkodkan. Salinan sijil PDF/PNG telah dihantar secara automatik ke peti masuk emel anda.`;
+      document.getElementById('emailBannerTitle').textContent = `e-Sijil (${issuedSerial}) telah dihantar ke ${email}`;
+      document.getElementById('emailBannerDesc').textContent = `Kehadiran ${name} (${ic}) telah direkodkan dengan No. Siri Sijil ${issuedSerial}. Salinan sijil telah dihantar secara automatik ke peti masuk emel anda.`;
     }
 
     function downloadGeneratedCert() {
       renderLivePreviewCert();
+      const activeSerial = (state.viewingRecordSerial || getNextSerialString()).replace(/[^a-zA-Z0-9]/g, '-');
       const name = (document.getElementById('inputTeacherName').value.trim() || 'guru').toLowerCase().replace(/[^a-z0-9]/g, '-');
       const link = document.createElement('a');
-      link.download = `e-sijil-${name}.png`;
+      link.download = `e-sijil-${activeSerial}-${name}.png`;
       link.href = previewCanvas.toDataURL('image/png');
       link.click();
     }
@@ -773,11 +872,19 @@
       const tbody = document.getElementById('recordsTableBody');
       tbody.innerHTML = '';
 
-      state.records.forEach((rec, idx) => {
+      // Sort by sequence number ascending (1, 2, 3...) for proper sequential order
+      const sorted = [...state.records].sort((a, b) => (a.seqNum || 0) - (b.seqNum || 0));
+
+      sorted.forEach((rec, idx) => {
+        const seqDisplay = String(rec.seqNum || (idx + 1)).padStart(4, '0');
+        const serialDisplay = rec.serialNo || `${state.serialPrefix}${seqDisplay}`;
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-[var(--background)] transition-colors';
         tr.innerHTML = `
-          <td class="p-3 font-medium text-[var(--muted-foreground)]">${idx + 1}</td>
+          <td class="p-3 font-mono font-bold text-[var(--muted-foreground)]">#${seqDisplay}</td>
+          <td class="p-3">
+            <span class="px-2 py-1 rounded bg-amber-500/15 text-amber-300 font-mono font-semibold">${serialDisplay}</span>
+          </td>
           <td class="p-3 font-semibold text-[var(--foreground)]">${rec.name}</td>
           <td class="p-3 font-mono text-[var(--muted-foreground)]">${rec.ic}</td>
           <td class="p-3 text-[var(--muted-foreground)]">${rec.email}</td>
@@ -788,7 +895,7 @@
             <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-medium">✅ ${rec.status}</span>
           </td>
           <td class="p-3 text-right">
-            <button onclick="previewRecordCert(${idx})" class="px-2.5 py-1 rounded text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)] hover:opacity-90">
+            <button onclick="previewRecordCertById(${rec.id})" class="px-2.5 py-1 rounded text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)] hover:opacity-90">
               Lihat Sijil
             </button>
           </td>
@@ -797,19 +904,22 @@
       });
     }
 
-    function previewRecordCert(idx) {
-      const rec = state.records[idx];
+    function previewRecordCertById(recordId) {
+      const rec = state.records.find(r => r.id === recordId);
       if (!rec) return;
       document.getElementById('inputTeacherName').value = rec.name;
       document.getElementById('inputTeacherIC').value = rec.ic;
       document.getElementById('inputTeacherEmail').value = rec.email;
+      state.viewingRecordSerial = rec.serialNo;
       switchTab('form');
     }
 
     function exportCSV() {
-      const headers = ['Bil', 'Nama Guru', 'No KP', 'Emel', 'Masa Pengesahan', 'Status Emel'];
-      const rows = state.records.map((r, i) => [
-        i + 1,
+      const sorted = [...state.records].sort((a, b) => (a.seqNum || 0) - (b.seqNum || 0));
+      const headers = ['Urutan', 'No Siri Sijil', 'Nama Guru', 'No KP', 'Emel', 'Masa Pengesahan', 'Status Emel'];
+      const rows = sorted.map((r, i) => [
+        r.seqNum || (i + 1),
+        `"${r.serialNo || formatSerialNumber(i + 1)}"`,
         `"${r.name}"`,
         `"${r.ic}"`,
         `"${r.email}"`,
@@ -821,11 +931,10 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'rekod-kehadiran-esijil.csv';
+      a.download = 'rekod-kehadiran-dan-no-siri-esijil.csv';
       a.click();
     }
 
-    // Check URL parameters if opened via QR scan
     function initFromUrlParams() {
       const params = new URLSearchParams(window.location.search);
       if (params.get('title')) {
@@ -840,6 +949,10 @@
         state.courseOrg = params.get('org');
         document.getElementById('courseOrg').value = state.courseOrg;
       }
+      if (params.get('prefix')) {
+        state.serialPrefix = params.get('prefix');
+        document.getElementById('serialPrefix').value = state.serialPrefix;
+      }
       if (params.get('preset')) {
         state.preset = params.get('preset');
         document.getElementById('presetTemplate').value = state.preset;
@@ -849,6 +962,7 @@
       document.getElementById('formCourseMeta').textContent = `Tarikh: ${state.courseDate} | ${state.courseOrg}`;
       document.getElementById('badgeCount').textContent = state.records.length;
 
+      updateSerialBadges();
       drawQRCode();
       renderAdminCanvas();
       renderLivePreviewCert();
