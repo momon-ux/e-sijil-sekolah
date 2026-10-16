@@ -1,6 +1,5 @@
-const CACHE_NAME = 'admin-esijil-v1';
+const CACHE_NAME = 'admin-esijil-v2';
 const ASSETS = [
-  './admin.html',
   './index.html',
   './manifest.json',
   './icon-192.png',
@@ -25,13 +24,6 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-  // Network-first for template_config.json so updated certificates always load fresh
-  if (event.request.url.includes('template_config.json')) {
-    event.respondWith(
-      fetch(event.request).catch(() => caches.match(event.request))
-    );
-    return;
-  }
   event.respondWith(
     fetch(event.request).catch(() => caches.match(event.request))
   );
