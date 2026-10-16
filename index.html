@@ -398,7 +398,6 @@
                   <option value="skrg_moden">2. Sijil Moden 3D SK Ranggu & KPM (Sebarang Kursus/Bengkel)</option>
                   <option value="gold">3. Sijil Emas Rasmi SK Ranggu & KPM (Melintang)</option>
                   <option value="blue">4. Sijil Biru Korporat SK Ranggu & KPM (Melintang)</option>
-                  <option value="emerald">5. Sijil Hijau Akademik SK Ranggu & KPM (Melintang)</option>
                 </select>
               </div>
 
@@ -835,7 +834,7 @@
     function safeUnit(unit) {
       if (!unit || typeof unit !== 'object') return null;
       const safeId = cleanText(unit.id, 80).replace(/[^a-zA-Z0-9_-]/g, '') || `sijil-${Date.now().toString(36)}`;
-      const safePreset = ['delima', 'skrg_moden', 'gold', 'blue', 'emerald'].includes(unit.preset) ? unit.preset : 'gold';
+      const safePreset = ['delima', 'skrg_moden', 'gold', 'blue'].includes(unit.preset) ? unit.preset : 'gold';
       const canvasW = Math.min(1600, Math.max(320, Number(unit.canvasW) || 728));
       const canvasH = Math.min(2000, Math.max(320, Number(unit.canvasH) || 1024));
       const elements = unit.elements || {};
@@ -1157,8 +1156,7 @@
 
       const palettes = {
         gold: { bg1: '#fffdf7', bg2: '#fef9e7', border: '#b45309', accent: '#d97706', title: '#78350f' },
-        blue: { bg1: '#f8fafc', bg2: '#eff6ff', border: '#1e40af', accent: '#2563eb', title: '#1e3a8a' },
-        emerald: { bg1: '#f8fafc', bg2: '#ecfdf5', border: '#065f46', accent: '#059669', title: '#064e3b' }
+        blue: { bg1: '#f8fafc', bg2: '#eff6ff', border: '#1e40af', accent: '#2563eb', title: '#1e3a8a' }
       };
       const pal = palettes[preset] || palettes.gold;
 
