@@ -895,7 +895,7 @@
           <p id="emailStatusDesc" class="text-[11px] leading-5 text-slate-500">Aktifkan penghantaran e-mel atau simpan sistem ini pada peranti anda apabila diperlukan.</p>
         </div>
         <div class="quick-action-buttons">
-          <button id="btnEmailSetupTop" onclick="openEmailSetupModal()" class="quick-action-button rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-xs font-bold text-blue-800 hover:bg-blue-100">✉️ Tetapan e-mel</button>
+          <button id="btnEmailSetupTop" onclick="openEmailSetupModal()" class="quick-action-button rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-xs font-bold text-emerald-800 hover:bg-emerald-100">✅ E-mel Automatik Aktif</button>
           <button id="btnInstallPwa" onclick="triggerInstallApp()" class="quick-action-button rounded-xl bg-blue-700 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-blue-800">📲 Simpan aplikasi</button>
           <button type="button" onclick="lockSettingsPanel()" class="quick-action-button rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50">🔒 Kunci semula Tetapan</button>
         </div>
@@ -1073,7 +1073,7 @@
           Pratonton Sijil Rasmi SK Ranggu Anda
         </h2>
         <p class="text-xs md:text-sm text-[var(--muted-foreground)] max-w-lg mx-auto">
-          Masukkan <strong>Nama Penuh</strong> dan <strong>Alamat E-mel</strong> anda. Selepas sijil dijana, tekan <strong>Simpan ke Galeri Foto</strong>. Penghantaran e-mel hanya berlaku apabila perkhidmatan e-mel admin aktif.
+          Masukkan <strong>Nama Penuh</strong> dan <strong>Alamat E-mel</strong> anda. Sijil akan dijana dan dihantar secara automatik ke e-mel tersebut. Anda juga boleh menyimpannya ke <strong>Galeri Foto</strong>.
         </p>
 
         <!-- 3D Rotating Certificate Showcase -->
@@ -1221,15 +1221,15 @@
           <button onclick="closeEmailSetupModal()" class="text-xs px-2.5 py-1 rounded-lg bg-[var(--secondary)] text-[var(--foreground)]">✕ Tutup</button>
         </div>
 
-        <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-slate-700 space-y-1">
-          <p class="font-bold text-amber-800">Kenapa guru belum terima sijil dalam Inbox e-mel sebelum ini?</p>
+        <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-slate-700 space-y-1">
+          <p class="font-bold text-emerald-800">✅ Penghantaran e-mel automatik sudah aktif</p>
           <p>
-            Laman web GitHub Pages tidak mempunyai pelayan e-mel (SMTP) sendiri secara lalai. Untuk membolehkan sistem menghantar fail gambar sijil terus ke dalam <strong>Inbox Gmail / DELIMa (@moe-dl.edu.my)</strong> secara automatik, anda hanya perlu menampal kod pendek di bawah ke dalam akaun Google anda sekali sahaja (100% Percuma).
+            Semua jenis sijil yang admin cipta akan menggunakan penghantar yang sama. Selepas guru memasukkan nama dan alamat e-mel, sijil akan dijana dan dihantar secara automatik ke <strong>Inbox Gmail / DELIMa</strong>. Tiada deploy berulang diperlukan.
           </p>
         </div>
 
         <div class="space-y-2 text-xs text-slate-700">
-          <p class="font-bold text-slate-900">Langkah Mudah (Hanya Buat Sekali Sahaja — 2 Minit):</p>
+          <p class="font-bold text-slate-900">Tetapan teknikal sandaran (tidak perlu diubah):</p>
           <ol class="list-decimal list-inside space-y-1">
             <li>Buka <a href="https://script.google.com/home/start" target="_blank" class="text-blue-400 underline font-semibold">script.google.com</a> dan klik <strong>"New Project" (Projek Baharu)</strong>.</li>
             <li>Padam kod asal, kemudian <strong>Salin & Tampal (Copy & Paste)</strong> kod di bawah:</li>
@@ -1263,7 +1263,7 @@
         </div>
 
         <div class="space-y-2 pt-2 border-t border-[var(--border)]">
-          <label class="block text-xs font-bold text-slate-900">URL Web App Google Apps Script Anda:</label>
+          <label class="block text-xs font-bold text-slate-900">URL penghantar aktif:</label>
           <input
             id="inputGasWebhookUrl"
             type="url"
@@ -1272,7 +1272,7 @@
           />
           <div class="flex justify-end gap-2 pt-1">
             <button type="button" onclick="saveGasWebhookUrl()" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 hover:opacity-90">
-              💾 Simpan & Aktifkan Penghantaran E-mel Automatik
+              💾 Simpan URL Penghantar
             </button>
           </div>
           <p id="gasSaveToast" class="text-xs font-semibold text-emerald-400 hidden"></p>
@@ -1375,6 +1375,7 @@
     const defaultCertUnits = [];
 
     const STORAGE_KEY = 'esijil_units_v7';
+    const DEFAULT_GAS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwMheuvW7_zScmCsVoJZzCuYC6g7CFqs72HtxDdvH2vuhNHD8d2xzyp-Jz128f-0vUw/exec';
 
     function cleanText(value, max = 160) {
       return String(value ?? '').replace(/[\u0000-\u001F\u007F]/g, ' ').trim().slice(0, max);
@@ -1447,7 +1448,7 @@
 
     const state = {
       certUnits: loadCertUnits(),
-      gasWebhookUrl: localStorage.getItem('esijil_gas_url') || '',
+      gasWebhookUrl: localStorage.getItem('esijil_gas_url') || DEFAULT_GAS_WEBHOOK_URL,
       draft: {
         title: 'PROGRAM / BENGKEL SEKOLAH',
         serialPrefix: 'SKR/842/2026/',
@@ -1585,8 +1586,8 @@
       const desc = document.getElementById('emailStatusDesc');
       if (state.gasWebhookUrl && state.gasWebhookUrl.startsWith('https://script.google.com/')) {
         dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400';
-        title.textContent = 'E-mel automatik aktif';
-        desc.textContent = 'Sijil akan dihantar terus selepas guru mengimbas QR dan mengisi alamat e-mel.';
+        title.textContent = 'E-mel automatik aktif untuk semua sijil';
+        desc.textContent = 'Sijil akan dihantar terus selepas guru memasukkan nama dan alamat e-mel. Tidak perlu deploy bagi setiap sijil.';
       } else {
         dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400';
         title.textContent = 'E-mel automatik belum aktif';
@@ -1632,14 +1633,14 @@
         document.getElementById('inputGasWebhookUrl').focus();
         return;
       }
-      state.gasWebhookUrl = val;
+      state.gasWebhookUrl = val || DEFAULT_GAS_WEBHOOK_URL;
       try {
-        localStorage.setItem('esijil_gas_url', val);
+        localStorage.setItem('esijil_gas_url', state.gasWebhookUrl);
       } catch (e) {}
       updateEmailStatusBanner();
       renderCertUnitsList();
       const toast = document.getElementById('gasSaveToast');
-      toast.textContent = val ? '✅ Tetapan e-mel berjaya disimpan.' : '✅ Tetapan e-mel telah dinyahaktifkan.';
+      toast.textContent = '✅ Penghantar e-mel automatik aktif untuk semua sijil.';
       toast.classList.remove('hidden');
       setTimeout(() => {
         toast.classList.add('hidden');
@@ -2148,9 +2149,6 @@
         sx: unit.elements.serial.x,
         sy: unit.elements.serial.y
       });
-      if (state.gasWebhookUrl) {
-        params.set('gas', state.gasWebhookUrl);
-      }
       return `${base}?${params.toString()}`;
     }
 
@@ -2375,9 +2373,7 @@
       document.getElementById('scanCertUnitTitle').textContent = unit.title;
       document.getElementById('backCertTitle').textContent = unit.title;
       const submitLabel = document.querySelector('#btnSubmitTeacher span');
-      if (submitLabel) submitLabel.textContent = state.gasWebhookUrl
-        ? '📧 Jana Sijil & Mohon Hantar E-mel'
-        : '✨ Jana Sijil Saya';
+      if (submitLabel) submitLabel.textContent = '📧 Jana Sijil & Hantar Automatik ke E-mel';
 
       const cw = unit.canvasW || 728;
       const ch = unit.canvasH || 1024;
@@ -2456,7 +2452,7 @@
 
       const btn = document.getElementById('btnSubmitTeacher');
       btn.disabled = true;
-      btn.innerHTML = `<span>${state.gasWebhookUrl ? '⏳ Sedang Menjana & Memohon Penghantaran...' : '⏳ Sedang Menjana Sijil...'}</span>`;
+      btn.innerHTML = '<span>⏳ Sedang Menjana & Menghantar ke E-mel...</span>';
 
       const nextSeq = getUnitNextSeq(unit);
       const issuedSerial = formatSerial(unit.serialPrefix, nextSeq);
@@ -2490,9 +2486,8 @@
       let emailRequestSubmitted = false;
       if (state.gasWebhookUrl && state.gasWebhookUrl.startsWith('https://script.google.com/')) {
         try {
-          await fetch(state.gasWebhookUrl, {
+          const response = await fetch(state.gasWebhookUrl, {
             method: 'POST',
-            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({
               email,
@@ -2503,14 +2498,16 @@
               imageBase64
             })
           });
+          const delivery = await response.json();
+          if (!response.ok || !delivery.ok) throw new Error(delivery.error || 'Penghantaran e-mel gagal');
           emailRequestSubmitted = true;
         } catch (err) {
-          showToast('Sijil berjaya dijana, tetapi permintaan e-mel tidak dapat dihantar. Gunakan butang Kongsi.', 'error');
+          showToast(`Sijil berjaya dijana, tetapi e-mel gagal dihantar: ${cleanText(err.message, 120)}`, 'error');
         }
       }
 
       btn.disabled = false;
-      btn.innerHTML = `<span>${state.gasWebhookUrl ? '📧 Jana Sijil & Mohon Hantar E-mel' : '✨ Jana Sijil Saya'}</span>`;
+      btn.innerHTML = '<span>📧 Jana Sijil & Hantar Automatik ke E-mel</span>';
 
       const successBox = document.getElementById('teacherSuccessBox');
       successBox.classList.remove('hidden');
@@ -2519,7 +2516,7 @@
 
       const noteEl = document.getElementById('teacherEmailDeliveryNote');
       if (emailRequestSubmitted) {
-        noteEl.textContent = `📩 Permintaan e-mel telah dihantar untuk ${email}. Sistem tidak akan mendakwa e-mel diterima; sila semak Inbox dan Spam.`;
+        noteEl.textContent = `📩 Sijil berjaya dihantar ke ${email}. Sila semak Inbox dan Spam.`;
       } else {
         noteEl.textContent = `⚠️ E-mel automatik admin belum aktif atau gagal dicapai. Simpan sijil ke Galeri Foto, kemudian gunakan butang Kongsi untuk menghantarnya.`;
       }
@@ -2606,10 +2603,7 @@
     // --- INITIALIZE APP & CHECK IF OPENED VIA UNIT QR SCAN ---
     function initApp() {
       const params = new URLSearchParams(window.location.search);
-      const gasFromUrl = params.get('gas');
-      if (gasFromUrl && gasFromUrl.startsWith('https://script.google.com/')) {
-        state.gasWebhookUrl = gasFromUrl;
-      }
+      state.gasWebhookUrl = DEFAULT_GAS_WEBHOOK_URL;
 
       updateEmailStatusBanner();
       saveCertUnits();
