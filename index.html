@@ -70,12 +70,12 @@
 
     .logo-cutout {
       width: auto;
-      height: 2.35rem;
+      height: 3.05rem;
       object-fit: contain;
       filter: drop-shadow(0 4px 5px rgba(15,23,42,.20));
     }
 
-    .logo-cutout.school { height: 2.5rem; }
+    .logo-cutout.school { height: 3.2rem; }
 
     .live-clock {
       min-width: 112px;
@@ -133,7 +133,175 @@
 
     .side-nav-button:hover { background: #f1f5f9; color: #174ea6; }
     .side-nav-button.active { background: #174ea6; color: #fff; box-shadow: 0 8px 18px rgba(23,78,166,.22); }
-    .side-nav-icon { width: 1.4rem; text-align: center; font-size: 1rem; }
+    .side-nav-icon {
+      width: 1.8rem;
+      height: 1.8rem;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: .62rem;
+      background: #e9f2ff;
+      color: #174ea6;
+      text-align: center;
+      font-size: .9rem;
+      transition: transform .2s ease, background .2s ease;
+    }
+    .side-nav-button:hover .side-nav-icon { transform: rotate(-4deg) scale(1.06); }
+    .side-nav-button.active .side-nav-icon { background: rgba(255,255,255,.17); color: #fff; }
+
+    .create-workflow-card,
+    .preview-workflow-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .create-workflow-card::before,
+    .preview-workflow-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 5px;
+      background: linear-gradient(90deg, #174ea6 0%, #4ea6ff 58%, #e6aa28 100%);
+    }
+
+    .create-workflow-card::after {
+      content: "";
+      position: absolute;
+      top: -80px;
+      right: -90px;
+      width: 190px;
+      height: 190px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(78,166,255,.18), rgba(78,166,255,0) 70%);
+      pointer-events: none;
+    }
+
+    .admin-step-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .3rem .65rem .3rem .36rem;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #174ea6;
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .admin-step-badge b {
+      display: grid;
+      place-items: center;
+      width: 1.35rem;
+      height: 1.35rem;
+      border-radius: 50%;
+      background: #174ea6;
+      color: #fff;
+      font-size: .7rem;
+    }
+
+    .qr-action-button {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      min-width: 172px;
+      padding: .62rem .72rem;
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 1rem;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0f2f62, #1768d7 65%, #2d88f2);
+      color: #fff;
+      text-align: left;
+      box-shadow: 0 10px 24px rgba(23,78,166,.28);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .qr-action-button::after,
+    .primary-create-button::after {
+      content: "";
+      position: absolute;
+      inset: -40% auto -40% -38%;
+      width: 26%;
+      background: rgba(255,255,255,.28);
+      transform: skewX(-18deg);
+      animation: qrSweep 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .qr-action-button:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(23,78,166,.34); }
+    .qr-action-button:active { transform: translateY(0) scale(.98); }
+
+    .qr-mini {
+      display: grid;
+      grid-template-columns: repeat(3, 4px);
+      grid-template-rows: repeat(3, 4px);
+      gap: 2px;
+      flex: 0 0 auto;
+      padding: 7px;
+      border-radius: .62rem;
+      background: #fff;
+      box-shadow: 0 5px 14px rgba(6,25,55,.22);
+      animation: qrPulse 2.2s ease-in-out infinite;
+    }
+
+    .qr-mini i { width: 4px; height: 4px; border-radius: 1px; background: #174ea6; }
+    .qr-mini i:nth-child(2),
+    .qr-mini i:nth-child(4),
+    .qr-mini i:nth-child(8) { background: transparent; }
+
+    .upload-zone {
+      background:
+        radial-gradient(circle at 12% 15%, rgba(78,166,255,.16), transparent 28%),
+        linear-gradient(135deg, #f8fbff, #eef6ff 58%, #fffaf0);
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+    }
+
+    .upload-zone:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(23,78,166,.13); }
+    .upload-zone-icon { animation: uploadFloat 2.8s ease-in-out infinite; }
+
+    .primary-create-button {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(100deg, #0f2f62 0%, #1768d7 62%, #2788f4 100%);
+      box-shadow: 0 12px 26px rgba(23,78,166,.28);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .primary-create-button:hover { transform: translateY(-2px); box-shadow: 0 16px 32px rgba(23,78,166,.34); }
+    .primary-create-button:active { transform: translateY(0) scale(.99); }
+
+    .preview-symbol {
+      display: grid;
+      place-items: center;
+      width: 2.55rem;
+      height: 2.55rem;
+      flex: 0 0 auto;
+      border-radius: .9rem;
+      background: linear-gradient(145deg, #eaf3ff, #fff8e8);
+      color: #174ea6;
+      border: 1px solid #d7e7fb;
+      box-shadow: inset 0 1px 0 #fff;
+      font-size: 1.1rem;
+    }
+
+    @keyframes qrSweep {
+      0%, 55% { left: -38%; }
+      78%, 100% { left: 125%; }
+    }
+
+    @keyframes qrPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+
+    @keyframes uploadFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
 
     .dashboard-panels { min-width: 0; }
     .dashboard-panel[hidden] { display: none !important; }
@@ -377,9 +545,10 @@
       .app-header { padding-left: .55rem !important; padding-right: .55rem !important; }
       .app-header-inner { gap: .35rem !important; }
       .brand-lockup { gap: .28rem; padding: .12rem; }
-      .logo-cutout { height: 1.8rem; }
-      .logo-cutout.school { height: 1.95rem; }
+      .logo-cutout { height: 2.25rem; }
+      .logo-cutout.school { height: 2.4rem; }
       .school-title { max-width: 160px; font-size: .75rem !important; line-height: .95rem !important; }
+      .top-subtitle { max-width: 178px; font-size: .52rem !important; line-height: .72rem !important; }
       .live-clock { min-width: 72px; padding: .35rem .45rem !important; }
       .live-clock-date { display: none; }
       .live-clock-time { font-size: .78rem !important; }
@@ -403,7 +572,8 @@
       }
       .dashboard-sidebar-title { display: none; }
       .side-nav-button { justify-content: center; padding: .72rem .35rem; font-size: .75rem; gap: .3rem; text-align: center; }
-      .side-nav-icon { width: auto; font-size: .9rem; }
+      .side-nav-icon { width: 1.55rem; height: 1.55rem; font-size: .78rem; border-radius: .5rem; }
+      .qr-action-button { min-width: 0; }
     }
   </style>
 </head>
@@ -425,7 +595,7 @@
             <h1 class="school-title text-xs sm:text-sm md:text-base font-extrabold tracking-tight text-[var(--foreground)]">SEKOLAH KEBANGSAAN RANGGU</h1>
             <span id="standaloneBadge" class="hidden px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">PWA</span>
           </div>
-          <p id="topSubtitle" class="hidden sm:block text-[11px] text-[var(--muted-foreground)]">Peti Surat 842, 91008 Tawau • Sistem e-Sijil & E-mel Automatik</p>
+          <p id="topSubtitle" class="top-subtitle text-[11px] leading-4 text-[var(--muted-foreground)]">Peti Surat 842, 91008 Tawau, Sabah • Sistem e-Sijil & E-mel Automatik</p>
         </div>
       </div>
 
@@ -505,7 +675,7 @@
           <nav class="contents" aria-label="Bahagian sistem">
             <button type="button" class="side-nav-button active" data-admin-panel="create" onclick="showAdminPanel('create')" aria-current="page"><span class="side-nav-icon">✦</span><span>Cipta Sijil</span></button>
             <button type="button" class="side-nav-button" data-admin-panel="records" onclick="showAdminPanel('records')"><span class="side-nav-icon">▦</span><span>Rekod & QR</span></button>
-            <button type="button" class="side-nav-button" data-admin-panel="settings" onclick="showAdminPanel('settings')"><span class="side-nav-icon">⚙</span><span>Tetapan</span></button>
+            <button type="button" class="side-nav-button" data-admin-panel="settings" onclick="requestSettingsAccess()"><span class="side-nav-icon">🔒</span><span>Tetapan</span></button>
           </nav>
         </aside>
 
@@ -516,6 +686,7 @@
           <div class="flex items-center gap-2">
             <span id="emailStatusDot" class="status-dot w-2.5 h-2.5 rounded-full bg-amber-400"></span>
             <h3 id="quickActionsTitle" class="text-sm font-extrabold text-slate-900">Tindakan pantas</h3>
+            <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">Tetapan dibuka</span>
           </div>
           <p id="emailStatusTitle" class="text-xs font-semibold text-slate-700">E-mel automatik belum diaktifkan</p>
           <p id="emailStatusDesc" class="text-[11px] leading-5 text-slate-500">Aktifkan penghantaran e-mel atau simpan sistem ini pada peranti anda apabila diperlukan.</p>
@@ -523,19 +694,28 @@
         <div class="quick-action-buttons">
           <button id="btnEmailSetupTop" onclick="openEmailSetupModal()" class="quick-action-button rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-xs font-bold text-blue-800 hover:bg-blue-100">✉️ Tetapan e-mel</button>
           <button id="btnInstallPwa" onclick="triggerInstallApp()" class="quick-action-button rounded-xl bg-blue-700 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-blue-800">📲 Simpan aplikasi</button>
+          <button type="button" onclick="lockSettingsPanel()" class="quick-action-button rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50">🔒 Kunci semula Tetapan</button>
         </div>
       </section>
 
       <!-- Section 1: Create / Edit Certificate Record & Upload Certificate Image -->
       <section id="panelCreate" class="dashboard-panel grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-5 space-y-4">
-          <div class="app-card bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 space-y-4">
-            <div class="flex items-center justify-between">
-              <div>
-                <span class="text-sm font-bold uppercase tracking-wider text-blue-500">LANGKAH ADMIN</span>
-                <h2 class="text-base font-bold text-[var(--foreground)]">1. Masukkan Rekod Sijil Baharu</h2>
+          <div class="create-workflow-card app-card bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div class="relative z-[1]">
+                <span class="admin-step-badge"><b>1</b> Langkah Admin</span>
+                <h2 class="mt-2 text-lg font-black tracking-tight text-[var(--foreground)]">Cipta Sijil Baharu</h2>
+                <p class="mt-0.5 text-xs leading-5 text-slate-500">Sediakan gambar, nama program dan nombor siri.</p>
               </div>
-              <span class="px-2 py-0.5 rounded text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]">Jana QR Unik</span>
+              <button type="button" onclick="saveNewCertificateRecord()" class="qr-action-button" aria-label="Simpan rekod dan jana kod QR unik">
+                <span class="qr-mini" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                <span class="min-w-0 flex-1">
+                  <strong class="block text-xs font-black leading-4">Jana QR Unik</strong>
+                  <small class="block text-[9px] leading-3 text-blue-100">Automatik untuk setiap sijil</small>
+                </span>
+                <span class="text-sm" aria-hidden="true">→</span>
+              </button>
             </div>
 
             <div class="space-y-3">
@@ -558,8 +738,8 @@
               </div>
 
               <!-- Muat naik sijil ialah langkah utama, bukan tetapan tersembunyi -->
-              <label id="certUploadCard" class="block cursor-pointer rounded-2xl border-2 border-dashed border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 p-5 text-center shadow-sm transition hover:border-blue-700 hover:shadow-md">
-                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-700 text-2xl font-black text-white shadow-lg shadow-blue-700/20">↑</div>
+              <label id="certUploadCard" class="upload-zone block cursor-pointer rounded-2xl border-2 border-dashed border-blue-500 p-5 text-center shadow-sm hover:border-blue-700">
+                <div class="upload-zone-icon mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-700 text-2xl font-black text-white shadow-lg shadow-blue-700/20">↑</div>
                 <div class="mt-3 text-sm font-extrabold text-blue-950">Muat Naik Gambar Sijil</div>
                 <div id="uploadStatusText" class="mt-1 text-xs leading-5 font-medium text-slate-600">Wajib • PNG atau JPG • Sistem hanya menambah nama dan nombor sijil</div>
                 <span class="mt-3 inline-flex rounded-lg bg-blue-700 px-4 py-2 text-sm font-bold text-white">Pilih Gambar Sijil</span>
@@ -604,8 +784,8 @@
               </details>
 
               <!-- Save Certificate Record & Generate Unique QR Button -->
-              <button type="button" onclick="saveNewCertificateRecord()" class="w-full py-3 px-4 rounded-xl text-sm font-bold bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-95 shadow-lg shadow-blue-600/30 transition-all">
-                Simpan Rekod & Jana QR
+              <button type="button" onclick="saveNewCertificateRecord()" class="primary-create-button w-full py-3 px-4 rounded-xl text-sm font-extrabold text-white">
+                ✦ Simpan Rekod & Jana QR Unik →
               </button>
               <p id="saveRecordToast" class="text-xs font-semibold text-emerald-700 text-center hidden" role="status" aria-live="polite"></p>
             </div>
@@ -614,11 +794,14 @@
 
         <!-- Right Column: Interactive Certificate Position Canvas -->
         <div class="lg:col-span-7 space-y-4">
-          <div class="app-card bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 space-y-3">
+          <div class="preview-workflow-card app-card bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 space-y-3">
             <div class="flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <h3 class="text-base font-bold text-[var(--foreground)]">Pratonton Gambar Sijil</h3>
-                <p class="text-sm leading-5 text-[var(--muted-foreground)]">Selepas gambar dimuat naik, sentuh dan tarik kotak biru <strong>Nama Guru</strong> atau <strong>No. Siri Sijil</strong> ke kedudukan yang betul.</p>
+              <div class="flex min-w-0 flex-1 items-start gap-3">
+                <span class="preview-symbol" aria-hidden="true">▣</span>
+                <div>
+                  <h3 class="text-lg font-black tracking-tight text-[var(--foreground)]">Pratonton Gambar Sijil</h3>
+                  <p class="text-sm leading-5 text-[var(--muted-foreground)]">Selepas gambar dimuat naik, sentuh dan tarik kotak biru <strong>Nama Guru</strong> atau <strong>No. Siri Sijil</strong> ke kedudukan yang betul.</p>
+                </div>
               </div>
               <label class="flex items-center gap-1.5 text-sm text-[var(--muted-foreground)] cursor-pointer">
                 <input id="showGuidesCheckbox" type="checkbox" checked onchange="renderAdminCanvas()" class="rounded" />
@@ -848,7 +1031,7 @@
     subject: 'e-Sijil Rasmi SK Ranggu: ' + data.title + ' (' + data.serialNo + ')',
     htmlBody: '&lt;p&gt;Tahniah &lt;b&gt;' + data.name + '&lt;/b&gt;,&lt;/p&gt;' +
               '&lt;p&gt;Bersama e-mel ini dilampirkan e-Sijil rasmi anda bagi &lt;b&gt;' + data.title + '&lt;/b&gt;.&lt;/p&gt;' +
-              '&lt;p&gt;&lt;b&gt;No. Siri Sijil:&lt;/b&gt; ' + data.serialNo + '&lt;br&gt;&lt;b&gt;Sekolah:&lt;/b&gt; SK Ranggu, Peti Surat 842, 91008 Tawau&lt;/p&gt;',
+              '&lt;p&gt;&lt;b&gt;No. Siri Sijil:&lt;/b&gt; ' + data.serialNo + '&lt;br&gt;&lt;b&gt;Sekolah:&lt;/b&gt; Sekolah Kebangsaan Ranggu, Peti Surat 842, 91008 Tawau, Sabah&lt;/p&gt;',
     attachments: [blob]
   });
   return ContentService.createTextOutput(JSON.stringify({ok: true})).setMimeType(ContentService.MimeType.JSON);
@@ -881,6 +1064,22 @@
           <p id="gasSaveToast" class="text-xs font-semibold text-emerald-400 hidden"></p>
         </div>
       </div>
+    </div>
+
+    <!-- Modal: Kod akses untuk membuka Tetapan pentadbir -->
+    <div id="settingsAccessModal" class="hidden fixed inset-0 z-[70] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <form onsubmit="verifySettingsAccess(event)" class="w-full max-w-sm rounded-3xl border border-blue-200 bg-white p-6 text-left shadow-2xl">
+        <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-2xl" aria-hidden="true">🔒</div>
+        <h3 class="text-center text-xl font-black text-slate-900">Kod Akses Tetapan</h3>
+        <p class="mt-2 text-center text-sm leading-5 text-slate-600">Masukkan kod pentadbir untuk membuka bahagian Tetapan.</p>
+        <label for="settingsAccessCode" class="mt-5 block text-sm font-bold text-slate-800">Kod akses</label>
+        <input id="settingsAccessCode" type="password" autocomplete="current-password" required maxlength="64" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base font-semibold tracking-wide text-slate-900 focus:border-blue-600" placeholder="Masukkan kod akses" oninput="clearSettingsAccessError()" />
+        <p id="settingsAccessError" class="mt-2 hidden text-sm font-bold text-red-700" role="alert">Kod akses tidak tepat. Cuba semula.</p>
+        <div class="mt-5 grid grid-cols-2 gap-3">
+          <button type="button" onclick="closeSettingsAccessModal()" class="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-bold text-slate-700">Batal</button>
+          <button type="submit" class="rounded-xl bg-blue-700 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-blue-700/20">Buka Tetapan</button>
+        </div>
+      </form>
     </div>
 
     <div id="appToast" class="hidden fixed bottom-5 left-1/2 z-[80] max-w-[calc(100%-2rem)] -translate-x-1/2 rounded-xl border px-4 py-3 text-sm font-bold shadow-2xl" role="status" aria-live="polite"></div>
@@ -1083,6 +1282,58 @@
       document.getElementById('statEmail').textContent = state.gasWebhookUrl ? 'Aktif' : 'Belum aktif';
     }
 
+    const SETTINGS_ACCESS_HASH = 'f4cf6f28cd1d68e6394b136e8877ab487018648509770a73153bf0af2b3168d9';
+    const SETTINGS_UNLOCKED_KEY = 'esijil_settings_unlocked';
+
+    async function hashSettingsAccessCode(value) {
+      const bytes = new TextEncoder().encode(value);
+      const digest = await crypto.subtle.digest('SHA-256', bytes);
+      return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
+    }
+
+    function requestSettingsAccess() {
+      if (sessionStorage.getItem(SETTINGS_UNLOCKED_KEY) === '1') {
+        showAdminPanel('settings');
+        return;
+      }
+      clearSettingsAccessError();
+      const modal = document.getElementById('settingsAccessModal');
+      modal.classList.remove('hidden');
+      setTimeout(() => document.getElementById('settingsAccessCode').focus(), 40);
+    }
+
+    function closeSettingsAccessModal() {
+      document.getElementById('settingsAccessModal').classList.add('hidden');
+      document.getElementById('settingsAccessCode').value = '';
+      clearSettingsAccessError();
+    }
+
+    function clearSettingsAccessError() {
+      document.getElementById('settingsAccessError')?.classList.add('hidden');
+    }
+
+    async function verifySettingsAccess(event) {
+      event.preventDefault();
+      const input = document.getElementById('settingsAccessCode');
+      const submittedHash = await hashSettingsAccessCode(input.value.trim());
+      if (submittedHash !== SETTINGS_ACCESS_HASH) {
+        document.getElementById('settingsAccessError').classList.remove('hidden');
+        input.select();
+        return;
+      }
+      sessionStorage.setItem(SETTINGS_UNLOCKED_KEY, '1');
+      closeSettingsAccessModal();
+      showAdminPanel('settings');
+      showToast('Tetapan pentadbir berjaya dibuka.');
+    }
+
+    function lockSettingsPanel() {
+      sessionStorage.removeItem(SETTINGS_UNLOCKED_KEY);
+      localStorage.setItem('esijil_admin_panel', 'create');
+      showAdminPanel('create', false);
+      showToast('Tetapan telah dikunci semula.');
+    }
+
     function showAdminPanel(panelName, remember = true) {
       const panels = {
         create: document.getElementById('panelCreate'),
@@ -1142,7 +1393,7 @@
     subject: 'e-Sijil Rasmi SK Ranggu: ' + data.title + ' (' + data.serialNo + ')',
     htmlBody: '<p>Tahniah <b>' + data.name + '</b>,</p>' +
               '<p>Bersama e-mel ini dilampirkan e-Sijil rasmi anda bagi <b>' + data.title + '</b>.</p>' +
-              '<p><b>No. Siri Sijil:</b> ' + data.serialNo + '<br><b>Sekolah:</b> SK Ranggu, Peti Surat 842, 91008 Tawau</p>',
+              '<p><b>No. Siri Sijil:</b> ' + data.serialNo + '<br><b>Sekolah:</b> Sekolah Kebangsaan Ranggu, Peti Surat 842, 91008 Tawau, Sabah</p>',
     attachments: [blob]
   });
   return ContentService.createTextOutput(JSON.stringify({ok: true})).setMimeType(ContentService.MimeType.JSON);
@@ -1224,7 +1475,7 @@
 
       ctx.fillStyle = '#1e3a8a';
       ctx.font = '700 10px sans-serif';
-      ctx.fillText('PETI SURAT 842, 91008 TAWAU', centerX, topY + 100);
+      ctx.fillText('PETI SURAT 842, 91008 TAWAU, SABAH', centerX, topY + 100);
 
       ctx.restore();
     }
@@ -2009,7 +2260,7 @@
       // Fallback mailto if Web Share API is not supported on desktop
       const subj = encodeURIComponent(`e-Sijil Rasmi SK Ranggu: ${unit.title} (${serial})`);
       const body = encodeURIComponent(
-        `Tahniah ${name},\n\nSijil rasmi anda bagi ${unit.title} (No. Siri: ${serial}) telah dijana dan dimuat turun.\n\nSekolah Kebangsaan Ranggu, Peti Surat 842, 91008 Tawau.`
+        `Tahniah ${name},\n\nSijil rasmi anda bagi ${unit.title} (No. Siri: ${serial}) telah dijana dan dimuat turun.\n\nSekolah Kebangsaan Ranggu, Peti Surat 842, 91008 Tawau, Sabah.`
       );
       window.location.href = `mailto:${email}?subject=${subj}&body=${body}`;
     }
@@ -2026,7 +2277,11 @@
       saveCertUnits();
       renderAdminCanvas();
       renderCertUnitsList();
-      showAdminPanel(localStorage.getItem('esijil_admin_panel') || 'create', false);
+      const rememberedPanel = localStorage.getItem('esijil_admin_panel') || 'create';
+      const safeInitialPanel = rememberedPanel === 'settings' && sessionStorage.getItem(SETTINGS_UNLOCKED_KEY) !== '1'
+        ? 'create'
+        : rememberedPanel;
+      showAdminPanel(safeInitialPanel, false);
 
       const scannedCertId = params.get('certId');
       if (scannedCertId) {
