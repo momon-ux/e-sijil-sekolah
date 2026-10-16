@@ -316,10 +316,8 @@
             </div>
             <!-- Back Face -->
             <div class="cert-face-back">
-              <div class="w-16 h-16 rounded-full bg-amber-400/20 border-2 border-amber-400 flex items-center justify-center text-2xl mb-3">
-                🏅
-              </div>
-              <p class="text-xs font-mono uppercase tracking-widest text-amber-300">Sijil Digital Disahkan</p>
+              <img src="./icon-192.png" alt="Logo SK Ranggu" class="w-20 h-20 rounded-2xl border-2 border-amber-400 shadow-lg mb-3" />
+              <p class="text-xs font-mono uppercase tracking-widest text-amber-300">Sijil Digital Disahkan • SK Ranggu</p>
               <h3 id="backCertTitle" class="text-base font-bold text-white mt-1">SISTEM e-SIJIL SEKOLAH</h3>
               <p id="backCertSerial" class="text-xs font-mono text-slate-300 mt-2 px-3 py-1 rounded bg-white/10">
                 No. Siri: SKR/AI/2026/0001
@@ -503,6 +501,13 @@
     const teacherCanvas = document.getElementById('teacherCertCanvas');
     const teacherCtx = teacherCanvas.getContext('2d');
 
+    const schoolCrestImg = new Image();
+    schoolCrestImg.onload = () => {
+      renderAdminCanvas();
+      renderTeacherSpinningCanvas();
+    };
+    schoolCrestImg.src = './skrg.png';
+
     function formatSerial(prefix, seq) {
       return `${prefix}${String(seq).padStart(4, '0')}`;
     }
@@ -548,22 +553,17 @@
         ctx.fill();
       });
 
-      ctx.save();
-      ctx.translate(width / 2, 110);
-      ctx.beginPath();
-      ctx.arc(0, 0, 36, 0, Math.PI * 2);
-      ctx.fillStyle = pal.accent;
-      ctx.fill();
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = '#ffffff';
-      ctx.stroke();
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 14px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('SKR', 0, -2);
-      ctx.font = '10px sans-serif';
-      ctx.fillText('E-SIJIL', 0, 12);
-      ctx.restore();
+      if (schoolCrestImg.complete && schoolCrestImg.naturalWidth > 0) {
+        ctx.drawImage(schoolCrestImg, width / 2 - 42, 58, 84, 96);
+      } else {
+        ctx.save();
+        ctx.translate(width / 2, 110);
+        ctx.beginPath();
+        ctx.arc(0, 0, 36, 0, Math.PI * 2);
+        ctx.fillStyle = pal.accent;
+        ctx.fill();
+        ctx.restore();
+      }
 
       ctx.fillStyle = pal.title;
       ctx.font = 'bold 32px Georgia, serif';
