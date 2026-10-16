@@ -17,19 +17,108 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root {
-      --background: #0b1120;
-      --foreground: #f8fafc;
-      --card: #151f32;
-      --border: #28354f;
-      --primary: #2563eb;
+      --background: #f3f6fb;
+      --foreground: #10203a;
+      --card: #ffffff;
+      --border: #d9e2ef;
+      --primary: #174ea6;
       --primary-foreground: #ffffff;
-      --secondary: #1e293b;
-      --secondary-foreground: #f1f5f9;
-      --muted-foreground: #94a3b8;
+      --secondary: #edf2f8;
+      --secondary-foreground: #183153;
+      --muted-foreground: #60708a;
+      --gold: #d69b2d;
     }
 
     body {
       -webkit-tap-highlight-color: transparent;
+      background:
+        radial-gradient(circle at 5% 0%, rgba(23, 78, 166, 0.10), transparent 28rem),
+        radial-gradient(circle at 95% 12%, rgba(214, 155, 45, 0.10), transparent 24rem),
+        var(--background);
+    }
+
+    button, a, input, select {
+      transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease, background-color .18s ease;
+    }
+
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 3px solid rgba(37, 99, 235, .28);
+      outline-offset: 2px;
+    }
+
+    button:not(:disabled):active { transform: translateY(1px); }
+    button:disabled { cursor: not-allowed; opacity: .58; }
+
+    .app-card {
+      box-shadow: 0 14px 42px rgba(39, 64, 102, .09);
+    }
+
+    .app-header { background: rgba(255,255,255,.96); }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      flex: 0 0 auto;
+      padding: .3rem .45rem;
+      border-radius: 1rem;
+      background: linear-gradient(145deg, rgba(255,255,255,.96), rgba(238,244,252,.9));
+      border: 1px solid rgba(23,78,166,.14);
+      box-shadow: 0 8px 22px rgba(25,55,96,.10);
+    }
+
+    .logo-cutout {
+      width: auto;
+      height: 2.35rem;
+      object-fit: contain;
+      filter: drop-shadow(0 3px 4px rgba(15,23,42,.16));
+    }
+
+    .logo-cutout.school { height: 2.5rem; }
+
+    .live-clock {
+      min-width: 106px;
+      background: linear-gradient(135deg, #f8fbff, #edf4ff);
+      border: 1px solid rgba(23,78,166,.16);
+    }
+
+    .hero-panel {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(120deg, #0f2f62 0%, #174ea6 58%, #2873d6 100%);
+    }
+
+    .hero-panel::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      right: -90px;
+      top: -120px;
+      background: rgba(255,255,255,.10);
+      box-shadow: -110px 170px 0 rgba(214,155,45,.13);
+      pointer-events: none;
+    }
+
+    .metric-card {
+      background: rgba(255,255,255,.11);
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(8px);
+    }
+
+    .status-dot { box-shadow: 0 0 0 4px rgba(251,191,36,.12); }
+
+    .sr-only-focusable:not(:focus) {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
     }
 
     .canvas-container {
@@ -121,35 +210,67 @@
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+      .cert-3d-wrapper { animation: none !important; }
+    }
+
+    @media (max-width: 640px) {
+      .header-actions .button-label { display: none; }
+      .header-actions button { min-width: 42px; min-height: 42px; justify-content: center; }
+      .mobile-stack { grid-template-columns: 1fr !important; }
+      .stage-3d { padding: .75rem 0; }
+      .app-header { padding-left: .55rem !important; padding-right: .55rem !important; }
+      .app-header-inner { gap: .35rem !important; }
+      .brand-lockup { gap: .25rem; padding: .24rem .34rem; border-radius: .8rem; }
+      .logo-cutout { height: 1.8rem; }
+      .logo-cutout.school { height: 1.95rem; }
+      .school-title { max-width: 150px; font-size: .68rem !important; line-height: .85rem !important; }
+      .live-clock { min-width: 72px; padding: .35rem .45rem !important; }
+      .live-clock-date { display: none; }
+      .live-clock-time { font-size: .72rem !important; }
+    }
   </style>
 </head>
 <body class="bg-[var(--background)] text-[var(--foreground)] antialiased min-h-screen pb-12">
 
+  <a href="#mainContent" class="sr-only-focusable fixed top-3 left-3 z-[70] rounded-lg bg-white px-4 py-2 text-sm font-bold text-blue-800 shadow-xl">Langkau ke kandungan utama</a>
+
   <!-- Top Header -->
-  <header class="sticky top-0 z-30 bg-[var(--card)]/95 backdrop-blur border-b border-[var(--border)] px-4 py-3">
-    <div class="max-w-5xl mx-auto flex items-center justify-between gap-2">
+  <header class="app-header sticky top-0 z-30 backdrop-blur border-b border-[var(--border)] px-3 sm:px-4 py-2.5 shadow-sm">
+    <div class="app-header-inner max-w-6xl mx-auto flex items-center justify-between gap-2">
       <div class="flex items-center gap-2.5">
-        <div class="flex items-center gap-1.5 bg-white/95 px-2 py-1 rounded-xl border border-amber-400/50 shadow-sm">
-          <img src="./logo-kpm.png" alt="Logo KPM" class="h-7 w-auto object-contain" />
-          <img src="./skrg.png" alt="Logo SK Ranggu" class="h-7 w-auto object-contain" />
+        <div class="brand-lockup" aria-label="Logo rasmi Kementerian Pendidikan Malaysia dan Sekolah Kebangsaan Ranggu">
+          <img src="./logo-kpm.png" alt="Logo Kementerian Pendidikan Malaysia" class="logo-cutout" />
+          <span class="h-7 w-px bg-slate-300" aria-hidden="true"></span>
+          <img src="./skrg.png" alt="Logo Sekolah Kebangsaan Ranggu" class="logo-cutout school" />
         </div>
         <div>
           <div class="flex items-center gap-1.5">
-            <h1 class="text-xs sm:text-sm md:text-base font-bold text-[var(--foreground)]">SEKOLAH KEBANGSAAN RANGGU</h1>
+            <h1 class="school-title text-xs sm:text-sm md:text-base font-extrabold tracking-tight text-[var(--foreground)]">SEKOLAH KEBANGSAAN RANGGU</h1>
             <span id="standaloneBadge" class="hidden px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">PWA</span>
           </div>
-          <p id="topSubtitle" class="text-[11px] text-[var(--muted-foreground)]">Peti Surat 842, 91008 Tawau • Sistem e-Sijil & E-mel Automatik</p>
+          <p id="topSubtitle" class="hidden sm:block text-[11px] text-[var(--muted-foreground)]">Peti Surat 842, 91008 Tawau • Sistem e-Sijil & E-mel Automatik</p>
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div class="header-actions flex items-center gap-2">
+        <div class="live-clock rounded-xl px-3 py-1.5 text-right" aria-label="Masa semasa di Tawau" aria-live="off">
+          <p id="liveClockTime" class="live-clock-time text-xs font-black tabular-nums text-blue-900">--:--:--</p>
+          <p id="liveClockDate" class="live-clock-date text-[9px] font-semibold text-slate-500">Memuatkan masa…</p>
+        </div>
         <!-- Email Server Setup Button -->
         <button id="btnEmailSetupTop" onclick="openEmailSetupModal()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 flex items-center gap-1">
-          <span>📧 Tetapan E-mel Automatik</span>
+          <span>📧 <span class="button-label">Tetapan E-mel</span></span>
         </button>
         <!-- Install PWA Button -->
         <button id="btnInstallPwa" onclick="triggerInstallApp()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 shadow-sm hover:opacity-90 flex items-center gap-1">
-          <span>📲 Simpan App</span>
+          <span>📲 <span class="button-label">Simpan App</span></span>
         </button>
         <!-- Back to Admin List Button -->
         <button id="btnBackToAdmin" onclick="exitQrScanView()" class="hidden px-3 py-1.5 rounded-xl text-xs font-semibold bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--border)]">
@@ -159,7 +280,7 @@
     </div>
   </header>
 
-  <main class="max-w-5xl mx-auto p-4 md:p-6 space-y-6">
+  <main id="mainContent" class="max-w-6xl mx-auto p-3 sm:p-4 md:p-6 space-y-6">
 
     <!-- PWA Install Guide Modal for iPhone / Android -->
     <div id="installHelpModal" class="hidden bg-blue-950/90 border-2 border-blue-500/50 rounded-2xl p-4 space-y-3">
@@ -186,11 +307,40 @@
     <!-- ===================================================================== -->
     <div id="viewAdminApp" class="space-y-6">
 
+      <!-- Ringkasan operasi -->
+      <section class="hero-panel app-card rounded-3xl p-5 sm:p-7 text-white" aria-labelledby="dashboardTitle">
+        <div class="relative z-10 grid gap-5 lg:grid-cols-[1.35fr_.9fr] lg:items-end">
+          <div class="space-y-3">
+            <span class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[.16em] text-blue-100">
+              <span class="h-2 w-2 rounded-full bg-emerald-400"></span> Pusat Pengurusan e-Sijil
+            </span>
+            <div>
+              <h2 id="dashboardTitle" class="text-2xl sm:text-3xl font-black tracking-tight">Urus sijil dengan lebih pantas.</h2>
+              <p class="mt-2 max-w-2xl text-sm leading-6 text-blue-100">Sediakan templat, jana kod QR dan semak rekod penerima dalam satu paparan yang mesra telefon dan komputer.</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-2 sm:gap-3" aria-label="Ringkasan rekod">
+            <div class="metric-card rounded-2xl p-3 sm:p-4">
+              <p class="text-[10px] sm:text-xs font-semibold text-blue-100">PROGRAM</p>
+              <p id="statPrograms" class="mt-1 text-xl sm:text-2xl font-black">0</p>
+            </div>
+            <div class="metric-card rounded-2xl p-3 sm:p-4">
+              <p class="text-[10px] sm:text-xs font-semibold text-blue-100">SIJIL</p>
+              <p id="statCertificates" class="mt-1 text-xl sm:text-2xl font-black">0</p>
+            </div>
+            <div class="metric-card rounded-2xl p-3 sm:p-4">
+              <p class="text-[10px] sm:text-xs font-semibold text-blue-100">E-MEL</p>
+              <p id="statEmail" class="mt-1 text-sm sm:text-base font-black">Belum aktif</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Banner Status Penghantaran E-mel Automatik -->
-      <div class="bg-blue-950/60 border border-blue-500/40 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div class="app-card bg-blue-950 border border-blue-500/40 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div class="space-y-1">
           <div class="flex items-center gap-2">
-            <span id="emailStatusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+            <span id="emailStatusDot" class="status-dot w-2.5 h-2.5 rounded-full bg-amber-400"></span>
             <h3 id="emailStatusTitle" class="text-xs sm:text-sm font-bold text-white">Status Penghantaran E-mel Automatik: Mod Muat Turun + Kongsi Pantas</h3>
           </div>
           <p id="emailStatusDesc" class="text-xs text-slate-300">
@@ -205,7 +355,7 @@
       <!-- Section 1: Create / Edit Certificate Record & Upload Certificate Image -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-5 space-y-4">
-          <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-md space-y-4">
+          <div class="app-card bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 space-y-4">
             <div class="flex items-center justify-between">
               <div>
                 <span class="text-xs font-bold uppercase tracking-wider text-blue-400">LANGKAH ADMIN</span>
@@ -217,13 +367,13 @@
             <div class="space-y-3">
               <div>
                 <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Nama / Tajuk Rekod Sijil (Program / Bengkel)</label>
-                <input id="certRecordTitle" type="text" value="SESI LITERASI DELIMa 3.0 TAHUN 2026" oninput="updateDraftCert()" class="w-full px-3 py-2.5 text-sm font-semibold rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+                <input id="certRecordTitle" type="text" value="SESI LITERASI DELIMa 3.0 TAHUN 2026" required maxlength="120" oninput="updateDraftCert()" class="w-full px-3 py-2.5 text-sm font-semibold rounded-xl bg-white border border-[var(--border)] text-[var(--foreground)]" />
               </div>
 
-              <div class="grid grid-cols-2 gap-3">
+              <div class="mobile-stack grid grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Awalan No. Siri Sijil</label>
-                  <input id="serialPrefix" type="text" value="SKR/842/2026/" oninput="updateDraftCert()" class="w-full px-3 py-2 text-xs font-mono rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+                  <input id="serialPrefix" type="text" value="SKR/842/2026/" required maxlength="40" oninput="updateDraftCert()" class="w-full px-3 py-2 text-xs font-mono rounded-xl bg-white border border-[var(--border)] text-[var(--foreground)]" />
                 </div>
                 <div>
                   <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Contoh No. Siri Pertama</label>
@@ -253,9 +403,9 @@
               </div>
 
               <!-- Custom Event Details Box (Shown when skrg_moden is selected) -->
-              <div id="customEventFields" class="hidden p-3 rounded-xl bg-blue-500/10 border border-blue-500/30 space-y-2">
+              <div id="customEventFields" class="hidden p-3 rounded-xl bg-blue-50 border border-blue-200 space-y-2">
                 <p class="text-[11px] font-bold text-blue-300 uppercase">Butiran Kursus / Bengkel Pada Sijil:</p>
-                <div class="grid grid-cols-3 gap-2">
+                <div class="mobile-stack grid grid-cols-3 gap-2">
                   <input id="certDateInput" type="text" value="16 Oktober 2026" placeholder="Tarikh" oninput="updateDraftCert()" class="px-2.5 py-1.5 text-xs rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
                   <input id="certTimeInput" type="text" value="2.30 Petang" placeholder="Masa" oninput="updateDraftCert()" class="px-2.5 py-1.5 text-xs rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
                   <input id="certVenueInput" type="text" value="SK Ranggu Tawau" placeholder="Tempat" oninput="updateDraftCert()" class="px-2.5 py-1.5 text-xs rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
@@ -263,19 +413,19 @@
               </div>
 
               <!-- Official Header & Cover Existing Name Toggles -->
-              <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-2">
-                <label class="flex items-center gap-2 text-xs font-semibold text-amber-300 cursor-pointer">
+              <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 space-y-2">
+                <label class="flex items-center gap-2 text-xs font-semibold text-amber-800 cursor-pointer">
                   <input id="showSchoolHeaderCheckbox" type="checkbox" checked onchange="updateDraftCert()" class="rounded" />
                   <span>🏫 Papar Logo KPM & SK Ranggu (Peti Surat 842, 91008 Tawau)</span>
                 </label>
-                <label class="flex items-center gap-2 text-xs font-semibold text-emerald-300 cursor-pointer">
+                <label class="flex items-center gap-2 text-xs font-semibold text-emerald-700 cursor-pointer">
                   <input id="coverOldNameCheckbox" type="checkbox" onchange="updateDraftCert()" class="rounded" />
                   <span>✨ Tutup Nama Asal Atas Gambar Sijil Dimuat Naik</span>
                 </label>
               </div>
 
               <!-- Font & Color Controls -->
-              <div class="grid grid-cols-2 gap-3 pt-2 border-t border-[var(--border)]">
+              <div class="mobile-stack grid grid-cols-2 gap-3 pt-2 border-t border-[var(--border)]">
                 <div>
                   <label class="block text-xs text-[var(--muted-foreground)] mb-1">Saiz Fon Nama (<span id="fontSizeVal">22</span>px)</label>
                   <input id="nameFontSize" type="range" min="14" max="44" value="22" oninput="updateDraftCert()" class="w-full" />
@@ -295,14 +445,14 @@
               <button type="button" onclick="saveNewCertificateRecord()" class="w-full py-3 px-4 rounded-xl text-sm font-bold bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-95 shadow-lg shadow-blue-600/30 transition-all">
                 💾 Simpan Rekod Sijil & Jana QR Unik
               </button>
-              <p id="saveRecordToast" class="text-xs font-semibold text-emerald-400 text-center hidden"></p>
+              <p id="saveRecordToast" class="text-xs font-semibold text-emerald-700 text-center hidden" role="status" aria-live="polite"></p>
             </div>
           </div>
         </div>
 
         <!-- Right Column: Interactive Certificate Position Canvas -->
         <div class="lg:col-span-7 space-y-4">
-          <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-md space-y-3">
+          <div class="app-card bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 space-y-3">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <h3 class="text-base font-bold text-[var(--foreground)]">Pratonton Sijil SK Ranggu & Kedudukan Nama</h3>
@@ -322,19 +472,31 @@
       </div>
 
       <!-- Section 2: List of Saved Certificate Units & Their Unique QR Codes -->
-      <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-md space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      <div class="app-card bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 space-y-4">
+        <div class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-4">
           <div>
             <h2 class="text-base font-bold text-[var(--foreground)]">2. Senarai Unit Sijil & Kod QR Unik Setiap Sijil</h2>
             <p class="text-xs text-[var(--muted-foreground)]">
               Setiap rekod sijil di bawah mempunyai <strong>Kod QR uniknya sendiri</strong>. Bila guru imbas QR mana-mana sijil, mereka akan nampak sijil tersebut berpusing-pusing dalam animasi 3D, masukkan Nama & E-mel, dan sijil terus dihantar ke e-mel serta dimuat turun!
             </p>
           </div>
+          <div class="grid grid-cols-2 sm:flex gap-2">
+            <label class="col-span-2 sm:col-auto">
+              <span class="sr-only">Cari program sijil</span>
+              <input id="unitSearch" type="search" placeholder="Cari program…" oninput="renderCertUnitsList()" class="w-full sm:w-48 px-3 py-2 rounded-xl bg-white border border-[var(--border)] text-xs text-[var(--foreground)]" />
+            </label>
+            <button type="button" onclick="exportBackup()" class="px-3 py-2 rounded-xl text-xs font-bold bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--border)]">⬇️ Sandaran</button>
+            <label class="cursor-pointer px-3 py-2 rounded-xl text-center text-xs font-bold bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--border)]">
+              ⬆️ Pulihkan
+              <input id="backupUpload" type="file" accept="application/json,.json" onchange="importBackup(event)" class="hidden" />
+            </label>
+          </div>
         </div>
 
         <div id="certUnitsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <!-- Populated dynamically by JS -->
         </div>
+        <p class="rounded-xl border border-blue-200 bg-blue-50 p-3 text-[11px] leading-5 text-blue-900">🔒 Rekod penerima disimpan pada pelayar peranti ini. Gunakan <strong>Sandaran</strong> secara berkala sebelum menukar telefon atau mengosongkan data pelayar.</p>
       </div>
     </div>
 
@@ -399,7 +561,10 @@
               id="inputTeacherName"
               type="text"
               required
-              placeholder="Contoh: MOHAMMAD FIKREY BIN ABDUL GAPAR"
+              minlength="3"
+              maxlength="120"
+              autocomplete="name"
+              placeholder="Contoh: NAMA PENUH GURU"
               oninput="onTeacherTypeName(this.value)"
               class="w-full px-4 py-3 text-center text-base font-bold rounded-xl bg-[var(--background)] border-2 border-[var(--primary)] text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:ring-4 focus:ring-blue-500/30"
             />
@@ -413,6 +578,9 @@
               id="inputTeacherEmail"
               type="email"
               required
+              maxlength="160"
+              autocomplete="email"
+              inputmode="email"
               placeholder="Contoh: cikgu@moe-dl.edu.my / @gmail.com"
               class="w-full px-4 py-3 text-center text-sm font-medium rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:border-blue-400"
             />
@@ -486,21 +654,21 @@
       <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl max-w-2xl w-full p-6 space-y-4 text-left shadow-2xl my-8">
         <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
           <div>
-            <span class="text-xs font-bold uppercase text-emerald-400">PENGHANTARAN TERUS KE INBOX GURU</span>
+            <span class="text-xs font-bold uppercase text-emerald-700">PENGHANTARAN TERUS KE INBOX GURU</span>
             <h3 class="text-base font-bold text-[var(--foreground)]">📧 Tetapan Hantar E-mel Automatik (Google Apps Script)</h3>
           </div>
           <button onclick="closeEmailSetupModal()" class="text-xs px-2.5 py-1 rounded-lg bg-[var(--secondary)] text-[var(--foreground)]">✕ Tutup</button>
         </div>
 
-        <div class="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-slate-200 space-y-1">
-          <p class="font-bold text-amber-300">Kenapa guru belum terima sijil dalam Inbox e-mel sebelum ini?</p>
+        <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-slate-700 space-y-1">
+          <p class="font-bold text-amber-800">Kenapa guru belum terima sijil dalam Inbox e-mel sebelum ini?</p>
           <p>
             Laman web GitHub Pages tidak mempunyai pelayan e-mel (SMTP) sendiri secara lalai. Untuk membolehkan sistem menghantar fail gambar sijil terus ke dalam <strong>Inbox Gmail / DELIMa (@moe-dl.edu.my)</strong> secara automatik, anda hanya perlu menampal kod pendek di bawah ke dalam akaun Google anda sekali sahaja (100% Percuma).
           </p>
         </div>
 
-        <div class="space-y-2 text-xs text-slate-300">
-          <p class="font-bold text-white">Langkah Mudah (Hanya Buat Sekali Sahaja — 2 Minit):</p>
+        <div class="space-y-2 text-xs text-slate-700">
+          <p class="font-bold text-slate-900">Langkah Mudah (Hanya Buat Sekali Sahaja — 2 Minit):</p>
           <ol class="list-decimal list-inside space-y-1">
             <li>Buka <a href="https://script.google.com/home/start" target="_blank" class="text-blue-400 underline font-semibold">script.google.com</a> dan klik <strong>"New Project" (Projek Baharu)</strong>.</li>
             <li>Padam kod asal, kemudian <strong>Salin & Tampal (Copy & Paste)</strong> kod di bawah:</li>
@@ -534,7 +702,7 @@
         </div>
 
         <div class="space-y-2 pt-2 border-t border-[var(--border)]">
-          <label class="block text-xs font-bold text-white">URL Web App Google Apps Script Anda:</label>
+          <label class="block text-xs font-bold text-slate-900">URL Web App Google Apps Script Anda:</label>
           <input
             id="inputGasWebhookUrl"
             type="url"
@@ -551,9 +719,33 @@
       </div>
     </div>
 
+    <div id="appToast" class="hidden fixed bottom-5 left-1/2 z-[80] max-w-[calc(100%-2rem)] -translate-x-1/2 rounded-xl border px-4 py-3 text-sm font-bold shadow-2xl" role="status" aria-live="polite"></div>
+
   </main>
 
   <script>
+    // Jam masa nyata Tawau / Sabah (UTC+8)
+    const clockTimeFormatter = new Intl.DateTimeFormat('ms-MY', {
+      timeZone: 'Asia/Kuching', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+    });
+    const clockDateFormatter = new Intl.DateTimeFormat('ms-MY', {
+      timeZone: 'Asia/Kuching', weekday: 'short', day: '2-digit', month: 'short', year: 'numeric'
+    });
+
+    function updateLiveClock() {
+      const now = new Date();
+      const timeEl = document.getElementById('liveClockTime');
+      const dateEl = document.getElementById('liveClockDate');
+      if (timeEl) timeEl.textContent = clockTimeFormatter.format(now);
+      if (dateEl) dateEl.textContent = clockDateFormatter.format(now);
+    }
+
+    updateLiveClock();
+    const liveClockTimer = window.setInterval(updateLiveClock, 1000);
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) updateLiveClock();
+    });
+
     // Register Service Worker for PWA
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -624,24 +816,72 @@
           serial: { id: 'serial', label: 'No. Siri Sijil', x: 585, y: 18, w: 220, h: 26 },
           name: { id: 'name', label: 'Nama Guru', x: 360, y: 347, w: 415, h: 48 }
         },
-        recipients: [
-          { seqNum: 1, serialNo: 'SKR/842/2026/0001', name: 'MOHAMMAD FIKREY BIN ABDUL GAPAR', email: 'fikrey@moe-dl.edu.my', time: '16 Okt 2026, 2:30 PTG' }
-        ]
+        recipients: []
       }
     ];
 
+    const STORAGE_KEY = 'esijil_units_v7';
+
+    function cleanText(value, max = 160) {
+      return String(value ?? '').replace(/[\u0000-\u001F\u007F]/g, ' ').trim().slice(0, max);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>'"]/g, (char) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      })[char]);
+    }
+
+    function safeUnit(unit) {
+      if (!unit || typeof unit !== 'object') return null;
+      const safeId = cleanText(unit.id, 80).replace(/[^a-zA-Z0-9_-]/g, '') || `sijil-${Date.now().toString(36)}`;
+      const safePreset = ['delima', 'skrg_moden', 'gold', 'blue', 'emerald'].includes(unit.preset) ? unit.preset : 'gold';
+      const canvasW = Math.min(1600, Math.max(320, Number(unit.canvasW) || 728));
+      const canvasH = Math.min(2000, Math.max(320, Number(unit.canvasH) || 1024));
+      const elements = unit.elements || {};
+      return {
+        ...unit,
+        id: safeId,
+        title: cleanText(unit.title || 'SIJIL PROGRAM SEKOLAH', 120),
+        serialPrefix: cleanText(unit.serialPrefix || 'SKR/842/2026/', 40),
+        preset: safePreset,
+        canvasW,
+        canvasH,
+        customBgDataUrl: /^data:image\/(png|jpeg|webp);base64,/i.test(unit.customBgDataUrl || '') ? unit.customBgDataUrl : null,
+        eventDate: cleanText(unit.eventDate, 60),
+        eventTime: cleanText(unit.eventTime, 40),
+        eventVenue: cleanText(unit.eventVenue, 80),
+        textColor: /^#[0-9a-f]{6}$/i.test(unit.textColor || '') ? unit.textColor : '#0f2952',
+        nameFontSize: Math.min(60, Math.max(12, Number(unit.nameFontSize) || 22)),
+        elements: {
+          serial: { id: 'serial', label: 'No. Siri Sijil', x: Number(elements.serial?.x) || 585, y: Number(elements.serial?.y) || 18, w: 220, h: 26 },
+          name: { id: 'name', label: 'Nama Guru', x: Number(elements.name?.x) || 360, y: Number(elements.name?.y) || 347, w: Number(elements.name?.w) || 415, h: 48 }
+        },
+        recipients: Array.isArray(unit.recipients) ? unit.recipients.slice(0, 10000).map((r, index) => ({
+          seqNum: Number(r.seqNum) || index + 1,
+          serialNo: cleanText(r.serialNo, 80),
+          name: cleanText(r.name, 120),
+          email: cleanText(r.email, 160),
+          time: cleanText(r.time, 80)
+        })).filter((r) => r.email.toLowerCase() !== 'fikrey@moe-dl.edu.my') : []
+      };
+    }
+
     function loadCertUnits() {
       try {
-        const saved = JSON.parse(localStorage.getItem('esijil_units_v6') || 'null');
-        if (Array.isArray(saved) && saved.length > 0) return saved;
+        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('esijil_units_v6');
+        const saved = JSON.parse(raw || 'null');
+        if (Array.isArray(saved) && saved.length > 0) return saved.map(safeUnit).filter(Boolean);
       } catch (e) {}
-      return defaultCertUnits;
+      return defaultCertUnits.map(safeUnit);
     }
 
     function saveCertUnits() {
       try {
-        localStorage.setItem('esijil_units_v6', JSON.stringify(state.certUnits));
-      } catch (e) {}
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.certUnits));
+      } catch (e) {
+        showToast('Ruang simpanan pelayar penuh. Buat sandaran dan padam templat imej besar yang tidak digunakan.', 'error');
+      }
     }
 
     const state = {
@@ -674,13 +914,32 @@
       activeScanUnit: null,
       activeScanBgImg: null,
       issuedSerialForSession: null,
-      spinPaused: false
+      spinPaused: false,
+      publicScanMode: false
     };
 
     const adminCanvas = document.getElementById('adminCertCanvas');
     const adminCtx = adminCanvas.getContext('2d');
     const teacherCanvas = document.getElementById('teacherCertCanvas');
     const teacherCtx = teacherCanvas.getContext('2d');
+
+    let toastTimer = null;
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('appToast');
+      if (!toast) return;
+      toast.textContent = message;
+      toast.className = `fixed bottom-5 left-1/2 z-[80] max-w-[calc(100%-2rem)] -translate-x-1/2 rounded-xl border px-4 py-3 text-sm font-bold shadow-2xl ${type === 'error' ? 'border-red-300 bg-red-50 text-red-800' : 'border-emerald-300 bg-emerald-50 text-emerald-800'}`;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.add('hidden'), 4200);
+    }
+
+    function updateDashboardMetrics() {
+      const programs = state.certUnits.length;
+      const certificates = state.certUnits.reduce((total, unit) => total + (unit.recipients || []).length, 0);
+      document.getElementById('statPrograms').textContent = programs.toLocaleString('ms-MY');
+      document.getElementById('statCertificates').textContent = certificates.toLocaleString('ms-MY');
+      document.getElementById('statEmail').textContent = state.gasWebhookUrl ? 'Aktif' : 'Belum aktif';
+    }
 
     function updateEmailStatusBanner() {
       const dot = document.getElementById('emailStatusDot');
@@ -695,6 +954,7 @@
         title.textContent = 'Status Penghantaran E-mel Automatik: Mod Muat Turun Automatik + Kongsi E-mel';
         desc.textContent = 'Klik "Aktifkan Hantar E-mel Automatik" di sebelah untuk menyambungkan Google Apps Script supaya sijil masuk terus ke Inbox e-mel guru tanpa perlu tekan apa-apa lagi.';
       }
+      updateDashboardMetrics();
     }
 
     function openEmailSetupModal() {
@@ -729,6 +989,11 @@
 
     function saveGasWebhookUrl() {
       const val = document.getElementById('inputGasWebhookUrl').value.trim();
+      if (val && !/^https:\/\/script\.google\.com\/macros\/s\/[a-zA-Z0-9_-]+\/exec$/.test(val)) {
+        showToast('URL tidak sah. Gunakan URL Web App Google Apps Script yang berakhir dengan /exec.', 'error');
+        document.getElementById('inputGasWebhookUrl').focus();
+        return;
+      }
       state.gasWebhookUrl = val;
       try {
         localStorage.setItem('esijil_gas_url', val);
@@ -736,7 +1001,7 @@
       updateEmailStatusBanner();
       renderCertUnitsList();
       const toast = document.getElementById('gasSaveToast');
-      toast.textContent = '✅ Berjaya disimpan! Semua QR Sijil kini disertakan dengan penghantaran e-mel automatik.';
+      toast.textContent = val ? '✅ Tetapan e-mel berjaya disimpan.' : '✅ Tetapan e-mel telah dinyahaktifkan.';
       toast.classList.remove('hidden');
       setTimeout(() => {
         toast.classList.add('hidden');
@@ -1022,7 +1287,7 @@
 
       drawWrappedName(
         ctx,
-        nameText || 'MOHAMMAD FIKREY BIN ABDUL GAPAR',
+        nameText || 'NAMA PENUH GURU',
         el.name.x,
         el.name.y,
         el.name.w || 415,
@@ -1064,7 +1329,7 @@
 
       adminCtx.clearRect(0, 0, adminCanvas.width, adminCanvas.height);
       drawCertBg(adminCtx, adminCanvas.width, adminCanvas.height, d, d.customBgImage);
-      drawCertOverlay(adminCtx, d, 'MOHAMMAD FIKREY BIN ABDUL GAPAR', sampleSerial, showGuides);
+      drawCertOverlay(adminCtx, d, 'NAMA PENUH GURU', sampleSerial, showGuides);
     }
 
     function updateDraftCert() {
@@ -1209,11 +1474,22 @@
     // --- SAVE NEW CERTIFICATE RECORD & GENERATE ITS UNIQUE QR ---
     function saveNewCertificateRecord() {
       const d = state.draft;
+      const title = cleanText(d.title, 120);
+      const serialPrefix = cleanText(d.serialPrefix, 40);
+      if (!title || !serialPrefix) {
+        showToast('Lengkapkan tajuk program dan awalan nombor siri dahulu.', 'error');
+        (!title ? document.getElementById('certRecordTitle') : document.getElementById('serialPrefix')).focus();
+        return;
+      }
+      if (state.certUnits.some((unit) => unit.title.toLowerCase() === title.toLowerCase() && unit.serialPrefix === serialPrefix)) {
+        showToast('Rekod dengan tajuk dan awalan nombor siri yang sama sudah wujud.', 'error');
+        return;
+      }
       const newId = 'sijil-' + Date.now().toString(36);
       const newUnit = {
         id: newId,
-        title: d.title.trim() || 'SIJIL PROGRAM SEKOLAH',
-        serialPrefix: d.serialPrefix.trim() || 'SKR/842/2026/',
+        title,
+        serialPrefix,
         preset: d.preset,
         canvasW: d.canvasW,
         canvasH: d.canvasH,
@@ -1232,6 +1508,7 @@
       state.certUnits.unshift(newUnit);
       saveCertUnits();
       renderCertUnitsList();
+      updateDashboardMetrics();
 
       const toast = document.getElementById('saveRecordToast');
       toast.textContent = `✅ Rekod "${newUnit.title}" disimpan & QR Unik telah dijana di bawah!`;
@@ -1276,41 +1553,85 @@
     function renderCertUnitsList() {
       const grid = document.getElementById('certUnitsGrid');
       grid.innerHTML = '';
+      const query = cleanText(document.getElementById('unitSearch')?.value, 100).toLowerCase();
+      const units = state.certUnits.filter((unit) => !query || unit.title.toLowerCase().includes(query) || unit.serialPrefix.toLowerCase().includes(query));
 
-      state.certUnits.forEach((unit) => {
+      if (units.length === 0) {
+        grid.innerHTML = `<div class="md:col-span-2 rounded-2xl border border-dashed border-[var(--border)] bg-slate-50 p-8 text-center"><p class="text-sm font-bold text-slate-700">Tiada rekod ditemui</p><p class="mt-1 text-xs text-slate-500">Cuba kata carian lain atau cipta rekod sijil baharu.</p></div>`;
+        updateDashboardMetrics();
+        return;
+      }
+
+      units.forEach((unit) => {
         const qrUrl = buildUnitQrUrl(unit);
         const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrUrl)}`;
         const nextSerial = formatSerial(unit.serialPrefix, getUnitNextSeq(unit));
         const count = (unit.recipients || []).length;
+        const safeId = escapeHtml(unit.id);
 
         const card = document.createElement('div');
-        card.className = 'bg-[var(--background)] border border-[var(--border)] rounded-xl p-4 flex flex-col sm:flex-row items-center gap-4';
+        card.className = 'rounded-2xl border border-[var(--border)] bg-slate-50 p-4 flex flex-col sm:flex-row items-center gap-4 hover:border-blue-300 hover:shadow-md';
         card.innerHTML = `
-          <div class="bg-white p-2 rounded-xl border border-[var(--border)] shrink-0 cursor-pointer" onclick="openQrModal('${unit.id}')">
-            <img src="${qrImgSrc}" alt="QR ${unit.title}" class="w-24 h-24 block" />
-          </div>
-          <div class="flex-1 space-y-1.5 text-center sm:text-left">
+          <button type="button" data-action="qr" data-id="${safeId}" class="bg-white p-2 rounded-xl border border-[var(--border)] shrink-0" aria-label="Papar QR untuk ${escapeHtml(unit.title)}">
+            <img src="${qrImgSrc}" alt="Kod QR ${escapeHtml(unit.title)}" class="w-24 h-24 block" loading="lazy" />
+          </button>
+          <div class="flex-1 space-y-1.5 text-center sm:text-left min-w-0">
             <div class="flex flex-wrap items-center justify-center sm:justify-start gap-1.5">
-              <span class="px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-amber-500/15 text-amber-300">
-                Giliran: ${nextSerial}
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-amber-100 text-amber-800">
+                Giliran: ${escapeHtml(nextSerial)}
               </span>
-              <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-500/15 text-emerald-300">
+              <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-100 text-emerald-800">
                 ${count} Sijil Dijana
               </span>
             </div>
-            <h3 class="text-sm font-bold text-[var(--foreground)]">${unit.title}</h3>
+            <h3 class="text-sm font-bold text-[var(--foreground)] break-words">${escapeHtml(unit.title)}</h3>
             <div class="flex flex-wrap gap-2 pt-1 justify-center sm:justify-start">
-              <button onclick="openQrModal('${unit.id}')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[var(--primary)] text-[var(--primary-foreground)]">
+              <button type="button" data-action="qr" data-id="${safeId}" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[var(--primary)] text-[var(--primary-foreground)]">
                 📱 Papar QR & Rekod
               </button>
-              <button onclick="enterTeacherQrScanMode('${unit.id}')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--border)]">
+              <button type="button" data-action="preview" data-id="${safeId}" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-[var(--secondary-foreground)] border border-[var(--border)]">
                 👁️ Uji Scan QR Ini
               </button>
+              <button type="button" data-action="duplicate" data-id="${safeId}" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-200" aria-label="Duplikasi rekod">⧉</button>
+              <button type="button" data-action="delete" data-id="${safeId}" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-red-700 hover:bg-red-50" aria-label="Padam rekod">🗑️</button>
             </div>
           </div>
         `;
         grid.appendChild(card);
       });
+      updateDashboardMetrics();
+    }
+
+    document.getElementById('certUnitsGrid').addEventListener('click', (event) => {
+      const button = event.target.closest('[data-action]');
+      if (!button) return;
+      const { action, id } = button.dataset;
+      if (action === 'qr') openQrModal(id);
+      if (action === 'preview') enterTeacherQrScanMode(id);
+      if (action === 'duplicate') duplicateUnit(id);
+      if (action === 'delete') deleteUnit(id);
+    });
+
+    function duplicateUnit(unitId) {
+      const unit = state.certUnits.find((item) => item.id === unitId);
+      if (!unit) return;
+      const copy = safeUnit(JSON.parse(JSON.stringify(unit)));
+      copy.id = `sijil-${Date.now().toString(36)}`;
+      copy.title = `${unit.title} (Salinan)`;
+      copy.recipients = [];
+      state.certUnits.unshift(copy);
+      saveCertUnits();
+      renderCertUnitsList();
+      showToast('Salinan rekod berjaya dicipta.');
+    }
+
+    function deleteUnit(unitId) {
+      const unit = state.certUnits.find((item) => item.id === unitId);
+      if (!unit || !window.confirm(`Padam rekod “${unit.title}” dan semua rekod penerimanya? Tindakan ini tidak boleh dibatalkan.`)) return;
+      state.certUnits = state.certUnits.filter((item) => item.id !== unitId);
+      saveCertUnits();
+      renderCertUnitsList();
+      showToast('Rekod sijil telah dipadam.');
     }
 
     function openQrModal(unitId) {
@@ -1341,11 +1662,11 @@
         listEl.innerHTML = recs.map(r => `
           <div class="p-2.5 flex items-center justify-between gap-2">
             <div>
-              <span class="font-mono font-bold text-amber-300 mr-2">${r.serialNo}</span>
-              <span class="font-semibold text-[var(--foreground)]">${r.name}</span>
-              ${r.email ? `<span class="block text-[11px] text-slate-400">📧 ${r.email}</span>` : ''}
+              <span class="font-mono font-bold text-amber-700 mr-2">${escapeHtml(r.serialNo)}</span>
+              <span class="font-semibold text-[var(--foreground)]">${escapeHtml(r.name)}</span>
+              ${r.email ? `<span class="block text-[11px] text-slate-500">📧 ${escapeHtml(r.email)}</span>` : ''}
             </div>
-            <span class="text-[var(--muted-foreground)] shrink-0">${r.time}</span>
+            <span class="text-[var(--muted-foreground)] shrink-0">${escapeHtml(r.time)}</span>
           </div>
         `).join('');
       }
@@ -1357,28 +1678,82 @@
       document.getElementById('qrModal').classList.add('hidden');
     }
 
+    function csvCell(value) {
+      let text = String(value ?? '').replace(/"/g, '""');
+      if (/^[=+\-@]/.test(text)) text = `'${text}`;
+      return `"${text}"`;
+    }
+
     function exportUnitCsv(unit) {
       const headers = ['Urutan', 'No Siri Sijil', 'Nama Guru', 'E-mel', 'Masa Dijana'];
       const rows = (unit.recipients || []).map((r, i) => [
         r.seqNum || (i + 1),
-        `"${r.serialNo}"`,
-        `"${r.name}"`,
-        `"${r.email || ''}"`,
-        `"${r.time}"`
+        csvCell(r.serialNo),
+        csvCell(r.name),
+        csvCell(r.email),
+        csvCell(r.time)
       ]);
-      const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const csv = ['\uFEFF' + headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = `rekod-${unit.id}.csv`;
       a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    }
+
+    function exportBackup() {
+      const payload = {
+        app: 'e-Sijil SK Ranggu',
+        version: 7,
+        exportedAt: new Date().toISOString(),
+        units: state.certUnits
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `sandaran-e-sijil-${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+      showToast('Fail sandaran telah dimuat turun.');
+    }
+
+    function importBackup(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      if (file.size > 12 * 1024 * 1024) {
+        showToast('Fail sandaran terlalu besar. Had maksimum ialah 12 MB.', 'error');
+        event.target.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(reader.result);
+          const units = Array.isArray(parsed) ? parsed : parsed.units;
+          if (!Array.isArray(units) || units.length === 0) throw new Error('invalid');
+          const restored = units.map(safeUnit).filter(Boolean);
+          if (!restored.length) throw new Error('empty');
+          if (!window.confirm(`Pulihkan ${restored.length} rekod daripada sandaran ini? Data semasa akan digantikan.`)) return;
+          state.certUnits = restored;
+          saveCertUnits();
+          renderCertUnitsList();
+          showToast(`${restored.length} rekod berjaya dipulihkan.`);
+        } catch (error) {
+          showToast('Fail sandaran tidak sah atau telah rosak.', 'error');
+        } finally {
+          event.target.value = '';
+        }
+      };
+      reader.onerror = () => showToast('Fail sandaran tidak dapat dibaca.', 'error');
+      reader.readAsText(file);
     }
 
     // --- TEACHER QR SCAN VIEW FOR A SPECIFIC CERTIFICATE UNIT ---
     function enterTeacherQrScanMode(unitId, urlFallbackUnit = null) {
       let unit = state.certUnits.find(u => u.id === unitId);
       if (!unit && urlFallbackUnit) {
-        unit = urlFallbackUnit;
+        unit = safeUnit(urlFallbackUnit);
         state.certUnits.unshift(unit);
       }
       if (!unit) unit = state.certUnits[0];
@@ -1391,7 +1766,7 @@
 
       document.getElementById('viewAdminApp').classList.add('hidden');
       document.getElementById('viewTeacherScan').classList.remove('hidden');
-      document.getElementById('btnBackToAdmin').classList.remove('hidden');
+      document.getElementById('btnBackToAdmin').classList.toggle('hidden', state.publicScanMode);
 
       document.getElementById('scanCertUnitTitle').textContent = unit.title;
       document.getElementById('backCertTitle').textContent = unit.title;
@@ -1463,9 +1838,13 @@
       e.preventDefault();
       const unit = state.activeScanUnit;
       if (!unit) return;
-      const name = document.getElementById('inputTeacherName').value.trim().toUpperCase();
-      const email = document.getElementById('inputTeacherEmail').value.trim();
-      if (!name || !email) return;
+      const nameInput = document.getElementById('inputTeacherName');
+      const emailInput = document.getElementById('inputTeacherEmail');
+      const name = cleanText(nameInput.value, 120).toUpperCase();
+      const email = cleanText(emailInput.value, 160).toLowerCase();
+      if (!nameInput.reportValidity() || !emailInput.reportValidity() || !name || !email) return;
+      nameInput.value = name;
+      emailInput.value = email;
 
       const btn = document.getElementById('btnSubmitTeacher');
       btn.disabled = true;
@@ -1503,7 +1882,7 @@
       downloadTeacherCertAgain();
 
       // 2. If Google Apps Script Webhook URL is configured, automatically email the PNG attachment to the teacher's Inbox!
-      let emailSentViaServer = false;
+      let emailRequestSubmitted = false;
       if (state.gasWebhookUrl && state.gasWebhookUrl.startsWith('https://script.google.com/')) {
         try {
           await fetch(state.gasWebhookUrl, {
@@ -1519,8 +1898,10 @@
               imageBase64
             })
           });
-          emailSentViaServer = true;
-        } catch (err) {}
+          emailRequestSubmitted = true;
+        } catch (err) {
+          showToast('Sijil berjaya dijana, tetapi permintaan e-mel tidak dapat dihantar. Gunakan butang Kongsi.', 'error');
+        }
       }
 
       btn.disabled = false;
@@ -1532,8 +1913,8 @@
       document.getElementById('teacherSuccessDesc').textContent = `Tahniah ${name}. Sijil rasmi SK Ranggu anda dengan No. Siri ${issuedSerial} telah dimuat turun ke peranti anda.`;
 
       const noteEl = document.getElementById('teacherEmailDeliveryNote');
-      if (emailSentViaServer) {
-        noteEl.textContent = `📩 Salinan sijil juga telah dihantar secara automatik ke Inbox e-mel: ${email} (Sila semak Inbox / Spam).`;
+      if (emailRequestSubmitted) {
+        noteEl.textContent = `📩 Permintaan penghantaran telah dihantar ke pelayan untuk ${email}. Sila semak Inbox / Spam sebentar lagi.`;
       } else {
         noteEl.textContent = `💡 Fail sijil telah disimpan ke dalam telefon/komputer anda. Anda juga boleh tekan "Hantar / Kongsi Ke E-mel & WhatsApp" di bawah untuk menghantar terus fail sijil ke ${email}.`;
       }
@@ -1590,11 +1971,14 @@
       }
 
       updateEmailStatusBanner();
+      saveCertUnits();
       renderAdminCanvas();
       renderCertUnitsList();
 
       const scannedCertId = params.get('certId');
       if (scannedCertId) {
+        state.publicScanMode = true;
+        document.getElementById('btnEmailSetupTop').classList.add('hidden');
         const fallbackUnit = {
           id: scannedCertId,
           title: params.get('title') || 'SESI LITERASI DELIMa 3.0 TAHUN 2026',
