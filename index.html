@@ -126,14 +126,9 @@
         <span id="headerSubtitle" class="text-xs text-[var(--muted-foreground)]">Portal Penjanaan Sijil Automatik</span>
       </div>
 
-      <!-- Admin Switch / Lock Button -->
+      <!-- Clean Teacher Header Badge -->
       <div class="flex items-center gap-2">
-        <button id="btnViewTeacher" onclick="setViewMode('teacher')" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--secondary)] text-[var(--secondary-foreground)] hover:opacity-90">
-          👁️ Lihat Paparan QR Guru
-        </button>
-        <button id="btnAdminToggle" onclick="handleAdminAccess()" class="px-3 py-1.5 rounded-lg text-xs font-medium border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">
-          🔒 Admin (Cikgu Momon)
-        </button>
+        <span class="px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-500/15 text-emerald-400">Imbasan QR Rasmi</span>
       </div>
     </div>
 
@@ -460,22 +455,13 @@
 
     // --- SWITCH BETWEEN TEACHER QR VIEW AND ADMIN VIEW ---
     function setViewMode(mode) {
-      state.viewMode = mode;
-      const isTeacher = mode === 'teacher';
-      document.getElementById('viewTeacher').classList.toggle('hidden', !isTeacher);
-      document.getElementById('viewAdmin').classList.toggle('hidden', isTeacher);
-      document.getElementById('btnViewTeacher').classList.toggle('hidden', isTeacher);
-      document.getElementById('btnAdminToggle').textContent = isTeacher
-        ? '🔒 Admin (Cikgu Momon)'
-        : '✅ Mod Admin Aktif';
-
-      if (isTeacher) {
-        renderTeacherSpinningCanvas();
-      } else {
-        renderAdminCanvas();
-        renderRecordsTable();
-        drawQRCode();
+      if (mode === 'admin') {
+        window.location.href = './admin.html';
+        return;
       }
+      state.viewMode = 'teacher';
+      document.getElementById('viewTeacher').classList.remove('hidden');
+      renderTeacherSpinningCanvas();
     }
 
     function handleAdminAccess() {
