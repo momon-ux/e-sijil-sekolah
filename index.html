@@ -96,6 +96,50 @@
       white-space: nowrap;
     }
 
+    .dashboard-shell {
+      display: grid;
+      grid-template-columns: 210px minmax(0, 1fr);
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    .dashboard-sidebar {
+      position: sticky;
+      top: 5.25rem;
+      padding: .75rem;
+      background: rgba(255,255,255,.96);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      box-shadow: 0 12px 32px rgba(39,64,102,.08);
+    }
+
+    .side-nav-button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      padding: .78rem .85rem;
+      border-radius: .8rem;
+      color: #52627a;
+      font-size: .78rem;
+      font-weight: 800;
+      text-align: left;
+    }
+
+    .side-nav-button:hover { background: #f1f5f9; color: #174ea6; }
+    .side-nav-button.active { background: #174ea6; color: #fff; box-shadow: 0 8px 18px rgba(23,78,166,.22); }
+    .side-nav-icon { width: 1.4rem; text-align: center; font-size: 1rem; }
+
+    .dashboard-panels { min-width: 0; }
+    .dashboard-panel[hidden] { display: none !important; }
+
+    .advanced-settings summary {
+      list-style: none;
+      cursor: pointer;
+    }
+    .advanced-settings summary::-webkit-details-marker { display: none; }
+    .advanced-settings[open] .advanced-chevron { transform: rotate(180deg); }
+
     .hero-panel {
       position: relative;
       overflow: hidden;
@@ -248,6 +292,24 @@
       .live-clock-time { font-size: .72rem !important; }
       .quick-actions { grid-template-columns: 1fr; }
       .quick-action-button { font-size: .72rem; padding-left: .75rem; padding-right: .75rem; }
+      .hero-panel { border-radius: 1.25rem !important; }
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-shell { grid-template-columns: 1fr; gap: .8rem; }
+      .dashboard-sidebar {
+        position: sticky;
+        top: 4.15rem;
+        z-index: 20;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: .4rem;
+        padding: .45rem;
+        border-radius: .9rem;
+      }
+      .dashboard-sidebar-title { display: none; }
+      .side-nav-button { justify-content: center; padding: .7rem .35rem; font-size: .68rem; gap: .3rem; text-align: center; }
+      .side-nav-icon { width: auto; font-size: .9rem; }
     }
   </style>
 </head>
@@ -342,8 +404,19 @@
         </div>
       </section>
 
-      <!-- Tindakan pantas dipisahkan daripada kepala laman supaya paparan kekal bersih -->
-      <section class="quick-actions app-card bg-white border border-[var(--border)] rounded-2xl p-4" aria-labelledby="quickActionsTitle">
+      <div class="dashboard-shell">
+        <aside class="dashboard-sidebar" aria-label="Navigasi panel pentadbir">
+          <p class="dashboard-sidebar-title px-3 pb-2 text-[10px] font-black uppercase tracking-[.18em] text-slate-400">Menu Utama</p>
+          <nav class="contents" aria-label="Bahagian sistem">
+            <button type="button" class="side-nav-button active" data-admin-panel="create" onclick="showAdminPanel('create')" aria-current="page"><span class="side-nav-icon">✦</span><span>Cipta Sijil</span></button>
+            <button type="button" class="side-nav-button" data-admin-panel="records" onclick="showAdminPanel('records')"><span class="side-nav-icon">▦</span><span>Rekod & QR</span></button>
+            <button type="button" class="side-nav-button" data-admin-panel="settings" onclick="showAdminPanel('settings')"><span class="side-nav-icon">⚙</span><span>Tetapan</span></button>
+          </nav>
+        </aside>
+
+        <div class="dashboard-panels">
+      <!-- Tetapan disembunyikan sehingga dipilih dari sidebar -->
+      <section id="panelSettings" class="dashboard-panel quick-actions app-card bg-white border border-[var(--border)] rounded-2xl p-4" aria-labelledby="quickActionsTitle" hidden>
         <div class="space-y-1 min-w-0">
           <div class="flex items-center gap-2">
             <span id="emailStatusDot" class="status-dot w-2.5 h-2.5 rounded-full bg-amber-400"></span>
@@ -359,7 +432,7 @@
       </section>
 
       <!-- Section 1: Create / Edit Certificate Record & Upload Certificate Image -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <section id="panelCreate" class="dashboard-panel grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-5 space-y-4">
           <div class="app-card bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 space-y-4">
             <div class="flex items-center justify-between">
@@ -389,6 +462,12 @@
                 </div>
               </div>
 
+              <details class="advanced-settings rounded-xl border border-[var(--border)] bg-slate-50">
+                <summary class="flex items-center justify-between gap-3 px-3.5 py-3 text-xs font-extrabold text-slate-700">
+                  <span>⚙ Tetapan lanjutan <span class="font-medium text-slate-400">(pilihan)</span></span>
+                  <span class="advanced-chevron text-slate-400 transition-transform">⌄</span>
+                </summary>
+                <div class="space-y-3 border-t border-[var(--border)] p-3.5">
               <!-- Upload Image Box -->
               <label class="block cursor-pointer p-3.5 rounded-xl border-2 border-dashed border-blue-500/60 bg-blue-500/10 hover:bg-blue-500/15 transition-colors text-center space-y-1">
                 <div class="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-lg font-black text-blue-700">+</div>
@@ -442,6 +521,8 @@
                   </div>
                 </div>
               </div>
+                </div>
+              </details>
 
               <!-- Save Certificate Record & Generate Unique QR Button -->
               <button type="button" onclick="saveNewCertificateRecord()" class="w-full py-3 px-4 rounded-xl text-sm font-bold bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-95 shadow-lg shadow-blue-600/30 transition-all">
@@ -471,10 +552,10 @@
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Section 2: List of Saved Certificate Units & Their Unique QR Codes -->
-      <div class="app-card bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 space-y-4">
+      <section id="panelRecords" class="dashboard-panel app-card bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 space-y-4" hidden>
         <div class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-4">
           <div>
             <h2 class="text-base font-bold text-[var(--foreground)]">2. Senarai Unit Sijil & Kod QR Unik Setiap Sijil</h2>
@@ -499,6 +580,8 @@
           <!-- Populated dynamically by JS -->
         </div>
         <p class="rounded-xl border border-blue-200 bg-blue-50 p-3 text-[11px] leading-5 text-blue-900">🔒 Rekod penerima disimpan pada pelayar peranti ini. Gunakan <strong>Sandaran</strong> secara berkala sebelum menukar telefon atau mengosongkan data pelayar.</p>
+      </section>
+        </div>
       </div>
     </div>
 
@@ -935,6 +1018,30 @@
       document.getElementById('statPrograms').textContent = programs.toLocaleString('ms-MY');
       document.getElementById('statCertificates').textContent = certificates.toLocaleString('ms-MY');
       document.getElementById('statEmail').textContent = state.gasWebhookUrl ? 'Aktif' : 'Belum aktif';
+    }
+
+    function showAdminPanel(panelName, remember = true) {
+      const panels = {
+        create: document.getElementById('panelCreate'),
+        records: document.getElementById('panelRecords'),
+        settings: document.getElementById('panelSettings')
+      };
+      const selected = panels[panelName] ? panelName : 'create';
+
+      Object.entries(panels).forEach(([name, panel]) => {
+        if (panel) panel.hidden = name !== selected;
+      });
+
+      document.querySelectorAll('[data-admin-panel]').forEach((button) => {
+        const active = button.dataset.adminPanel === selected;
+        button.classList.toggle('active', active);
+        if (active) button.setAttribute('aria-current', 'page');
+        else button.removeAttribute('aria-current');
+      });
+
+      if (remember) localStorage.setItem('esijil_admin_panel', selected);
+      if (selected === 'records') renderCertUnitsList();
+      if (selected === 'create') renderAdminCanvas();
     }
 
     function updateEmailStatusBanner() {
@@ -1907,6 +2014,7 @@
       saveCertUnits();
       renderAdminCanvas();
       renderCertUnitsList();
+      showAdminPanel(localStorage.getItem('esijil_admin_panel') || 'create', false);
 
       const scannedCertId = params.get('certId');
       if (scannedCertId) {
