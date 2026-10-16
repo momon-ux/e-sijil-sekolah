@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Sistem e-Sijil & QR Sekolah — SK Ranggu</title>
+  <title>Sistem e-Sijil & QR — SK Ranggu Tawau</title>
 
   <!-- PWA Manifest & Mobile App Meta Tags (Single Unified Link) -->
   <link rel="manifest" href="./manifest.json" />
   <meta name="theme-color" content="#2563eb" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="e-Sijil QR" />
+  <meta name="apple-mobile-web-app-title" content="e-Sijil SKRG" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="icon" type="image/png" href="./icon-192.png" />
 
@@ -129,13 +129,16 @@
   <header class="sticky top-0 z-30 bg-[var(--card)]/95 backdrop-blur border-b border-[var(--border)] px-4 py-3">
     <div class="max-w-5xl mx-auto flex items-center justify-between gap-2">
       <div class="flex items-center gap-2.5">
-        <img src="./icon-192.png" alt="Logo" class="w-9 h-9 rounded-xl border border-amber-400/40" />
+        <div class="flex items-center gap-1.5 bg-white/95 px-2 py-1 rounded-xl border border-amber-400/50 shadow-sm">
+          <img src="./logo-kpm.png" alt="Logo KPM" class="h-7 w-auto object-contain" />
+          <img src="./skrg.png" alt="Logo SK Ranggu" class="h-7 w-auto object-contain" />
+        </div>
         <div>
           <div class="flex items-center gap-1.5">
-            <h1 class="text-sm md:text-base font-bold text-[var(--foreground)]">Sistem e-Sijil & QR SK Ranggu</h1>
-            <span id="standaloneBadge" class="hidden px-1.5 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-300">PWA</span>
+            <h1 class="text-xs sm:text-sm md:text-base font-bold text-[var(--foreground)]">SEKOLAH KEBANGSAAN RANGGU</h1>
+            <span id="standaloneBadge" class="hidden px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">PWA</span>
           </div>
-          <p id="topSubtitle" class="text-xs text-[var(--muted-foreground)]">Pengurusan Rekod Sijil & QR Unik Setiap Sijil</p>
+          <p id="topSubtitle" class="text-[11px] text-[var(--muted-foreground)]">Peti Surat 842, 91008 Tawau • Sistem e-Sijil & QR Unik</p>
         </div>
       </div>
 
@@ -200,43 +203,55 @@
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Awalan No. Siri Sijil</label>
-                  <input id="serialPrefix" type="text" value="SKR/DELIMA/2026/" oninput="updateDraftCert()" class="w-full px-3 py-2 text-xs font-mono rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+                  <input id="serialPrefix" type="text" value="SKR/842/2026/" oninput="updateDraftCert()" class="w-full px-3 py-2 text-xs font-mono rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
                 </div>
                 <div>
                   <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Contoh No. Siri Pertama</label>
                   <div id="draftSerialPreview" class="px-3 py-2 text-xs font-mono font-bold rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
-                    SKR/DELIMA/2026/0001
+                    SKR/842/2026/0001
                   </div>
                 </div>
               </div>
 
               <!-- Upload Image Box -->
-              <label class="block cursor-pointer p-4 rounded-xl border-2 border-dashed border-blue-500/60 bg-blue-500/10 hover:bg-blue-500/15 transition-colors text-center space-y-1">
-                <div class="text-2xl">🖼️</div>
-                <div class="text-xs font-bold text-[var(--foreground)]">Klik Untuk Muat Naik Gambar Sijil Ini (PNG / JPG)</div>
-                <div class="text-xs text-[var(--muted-foreground)]">Sokong Sijil Tegak (Portrait) & Melintang (Landscape)</div>
+              <label class="block cursor-pointer p-3.5 rounded-xl border-2 border-dashed border-blue-500/60 bg-blue-500/10 hover:bg-blue-500/15 transition-colors text-center space-y-1">
+                <div class="text-xl">🖼️</div>
+                <div class="text-xs font-bold text-[var(--foreground)]">Klik Untuk Muat Naik Gambar Sijil Lain (PNG / JPG)</div>
+                <div class="text-[11px] text-[var(--muted-foreground)]">Atau gunakan Sijil Rasmi SK Ranggu & KPM di bawah</div>
                 <input id="certUpload" type="file" accept="image/*" onchange="handleCertUpload(event)" class="hidden" />
               </label>
 
-              <div class="flex items-center justify-between text-xs gap-2">
-                <span class="text-[var(--muted-foreground)] shrink-0">Atau guna templat:</span>
-                <select id="presetTemplate" onchange="changePresetTemplate(this.value)" class="w-full px-2.5 py-1.5 rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]">
-                  <option value="delima" selected>Sijil Literasi DELIMa 3.0 (Contoh Anda)</option>
-                  <option value="gold">Templat Emas Rasmi (Melintang)</option>
-                  <option value="blue">Templat Biru Korporat (Melintang)</option>
-                  <option value="emerald">Templat Hijau Akademik (Melintang)</option>
+              <div class="space-y-1 text-xs">
+                <span class="text-[var(--muted-foreground)]">Pilihan Templat Sijil Rasmi SK Ranggu & KPM:</span>
+                <select id="presetTemplate" onchange="changePresetTemplate(this.value)" class="w-full px-2.5 py-2 rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] font-medium">
+                  <option value="delima" selected>1. Sijil Moden 3D SK Ranggu & KPM (DELIMa 3.0)</option>
+                  <option value="skrg_moden">2. Sijil Moden 3D SK Ranggu & KPM (Sebarang Kursus/Bengkel)</option>
+                  <option value="gold">3. Sijil Emas Rasmi SK Ranggu & KPM (Melintang)</option>
+                  <option value="blue">4. Sijil Biru Korporat SK Ranggu & KPM (Melintang)</option>
+                  <option value="emerald">5. Sijil Hijau Akademik SK Ranggu & KPM (Melintang)</option>
                 </select>
               </div>
 
-              <!-- Cover Existing Name Box Toggle -->
-              <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-1">
+              <!-- Custom Event Details Box (Shown when skrg_moden is selected) -->
+              <div id="customEventFields" class="hidden p-3 rounded-xl bg-blue-500/10 border border-blue-500/30 space-y-2">
+                <p class="text-[11px] font-bold text-blue-300 uppercase">Butiran Kursus / Bengkel Pada Sijil:</p>
+                <div class="grid grid-cols-3 gap-2">
+                  <input id="certDateInput" type="text" value="16 Oktober 2026" placeholder="Tarikh" oninput="updateDraftCert()" class="px-2.5 py-1.5 text-xs rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+                  <input id="certTimeInput" type="text" value="2.30 Petang" placeholder="Masa" oninput="updateDraftCert()" class="px-2.5 py-1.5 text-xs rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+                  <input id="certVenueInput" type="text" value="SK Ranggu Tawau" placeholder="Tempat" oninput="updateDraftCert()" class="px-2.5 py-1.5 text-xs rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+                </div>
+              </div>
+
+              <!-- Official Header & Cover Existing Name Toggles -->
+              <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-2">
                 <label class="flex items-center gap-2 text-xs font-semibold text-amber-300 cursor-pointer">
-                  <input id="coverOldNameCheckbox" type="checkbox" onchange="updateDraftCert()" class="rounded" />
-                  <span>✨ Tutup Nama Asal Atas Sijil (Kotak Putih/Emas)</span>
+                  <input id="showSchoolHeaderCheckbox" type="checkbox" checked onchange="updateDraftCert()" class="rounded" />
+                  <span>🏫 Papar Logo KPM & SK Ranggu (Peti Surat 842, 91008 Tawau)</span>
                 </label>
-                <p class="text-[11px] text-[var(--muted-foreground)] pl-5">
-                  Tandakan ini jika gambar sijil yang anda muat naik sudah mempunyai nama orang lain di dalamnya.
-                </p>
+                <label class="flex items-center gap-2 text-xs font-semibold text-emerald-300 cursor-pointer">
+                  <input id="coverOldNameCheckbox" type="checkbox" onchange="updateDraftCert()" class="rounded" />
+                  <span>✨ Tutup Nama Asal Atas Gambar Sijil Dimuat Naik</span>
+                </label>
               </div>
 
               <!-- Font & Color Controls -->
@@ -270,7 +285,7 @@
           <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-md space-y-3">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <h3 class="text-base font-bold text-[var(--foreground)]">Pratonton & Kedudukan Nama / No. Siri</h3>
+                <h3 class="text-base font-bold text-[var(--foreground)]">Pratonton Sijil SK Ranggu & Kedudukan Nama</h3>
                 <p class="text-xs text-[var(--muted-foreground)]">Sentuh & tarik kotak biru <strong>Nama Guru</strong> atau <strong>No. Siri Sijil</strong> di atas gambar sijil.</p>
               </div>
               <label class="flex items-center gap-1.5 text-xs text-[var(--muted-foreground)] cursor-pointer">
@@ -312,11 +327,11 @@
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-semibold">
           <span id="scanCertUnitTitle">SESI LITERASI DELIMa 3.0 TAHUN 2026</span>
           <span>•</span>
-          <span id="teacherSerialBadge" class="font-mono">No. Sijil: SKR/DELIMA/2026/0001</span>
+          <span id="teacherSerialBadge" class="font-mono">No. Sijil: SKR/842/2026/0001</span>
         </div>
 
         <h2 class="text-xl md:text-2xl font-bold text-[var(--foreground)]">
-          Pratonton Sijil Anda
+          Pratonton Sijil Rasmi SK Ranggu Anda
         </h2>
         <p class="text-xs md:text-sm text-[var(--muted-foreground)] max-w-lg mx-auto">
           Masukkan <strong>Nama Penuh</strong> anda sahaja di bawah. Sijil anda sedang berpusing di bawah bersama No. Siri mengikut urutan pendaftaran.
@@ -332,11 +347,18 @@
             </div>
             <!-- Back Face -->
             <div class="cert-face-back">
-              <img src="./icon-192.png" alt="Logo SK Ranggu" class="w-20 h-20 rounded-2xl border-2 border-amber-400 shadow-lg mb-3" />
-              <p class="text-xs font-mono uppercase tracking-widest text-amber-300">Sijil Digital Disahkan • SK Ranggu</p>
-              <h3 id="backCertTitle" class="text-base font-bold text-white mt-1">SESI LITERASI DELIMa 3.0</h3>
-              <p id="backCertSerial" class="text-xs font-mono text-slate-300 mt-2 px-3 py-1 rounded bg-white/10">
-                No. Siri: SKR/DELIMA/2026/0001
+              <div class="flex items-center justify-center gap-3 bg-white/95 px-4 py-2.5 rounded-2xl border-2 border-amber-400 shadow-lg mb-3">
+                <img src="./logo-kpm.png" alt="Logo KPM" class="h-12 w-auto object-contain" />
+                <img src="./skrg.png" alt="Logo SK Ranggu" class="h-12 w-auto object-contain" />
+              </div>
+              <p class="text-xs font-bold uppercase tracking-wider text-amber-300">KEMENTERIAN PENDIDIKAN MALAYSIA</p>
+              <h3 class="text-sm font-extrabold text-white mt-0.5">SEKOLAH KEBANGSAAN RANGGU</h3>
+              <p class="text-[11px] text-slate-300">PETI SURAT 842, 91008 TAWAU, SABAH</p>
+              <p id="backCertTitle" class="text-xs font-bold text-blue-300 mt-3 px-3 py-1 rounded-lg bg-blue-500/20 border border-blue-400/30">
+                SESI LITERASI DELIMa 3.0
+              </p>
+              <p id="backCertSerial" class="text-xs font-mono text-emerald-300 mt-2 px-3 py-1 rounded bg-white/10">
+                No. Siri: SKR/842/2026/0001
               </p>
             </div>
           </div>
@@ -450,7 +472,7 @@
       }
     }
 
-    // Preload Built-in Images (DELIMa 3.0 Certificate & SK Ranggu Crest)
+    // Preload Official Images: DELIMa 3.0 Base, SK Ranggu Logo, and KPM Logo
     const delimaCertImg = new Image();
     delimaCertImg.onload = () => {
       renderAdminCanvas();
@@ -465,32 +487,43 @@
     };
     schoolCrestImg.src = './skrg.png';
 
+    const kpmLogoImg = new Image();
+    kpmLogoImg.onload = () => {
+      renderAdminCanvas();
+      renderTeacherSpinningCanvas();
+    };
+    kpmLogoImg.src = './logo-kpm.png';
+
     // --- DEFAULT CERTIFICATE UNITS DATABASE ---
     const defaultCertUnits = [
       {
-        id: 'cert-delima-2026',
+        id: 'cert-delima-skrg-2026',
         title: 'SESI LITERASI DELIMa 3.0 TAHUN 2026',
-        serialPrefix: 'SKR/DELIMA/2026/',
+        serialPrefix: 'SKR/842/2026/',
         preset: 'delima',
         canvasW: 728,
         canvasH: 1024,
         customBgDataUrl: null,
+        showSchoolHeader: true,
         coverOldName: false,
+        eventDate: '12 Oktober 2026',
+        eventTime: '2.30 petang',
+        eventVenue: 'SK Ranggu Tawau',
         nameFontSize: 22,
         textColor: '#0f2952',
         elements: {
-          serial: { id: 'serial', label: 'No. Siri Sijil', x: 585, y: 24, w: 220, h: 26 },
+          serial: { id: 'serial', label: 'No. Siri Sijil', x: 585, y: 18, w: 220, h: 26 },
           name: { id: 'name', label: 'Nama Guru', x: 360, y: 347, w: 415, h: 48 }
         },
         recipients: [
-          { seqNum: 1, serialNo: 'SKR/DELIMA/2026/0001', name: 'MOHAMMAD FIKREY BIN ABDUL GAPAR', time: '16 Okt 2026, 2:30 PTG' }
+          { seqNum: 1, serialNo: 'SKR/842/2026/0001', name: 'MOHAMMAD FIKREY BIN ABDUL GAPAR', time: '16 Okt 2026, 2:30 PTG' }
         ]
       }
     ];
 
     function loadCertUnits() {
       try {
-        const saved = JSON.parse(localStorage.getItem('esijil_units_v5') || 'null');
+        const saved = JSON.parse(localStorage.getItem('esijil_units_v6') || 'null');
         if (Array.isArray(saved) && saved.length > 0) return saved;
       } catch (e) {}
       return defaultCertUnits;
@@ -498,7 +531,7 @@
 
     function saveCertUnits() {
       try {
-        localStorage.setItem('esijil_units_v5', JSON.stringify(state.certUnits));
+        localStorage.setItem('esijil_units_v6', JSON.stringify(state.certUnits));
       } catch (e) {}
     }
 
@@ -506,17 +539,21 @@
       certUnits: loadCertUnits(),
       draft: {
         title: 'SESI LITERASI DELIMa 3.0 TAHUN 2026',
-        serialPrefix: 'SKR/DELIMA/2026/',
+        serialPrefix: 'SKR/842/2026/',
         preset: 'delima',
         canvasW: 728,
         canvasH: 1024,
         customBgDataUrl: null,
         customBgImage: null,
+        showSchoolHeader: true,
         coverOldName: false,
+        eventDate: '16 Oktober 2026',
+        eventTime: '2.30 Petang',
+        eventVenue: 'SK Ranggu Tawau',
         nameFontSize: 22,
         textColor: '#0f2952',
         elements: {
-          serial: { id: 'serial', label: 'No. Siri Sijil', x: 585, y: 24, w: 220, h: 26 },
+          serial: { id: 'serial', label: 'No. Siri Sijil', x: 585, y: 18, w: 220, h: 26 },
           name: { id: 'name', label: 'Nama Guru', x: 360, y: 347, w: 415, h: 48 }
         }
       },
@@ -544,18 +581,155 @@
       return unit.recipients.reduce((m, r, idx) => Math.max(m, r.seqNum || (idx + 1)), 0) + 1;
     }
 
+    function drawRoundedRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    // Draw Official KPM + SK Ranggu Dual-Logo & Address Header
+    function drawOfficialKpmSkrgHeader(ctx, centerX, topY) {
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      // Draw KPM Logo (left) and SK Ranggu Logo (right)
+      const kpmReady = kpmLogoImg.complete && kpmLogoImg.naturalWidth > 0;
+      const skrReady = schoolCrestImg.complete && schoolCrestImg.naturalWidth > 0;
+
+      if (kpmReady && skrReady) {
+        // KPM Jata Negara (width 70, height 56)
+        ctx.drawImage(kpmLogoImg, centerX - 74, topY + 2, 70, 56);
+        // SK Ranggu Crest (width 48, height 62)
+        ctx.drawImage(schoolCrestImg, centerX + 8, topY - 1, 48, 62);
+      } else if (skrReady) {
+        ctx.drawImage(schoolCrestImg, centerX - 24, topY, 48, 62);
+      }
+
+      // Official Text Lines below logos
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '800 10.5px sans-serif';
+      ctx.fillText('KEMENTERIAN PENDIDIKAN', centerX, topY + 71);
+
+      ctx.fillStyle = '#0f2952';
+      ctx.font = '900 12px sans-serif';
+      ctx.fillText('SEKOLAH KEBANGSAAN RANGGU', centerX, topY + 86);
+
+      ctx.fillStyle = '#1e3a8a';
+      ctx.font = '700 10px sans-serif';
+      ctx.fillText('PETI SURAT 842, 91008 TAWAU', centerX, topY + 100);
+
+      ctx.restore();
+    }
+
     // --- DRAWING CERTIFICATE BACKGROUND & OVERLAY ---
-    function drawCertBg(ctx, width, height, preset, bgImg, certTitle) {
+    function drawCertBg(ctx, width, height, cfg, bgImg) {
+      const preset = cfg.preset || 'delima';
+      const certTitle = cfg.title || 'PROGRAM RASMI SEKOLAH';
+
       if (bgImg) {
         ctx.drawImage(bgImg, 0, 0, width, height);
+        if (cfg.showSchoolHeader) {
+          // Soft pill backdrop for readability over custom uploaded images
+          ctx.save();
+          drawRoundedRect(ctx, width / 2 - 145, 16, 290, 114, 14);
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+          ctx.fill();
+          ctx.restore();
+          drawOfficialKpmSkrgHeader(ctx, width / 2, 22);
+        }
         return;
       }
 
-      if (preset === 'delima' && delimaCertImg.complete && delimaCertImg.naturalWidth > 0) {
+      if ((preset === 'delima' || preset === 'skrg_moden') && delimaCertImg.complete && delimaCertImg.naturalWidth > 0) {
         ctx.drawImage(delimaCertImg, 0, 0, width, height);
+
+        // Draw Official KPM + SK Ranggu Header in the cleaned top area
+        if (cfg.showSchoolHeader !== false) {
+          drawOfficialKpmSkrgHeader(ctx, 368, 25);
+        }
+
+        // If user selected 'skrg_moden' (Sebarang Kursus/Bengkel), replace the DELIMa 3.0 program section with custom title & date/time/venue
+        if (preset === 'skrg_moden') {
+          ctx.save();
+          // Clean cover over the DELIMa 3.0 middle section (y=392..615, x=140..585)
+          drawRoundedRect(ctx, 138, 392, 450, 222, 16);
+          const grad = ctx.createLinearGradient(138, 392, 588, 614);
+          grad.addColorStop(0, '#f4f6fa');
+          grad.addColorStop(0.5, '#f9fafc');
+          grad.addColorStop(1, '#eef2f9');
+          ctx.fillStyle = grad;
+          ctx.fill();
+          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = 'rgba(180, 153, 100, 0.45)';
+          ctx.stroke();
+
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+
+          // Wrap Course/Workshop Title in 1-3 lines
+          ctx.fillStyle = '#0f2952';
+          ctx.font = '900 23px sans-serif';
+          const words = (certTitle || 'KURSUS PROFESIONALISME GURU').toUpperCase().split(/\s+/);
+          let lines = [];
+          let curr = '';
+          words.forEach(w => {
+            const test = curr ? (curr + ' ' + w) : w;
+            if (ctx.measureText(test).width <= 410) {
+              curr = test;
+            } else {
+              if (curr) lines.push(curr);
+              curr = w;
+            }
+          });
+          if (curr) lines.push(curr);
+          lines = lines.slice(0, 3);
+
+          const startY = lines.length === 1 ? 455 : (lines.length === 2 ? 440 : 428);
+          lines.forEach((ln, idx) => {
+            ctx.fillText(ln, 364, startY + idx * 28);
+          });
+
+          // Sub-label
+          ctx.fillStyle = '#1e3a8a';
+          ctx.font = '800 12px sans-serif';
+          ctx.fillText('ANJURAN SEKOLAH KEBANGSAAN RANGGU, TAWAU', 364, 518);
+
+          // Date, Time, Venue Badges
+          const badges = [
+            { icon: '📅', text: cfg.eventDate || '16 Oktober 2026', x: 215 },
+            { icon: '⏰', text: cfg.eventTime || '2.30 Petang', x: 364 },
+            { icon: '📍', text: cfg.eventVenue || 'SK Ranggu Tawau', x: 513 }
+          ];
+          badges.forEach(b => {
+            drawRoundedRect(ctx, b.x - 68, 544, 136, 50, 10);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.stroke();
+
+            ctx.font = '14px sans-serif';
+            ctx.fillText(b.icon, b.x, 560);
+            ctx.fillStyle = '#0f172a';
+            ctx.font = '700 10.5px sans-serif';
+            ctx.fillText(b.text, b.x, 580);
+          });
+
+          ctx.restore();
+        }
         return;
       }
 
+      // Landscape Classic Templates (Gold, Blue, Emerald) with KPM + SK Ranggu Header
       const palettes = {
         gold: { bg1: '#fffdf7', bg2: '#fef9e7', border: '#b45309', accent: '#d97706', title: '#78350f' },
         blue: { bg1: '#f8fafc', bg2: '#eff6ff', border: '#1e40af', accent: '#2563eb', title: '#1e3a8a' },
@@ -577,18 +751,17 @@
       ctx.lineWidth = 2;
       ctx.strokeRect(40, 40, width - 80, height - 80);
 
-      if (schoolCrestImg.complete && schoolCrestImg.naturalWidth > 0) {
-        ctx.drawImage(schoolCrestImg, width / 2 - 42, 58, 84, 96);
-      }
+      // Draw KPM & SK Ranggu Header at Top Center
+      drawOfficialKpmSkrgHeader(ctx, width / 2, 52);
 
       ctx.fillStyle = pal.title;
-      ctx.font = 'bold 32px Georgia, serif';
+      ctx.font = 'bold 30px Georgia, serif';
       ctx.textAlign = 'center';
-      ctx.fillText('SIJIL PENGHARGAAN & PENYERTAAN', width / 2, 195);
+      ctx.fillText('SIJIL PENGHARGAAN & PENYERTAAN', width / 2, 205);
 
       ctx.fillStyle = '#475569';
-      ctx.font = 'italic 17px Georgia, serif';
-      ctx.fillText('Dengan sukacitanya diperakui bahawa', width / 2, 255);
+      ctx.font = 'italic 16px Georgia, serif';
+      ctx.fillText('Dengan ini disahkan bahawa', width / 2, 255);
 
       ctx.fillStyle = '#475569';
       ctx.font = '15px sans-serif';
@@ -596,17 +769,20 @@
 
       ctx.font = 'bold 20px sans-serif';
       ctx.fillStyle = pal.title;
-      ctx.fillText(certTitle || 'PROGRAM RASMI SEKOLAH', width / 2, 430);
+      ctx.fillText(certTitle, width / 2, 430);
 
       ctx.strokeStyle = '#64748b';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.moveTo(width / 2 - 120, height - 90);
-      ctx.lineTo(width / 2 + 120, height - 90);
+      ctx.moveTo(width / 2 - 130, height - 85);
+      ctx.lineTo(width / 2 + 130, height - 85);
       ctx.stroke();
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText('GURU BESAR', width / 2, height - 66);
       ctx.fillStyle = '#334155';
-      ctx.font = 'bold 13px sans-serif';
-      ctx.fillText('GURU BESAR SK RANGGU', width / 2, height - 68);
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillText('SEKOLAH KEBANGSAAN RANGGU, PETI SURAT 842, 91008 TAWAU', width / 2, height - 50);
     }
 
     // Wrap text into up to 2 lines if it exceeds maxWidth
@@ -621,7 +797,6 @@
 
       const words = text.trim().split(/\s+/);
       if (ctx.measureText(text).width <= maxWidth || words.length <= 2) {
-        // Fit on single line or shrink slightly
         while (ctx.measureText(text).width > maxWidth && size > 13) {
           size -= 1;
           ctx.font = `800 ${size}px sans-serif`;
@@ -631,7 +806,6 @@
         return;
       }
 
-      // Split into 2 balanced lines (like "MOHAMMAD FIKREY BIN ABDUL" / "GAPAR")
       let line1 = '';
       let line2 = '';
       for (let i = 0; i < words.length; i++) {
@@ -653,20 +827,6 @@
       ctx.fillText(line1, x, y - lineHeight / 2 + 1);
       ctx.fillText(line2, x, y + lineHeight / 2 + 1);
       ctx.restore();
-    }
-
-    function drawRoundedRect(ctx, x, y, w, h, r) {
-      ctx.beginPath();
-      ctx.moveTo(x + r, y);
-      ctx.lineTo(x + w - r, y);
-      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-      ctx.lineTo(x + w, y + h - r);
-      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-      ctx.lineTo(x + r, y + h);
-      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-      ctx.lineTo(x, y + r);
-      ctx.quadraticCurveTo(x, y, x + r, y);
-      ctx.closePath();
     }
 
     function drawCertOverlay(ctx, cfg, nameText, serialText, showGuides) {
@@ -692,13 +852,13 @@
       // Draw Serial Number pill badge
       ctx.save();
       const sLabel = `No. Sijil: ${serialText}`;
-      ctx.font = 'bold 12px monospace';
-      const sw = Math.max(ctx.measureText(sLabel).width + 18, 160);
-      drawRoundedRect(ctx, el.serial.x - sw / 2, el.serial.y - 13, sw, 26, 8);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
+      ctx.font = 'bold 11.5px monospace';
+      const sw = Math.max(ctx.measureText(sLabel).width + 18, 155);
+      drawRoundedRect(ctx, el.serial.x - sw / 2, el.serial.y - 12, sw, 24, 8);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
       ctx.fill();
       ctx.lineWidth = 1.2;
-      ctx.strokeStyle = 'rgba(180, 150, 90, 0.6)';
+      ctx.strokeStyle = 'rgba(180, 150, 90, 0.65)';
       ctx.stroke();
       ctx.fillStyle = '#0f2952';
       ctx.fillText(sLabel, el.serial.x, el.serial.y);
@@ -748,7 +908,7 @@
       document.getElementById('draftSerialPreview').textContent = sampleSerial;
 
       adminCtx.clearRect(0, 0, adminCanvas.width, adminCanvas.height);
-      drawCertBg(adminCtx, adminCanvas.width, adminCanvas.height, d.preset, d.customBgImage, d.title);
+      drawCertBg(adminCtx, adminCanvas.width, adminCanvas.height, d, d.customBgImage);
       drawCertOverlay(adminCtx, d, 'MOHAMMAD FIKREY BIN ABDUL GAPAR', sampleSerial, showGuides);
     }
 
@@ -757,7 +917,11 @@
       state.draft.serialPrefix = document.getElementById('serialPrefix').value;
       state.draft.nameFontSize = parseInt(document.getElementById('nameFontSize').value, 10);
       state.draft.textColor = document.getElementById('textColorPicker').value;
+      state.draft.showSchoolHeader = document.getElementById('showSchoolHeaderCheckbox').checked;
       state.draft.coverOldName = document.getElementById('coverOldNameCheckbox').checked;
+      state.draft.eventDate = document.getElementById('certDateInput').value;
+      state.draft.eventTime = document.getElementById('certTimeInput').value;
+      state.draft.eventVenue = document.getElementById('certVenueInput').value;
       document.getElementById('fontSizeVal').textContent = state.draft.nameFontSize;
       renderAdminCanvas();
     }
@@ -766,7 +930,11 @@
       state.draft.preset = val;
       state.draft.customBgImage = null;
       state.draft.customBgDataUrl = null;
-      if (val === 'delima') {
+
+      const customFields = document.getElementById('customEventFields');
+      customFields.classList.toggle('hidden', val !== 'skrg_moden');
+
+      if (val === 'delima' || val === 'skrg_moden') {
         state.draft.canvasW = 728;
         state.draft.canvasH = 1024;
         state.draft.nameFontSize = 22;
@@ -774,7 +942,7 @@
         document.getElementById('nameFontSize').value = 22;
         document.getElementById('fontSizeVal').textContent = 22;
         document.getElementById('textColorPicker').value = '#0f2952';
-        state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: 585, y: 24, w: 220, h: 26 };
+        state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: 585, y: 18, w: 220, h: 26 };
         state.draft.elements.name = { id: 'name', label: 'Nama Guru', x: 360, y: 347, w: 415, h: 48 };
       } else {
         state.draft.canvasW = 900;
@@ -797,7 +965,6 @@
       reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
-          // Preserve portrait or landscape aspect ratio automatically
           const isPortrait = img.naturalHeight >= img.naturalWidth;
           const targetW = isPortrait ? 728 : 900;
           const targetH = Math.round(targetW * (img.naturalHeight / img.naturalWidth));
@@ -811,12 +978,11 @@
           state.draft.canvasH = targetH;
           state.draft.customBgDataUrl = off.toDataURL('image/jpeg', 0.84);
           state.draft.customBgImage = img;
-          // Auto-enable coverOldName when user uploads a certificate image that might already have a sample name
           state.draft.coverOldName = true;
           document.getElementById('coverOldNameCheckbox').checked = true;
 
           if (isPortrait) {
-            state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: Math.round(targetW * 0.8), y: 24, w: 220, h: 26 };
+            state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: Math.round(targetW * 0.8), y: 18, w: 220, h: 26 };
             state.draft.elements.name = { id: 'name', label: 'Nama Guru', x: Math.round(targetW / 2), y: Math.round(targetH * 0.339), w: Math.round(targetW * 0.57), h: 48 };
           } else {
             state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: Math.round(targetW * 0.8), y: 55, w: 230, h: 28 };
@@ -834,7 +1000,7 @@
       const h = state.draft.canvasH;
       const isPortrait = h >= w;
       if (isPortrait) {
-        state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: 585, y: 24, w: 220, h: 26 };
+        state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: 585, y: 18, w: 220, h: 26 };
         state.draft.elements.name = { id: 'name', label: 'Nama Guru', x: Math.round(w / 2) - 4, y: Math.round(h * 0.339), w: 415, h: 48 };
       } else {
         state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: 730, y: 68, w: 230, h: 28 };
@@ -878,7 +1044,7 @@
       const pos = getCanvasCoords(adminCanvas, e);
       const el = state.draft.elements[state.selectedElement];
       el.x = Math.max(60, Math.min(adminCanvas.width - 60, Math.round(pos.x - state.dragOffsetX)));
-      el.y = Math.max(18, Math.min(adminCanvas.height - 18, Math.round(pos.y - state.dragOffsetY)));
+      el.y = Math.max(16, Math.min(adminCanvas.height - 16, Math.round(pos.y - state.dragOffsetY)));
       renderAdminCanvas();
     });
 
@@ -893,12 +1059,16 @@
       const newUnit = {
         id: newId,
         title: d.title.trim() || 'SIJIL PROGRAM SEKOLAH',
-        serialPrefix: d.serialPrefix.trim() || 'SKR/2026/',
+        serialPrefix: d.serialPrefix.trim() || 'SKR/842/2026/',
         preset: d.preset,
         canvasW: d.canvasW,
         canvasH: d.canvasH,
         customBgDataUrl: d.customBgDataUrl,
+        showSchoolHeader: d.showSchoolHeader,
         coverOldName: d.coverOldName,
+        eventDate: d.eventDate,
+        eventTime: d.eventTime,
+        eventVenue: d.eventVenue,
         nameFontSize: d.nameFontSize,
         textColor: d.textColor,
         elements: JSON.parse(JSON.stringify(d.elements)),
@@ -930,7 +1100,11 @@
         preset: unit.preset,
         cw: unit.canvasW || 728,
         ch: unit.canvasH || 1024,
+        hdr: unit.showSchoolHeader !== false ? '1' : '0',
         cov: unit.coverOldName ? '1' : '0',
+        dt: unit.eventDate || '16 Oktober 2026',
+        tm: unit.eventTime || '2.30 Petang',
+        vn: unit.eventVenue || 'SK Ranggu Tawau',
         fs: unit.nameFontSize,
         col: unit.textColor,
         nx: unit.elements.name.x,
@@ -1103,7 +1277,7 @@
       document.getElementById('backCertSerial').textContent = `No. Siri: ${activeSerial}`;
 
       teacherCtx.clearRect(0, 0, teacherCanvas.width, teacherCanvas.height);
-      drawCertBg(teacherCtx, teacherCanvas.width, teacherCanvas.height, unit.preset, state.activeScanBgImg, unit.title);
+      drawCertBg(teacherCtx, teacherCanvas.width, teacherCanvas.height, unit, state.activeScanBgImg);
       drawCertOverlay(teacherCtx, unit, typedName || 'NAMA PENUH ANDA DI SINI', activeSerial, false);
     }
 
@@ -1157,7 +1331,7 @@
       const successBox = document.getElementById('teacherSuccessBox');
       successBox.classList.remove('hidden');
       document.getElementById('teacherSuccessTitle').textContent = `✅ Sijil Siap! (${issuedSerial})`;
-      document.getElementById('teacherSuccessDesc').textContent = `Tahniah ${name}. Sijil anda dengan No. Siri ${issuedSerial} telah dijana dan sedang dimuat turun.`;
+      document.getElementById('teacherSuccessDesc').textContent = `Tahniah ${name}. Sijil rasmi SK Ranggu anda dengan No. Siri ${issuedSerial} telah dijana dan sedang dimuat turun.`;
 
       downloadTeacherCertAgain();
     }
@@ -1167,7 +1341,7 @@
       const serialSlug = (state.issuedSerialForSession || 'sijil').replace(/[^a-zA-Z0-9]/g, '-');
       const nameSlug = (document.getElementById('inputTeacherName').value.trim() || 'guru').toLowerCase().replace(/[^a-z0-9]/g, '-');
       const link = document.createElement('a');
-      link.download = `e-sijil-${serialSlug}-${nameSlug}.png`;
+      link.download = `e-sijil-skrg-${serialSlug}-${nameSlug}.png`;
       link.href = teacherCanvas.toDataURL('image/png');
       link.click();
     }
@@ -1183,12 +1357,16 @@
         const fallbackUnit = {
           id: scannedCertId,
           title: params.get('title') || 'SESI LITERASI DELIMa 3.0 TAHUN 2026',
-          serialPrefix: params.get('prefix') || 'SKR/DELIMA/2026/',
+          serialPrefix: params.get('prefix') || 'SKR/842/2026/',
           preset: params.get('preset') || 'delima',
           canvasW: parseInt(params.get('cw') || '728', 10),
           canvasH: parseInt(params.get('ch') || '1024', 10),
           customBgDataUrl: null,
+          showSchoolHeader: params.get('hdr') !== '0',
           coverOldName: params.get('cov') === '1',
+          eventDate: params.get('dt') || '16 Oktober 2026',
+          eventTime: params.get('tm') || '2.30 Petang',
+          eventVenue: params.get('vn') || 'SK Ranggu Tawau',
           nameFontSize: parseInt(params.get('fs') || '22', 10),
           textColor: params.get('col') || '#0f2952',
           elements: {
@@ -1196,7 +1374,7 @@
               id: 'serial',
               label: 'No. Siri Sijil',
               x: parseInt(params.get('sx') || '585', 10),
-              y: parseInt(params.get('sy') || '24', 10),
+              y: parseInt(params.get('sy') || '18', 10),
               w: 220,
               h: 26
             },
