@@ -138,16 +138,20 @@
             <h1 class="text-xs sm:text-sm md:text-base font-bold text-[var(--foreground)]">SEKOLAH KEBANGSAAN RANGGU</h1>
             <span id="standaloneBadge" class="hidden px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">PWA</span>
           </div>
-          <p id="topSubtitle" class="text-[11px] text-[var(--muted-foreground)]">Peti Surat 842, 91008 Tawau • Sistem e-Sijil & QR Unik</p>
+          <p id="topSubtitle" class="text-[11px] text-[var(--muted-foreground)]">Peti Surat 842, 91008 Tawau • Sistem e-Sijil & E-mel Automatik</p>
         </div>
       </div>
 
       <div class="flex items-center gap-2">
+        <!-- Email Server Setup Button -->
+        <button id="btnEmailSetupTop" onclick="openEmailSetupModal()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 flex items-center gap-1">
+          <span>📧 Tetapan E-mel Automatik</span>
+        </button>
         <!-- Install PWA Button -->
         <button id="btnInstallPwa" onclick="triggerInstallApp()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 shadow-sm hover:opacity-90 flex items-center gap-1">
-          <span>📲 Simpan App di Fon</span>
+          <span>📲 Simpan App</span>
         </button>
-        <!-- Back to Admin List Button (Only shown when Admin previews a QR scan) -->
+        <!-- Back to Admin List Button -->
         <button id="btnBackToAdmin" onclick="exitQrScanView()" class="hidden px-3 py-1.5 rounded-xl text-xs font-semibold bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--border)]">
           ⚙️ Panel Admin
         </button>
@@ -181,6 +185,22 @@
     <!-- MODE A: ADMIN PWA VIEW (CREATE CERTIFICATE RECORDS & UNIQUE QR CODES) -->
     <!-- ===================================================================== -->
     <div id="viewAdminApp" class="space-y-6">
+
+      <!-- Banner Status Penghantaran E-mel Automatik -->
+      <div class="bg-blue-950/60 border border-blue-500/40 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span id="emailStatusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+            <h3 id="emailStatusTitle" class="text-xs sm:text-sm font-bold text-white">Status Penghantaran E-mel Automatik: Mod Muat Turun + Kongsi Pantas</h3>
+          </div>
+          <p id="emailStatusDesc" class="text-xs text-slate-300">
+            Sambungkan URL Google Apps Script (Percuma) supaya setiap kali guru imbas QR & isi e-mel, sijil PNG dihantar terus ke Inbox Gmail / DELIMa mereka secara automatik.
+          </p>
+        </div>
+        <button onclick="openEmailSetupModal()" class="shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-500 shadow">
+          ⚙️ Aktifkan Hantar E-mel Automatik
+        </button>
+      </div>
 
       <!-- Section 1: Create / Edit Certificate Record & Upload Certificate Image -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -307,7 +327,7 @@
           <div>
             <h2 class="text-base font-bold text-[var(--foreground)]">2. Senarai Unit Sijil & Kod QR Unik Setiap Sijil</h2>
             <p class="text-xs text-[var(--muted-foreground)]">
-              Setiap rekod sijil di bawah mempunyai <strong>Kod QR uniknya sendiri</strong>. Bila guru imbas QR mana-mana sijil, mereka akan nampak sijil tersebut berpusing-pusing dalam animasi 3D dan hanya perlu masukkan nama.
+              Setiap rekod sijil di bawah mempunyai <strong>Kod QR uniknya sendiri</strong>. Bila guru imbas QR mana-mana sijil, mereka akan nampak sijil tersebut berpusing-pusing dalam animasi 3D, masukkan Nama & E-mel, dan sijil terus dihantar ke e-mel serta dimuat turun!
             </p>
           </div>
         </div>
@@ -320,7 +340,6 @@
 
     <!-- ===================================================================== -->
     <!-- MODE B: TEACHER QR SCAN VIEW FOR A SPECIFIC CERTIFICATE UNIT          -->
-    <!-- (Opened automatically when scanning any certificate's unique QR code) -->
     <!-- ===================================================================== -->
     <div id="viewTeacherScan" class="hidden space-y-6">
       <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 md:p-8 shadow-lg text-center space-y-3">
@@ -334,7 +353,7 @@
           Pratonton Sijil Rasmi SK Ranggu Anda
         </h2>
         <p class="text-xs md:text-sm text-[var(--muted-foreground)] max-w-lg mx-auto">
-          Masukkan <strong>Nama Penuh</strong> anda sahaja di bawah. Sijil anda sedang berpusing di bawah bersama No. Siri mengikut urutan pendaftaran.
+          Masukkan <strong>Nama Penuh</strong> dan <strong>Alamat E-mel</strong> anda di bawah. Sijil akan dihantar ke e-mel anda dan dimuat turun secara automatik.
         </p>
 
         <!-- 3D Rotating Certificate Showcase -->
@@ -370,11 +389,11 @@
           </button>
         </div>
 
-        <!-- Single Name Input for Teacher -->
-        <form onsubmit="handleTeacherGenerate(event)" class="max-w-md mx-auto space-y-4 pt-2 text-left">
+        <!-- Name + Email Input for Teacher -->
+        <form onsubmit="handleTeacherGenerate(event)" class="max-w-md mx-auto space-y-3 pt-2 text-left">
           <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-1.5 text-center">
-              Masukkan Nama Penuh Anda Sahaja
+            <label class="block text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-1 text-center">
+              1. Masukkan Nama Penuh Anda (Pada Sijil)
             </label>
             <input
               id="inputTeacherName"
@@ -382,25 +401,45 @@
               required
               placeholder="Contoh: MOHAMMAD FIKREY BIN ABDUL GAPAR"
               oninput="onTeacherTypeName(this.value)"
-              class="w-full px-4 py-3.5 text-center text-base font-bold rounded-xl bg-[var(--background)] border-2 border-[var(--primary)] text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:ring-4 focus:ring-blue-500/30"
+              class="w-full px-4 py-3 text-center text-base font-bold rounded-xl bg-[var(--background)] border-2 border-[var(--primary)] text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:ring-4 focus:ring-blue-500/30"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-1 text-center">
+              2. Masukkan Alamat E-mel Anda (Untuk Terima Sijil)
+            </label>
+            <input
+              id="inputTeacherEmail"
+              type="email"
+              required
+              placeholder="Contoh: cikgu@moe-dl.edu.my / @gmail.com"
+              class="w-full px-4 py-3 text-center text-sm font-medium rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:border-blue-400"
             />
           </div>
 
           <button
+            id="btnSubmitTeacher"
             type="submit"
             class="w-full py-3.5 px-6 rounded-xl text-sm md:text-base font-bold bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-95 shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2"
           >
-            <span>⬇️ Jana & Muat Turun Sijil Saya Sekarang</span>
+            <span>📧 Jana Sijil, Hantar Ke E-mel & Muat Turun</span>
           </button>
         </form>
 
         <!-- Success Box -->
-        <div id="teacherSuccessBox" class="hidden max-w-md mx-auto mt-4 p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-center space-y-2">
+        <div id="teacherSuccessBox" class="hidden max-w-md mx-auto mt-4 p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-center space-y-2.5">
           <p class="text-sm font-bold text-emerald-300" id="teacherSuccessTitle">✅ Sijil Anda Telah Dijana!</p>
-          <p class="text-xs text-[var(--muted-foreground)]" id="teacherSuccessDesc"></p>
-          <button type="button" onclick="downloadTeacherCertAgain()" class="mt-1 px-4 py-2 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 hover:opacity-90">
-            ⬇️ Muat Turun Semula Gambar Sijil (PNG)
-          </button>
+          <p class="text-xs text-slate-200" id="teacherSuccessDesc"></p>
+          <p class="text-[11px] text-amber-300 font-medium" id="teacherEmailDeliveryNote"></p>
+          <div class="flex flex-wrap justify-center gap-2 pt-1">
+            <button type="button" onclick="downloadTeacherCertAgain()" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 hover:opacity-90">
+              ⬇️ Muat Turun Gambar Sijil (PNG)
+            </button>
+            <button type="button" onclick="shareOrEmailCertFile()" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-blue-500 text-white hover:opacity-90">
+              📤 Hantar / Kongsi Ke E-mel & WhatsApp
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -414,7 +453,7 @@
         </div>
 
         <p class="text-xs text-[var(--muted-foreground)]">
-          Guru yang mengimbas QR ini akan terus melihat sijil unit ini berpusing dalam animasi 3D dan hanya perlu memasukkan nama.
+          Guru yang mengimbas QR ini akan terus melihat sijil unit ini berpusing dalam animasi 3D, memasukkan Nama & E-mel, dan menerima sijil mereka.
         </p>
 
         <div class="inline-block bg-white p-4 rounded-2xl border-4 border-blue-500/30">
@@ -438,6 +477,76 @@
           </div>
           <div id="modalRecipientsList" class="max-h-36 overflow-y-auto divide-y divide-[var(--border)] border border-[var(--border)] rounded-xl bg-[var(--background)] text-xs">
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Setup Automatic Email via Google Apps Script (Free & Instant to Gmail/DELIMa Inbox) -->
+    <div id="emailSetupModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl max-w-2xl w-full p-6 space-y-4 text-left shadow-2xl my-8">
+        <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
+          <div>
+            <span class="text-xs font-bold uppercase text-emerald-400">PENGHANTARAN TERUS KE INBOX GURU</span>
+            <h3 class="text-base font-bold text-[var(--foreground)]">📧 Tetapan Hantar E-mel Automatik (Google Apps Script)</h3>
+          </div>
+          <button onclick="closeEmailSetupModal()" class="text-xs px-2.5 py-1 rounded-lg bg-[var(--secondary)] text-[var(--foreground)]">✕ Tutup</button>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-slate-200 space-y-1">
+          <p class="font-bold text-amber-300">Kenapa guru belum terima sijil dalam Inbox e-mel sebelum ini?</p>
+          <p>
+            Laman web GitHub Pages tidak mempunyai pelayan e-mel (SMTP) sendiri secara lalai. Untuk membolehkan sistem menghantar fail gambar sijil terus ke dalam <strong>Inbox Gmail / DELIMa (@moe-dl.edu.my)</strong> secara automatik, anda hanya perlu menampal kod pendek di bawah ke dalam akaun Google anda sekali sahaja (100% Percuma).
+          </p>
+        </div>
+
+        <div class="space-y-2 text-xs text-slate-300">
+          <p class="font-bold text-white">Langkah Mudah (Hanya Buat Sekali Sahaja — 2 Minit):</p>
+          <ol class="list-decimal list-inside space-y-1">
+            <li>Buka <a href="https://script.google.com/home/start" target="_blank" class="text-blue-400 underline font-semibold">script.google.com</a> dan klik <strong>"New Project" (Projek Baharu)</strong>.</li>
+            <li>Padam kod asal, kemudian <strong>Salin & Tampal (Copy & Paste)</strong> kod di bawah:</li>
+          </ol>
+
+          <div class="relative">
+            <pre id="gasCodeBlock" class="p-3 rounded-xl bg-slate-950 border border-slate-700 text-[11px] font-mono text-emerald-300 overflow-x-auto">function doPost(e) {
+  var data = JSON.parse(e.postData.contents);
+  var base64 = data.imageBase64.split(',')[1];
+  var blob = Utilities.newBlob(Utilities.base64Decode(base64), 'image/png', data.fileName || 'Sijil-SK-Ranggu.png');
+  MailApp.sendEmail({
+    to: data.email,
+    subject: 'e-Sijil Rasmi SK Ranggu: ' + data.title + ' (' + data.serialNo + ')',
+    htmlBody: '&lt;p&gt;Tahniah &lt;b&gt;' + data.name + '&lt;/b&gt;,&lt;/p&gt;' +
+              '&lt;p&gt;Bersama e-mel ini dilampirkan e-Sijil rasmi anda bagi &lt;b&gt;' + data.title + '&lt;/b&gt;.&lt;/p&gt;' +
+              '&lt;p&gt;&lt;b&gt;No. Siri Sijil:&lt;/b&gt; ' + data.serialNo + '&lt;br&gt;&lt;b&gt;Sekolah:&lt;/b&gt; SK Ranggu, Peti Surat 842, 91008 Tawau&lt;/p&gt;',
+    attachments: [blob]
+  });
+  return ContentService.createTextOutput(JSON.stringify({ok: true})).setMimeType(ContentService.MimeType.JSON);
+}</pre>
+            <button type="button" onclick="copyGasScript()" id="btnCopyGasCode" class="absolute top-2 right-2 px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white">
+              📋 Salin Kod
+            </button>
+          </div>
+
+          <ol start="3" class="list-decimal list-inside space-y-1 pt-1">
+            <li>Klik butang biru <strong>Deploy &rarr; New deployment</strong> di penjuru kanan atas.</li>
+            <li>Pilih jenis <strong>Web app</strong>, tetapkan <em>Who has access</em> kepada <strong>"Anyone" (Sesiapa sahaja)</strong>, dan klik <strong>Deploy</strong> (benarkan akses e-mel Google anda).</li>
+            <li>Salin <strong>Web App URL</strong> (`https://script.google.com/macros/s/.../exec`) dan tampal di kotak bawah:</li>
+          </ol>
+        </div>
+
+        <div class="space-y-2 pt-2 border-t border-[var(--border)]">
+          <label class="block text-xs font-bold text-white">URL Web App Google Apps Script Anda:</label>
+          <input
+            id="inputGasWebhookUrl"
+            type="url"
+            placeholder="https://script.google.com/macros/s/AKfycb.../exec"
+            class="w-full px-3 py-2.5 text-xs font-mono rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]"
+          />
+          <div class="flex justify-end gap-2 pt-1">
+            <button type="button" onclick="saveGasWebhookUrl()" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 hover:opacity-90">
+              💾 Simpan & Aktifkan Penghantaran E-mel Automatik
+            </button>
+          </div>
+          <p id="gasSaveToast" class="text-xs font-semibold text-emerald-400 hidden"></p>
         </div>
       </div>
     </div>
@@ -516,7 +625,7 @@
           name: { id: 'name', label: 'Nama Guru', x: 360, y: 347, w: 415, h: 48 }
         },
         recipients: [
-          { seqNum: 1, serialNo: 'SKR/842/2026/0001', name: 'MOHAMMAD FIKREY BIN ABDUL GAPAR', time: '16 Okt 2026, 2:30 PTG' }
+          { seqNum: 1, serialNo: 'SKR/842/2026/0001', name: 'MOHAMMAD FIKREY BIN ABDUL GAPAR', email: 'fikrey@moe-dl.edu.my', time: '16 Okt 2026, 2:30 PTG' }
         ]
       }
     ];
@@ -537,6 +646,7 @@
 
     const state = {
       certUnits: loadCertUnits(),
+      gasWebhookUrl: localStorage.getItem('esijil_gas_url') || '',
       draft: {
         title: 'SESI LITERASI DELIMa 3.0 TAHUN 2026',
         serialPrefix: 'SKR/842/2026/',
@@ -572,6 +682,68 @@
     const teacherCanvas = document.getElementById('teacherCertCanvas');
     const teacherCtx = teacherCanvas.getContext('2d');
 
+    function updateEmailStatusBanner() {
+      const dot = document.getElementById('emailStatusDot');
+      const title = document.getElementById('emailStatusTitle');
+      const desc = document.getElementById('emailStatusDesc');
+      if (state.gasWebhookUrl && state.gasWebhookUrl.startsWith('https://script.google.com/')) {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400';
+        title.textContent = 'Status Penghantaran E-mel Automatik: AKTIF (Google Apps Script Disambungkan)';
+        desc.textContent = 'Setiap kali guru mengimbas QR dan memasukkan alamat e-mel, sijil PNG akan dihantar terus ke Inbox e-mel mereka secara automatik.';
+      } else {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400';
+        title.textContent = 'Status Penghantaran E-mel Automatik: Mod Muat Turun Automatik + Kongsi E-mel';
+        desc.textContent = 'Klik "Aktifkan Hantar E-mel Automatik" di sebelah untuk menyambungkan Google Apps Script supaya sijil masuk terus ke Inbox e-mel guru tanpa perlu tekan apa-apa lagi.';
+      }
+    }
+
+    function openEmailSetupModal() {
+      document.getElementById('inputGasWebhookUrl').value = state.gasWebhookUrl || '';
+      document.getElementById('emailSetupModal').classList.remove('hidden');
+    }
+
+    function closeEmailSetupModal() {
+      document.getElementById('emailSetupModal').classList.add('hidden');
+    }
+
+    function copyGasScript() {
+      const code = `function doPost(e) {
+  var data = JSON.parse(e.postData.contents);
+  var base64 = data.imageBase64.split(',')[1];
+  var blob = Utilities.newBlob(Utilities.base64Decode(base64), 'image/png', data.fileName || 'Sijil-SK-Ranggu.png');
+  MailApp.sendEmail({
+    to: data.email,
+    subject: 'e-Sijil Rasmi SK Ranggu: ' + data.title + ' (' + data.serialNo + ')',
+    htmlBody: '<p>Tahniah <b>' + data.name + '</b>,</p>' +
+              '<p>Bersama e-mel ini dilampirkan e-Sijil rasmi anda bagi <b>' + data.title + '</b>.</p>' +
+              '<p><b>No. Siri Sijil:</b> ' + data.serialNo + '<br><b>Sekolah:</b> SK Ranggu, Peti Surat 842, 91008 Tawau</p>',
+    attachments: [blob]
+  });
+  return ContentService.createTextOutput(JSON.stringify({ok: true})).setMimeType(ContentService.MimeType.JSON);
+}`;
+      navigator.clipboard.writeText(code);
+      const btn = document.getElementById('btnCopyGasCode');
+      btn.textContent = '✅ Kod Disalin!';
+      setTimeout(() => { btn.textContent = '📋 Salin Kod'; }, 2000);
+    }
+
+    function saveGasWebhookUrl() {
+      const val = document.getElementById('inputGasWebhookUrl').value.trim();
+      state.gasWebhookUrl = val;
+      try {
+        localStorage.setItem('esijil_gas_url', val);
+      } catch (e) {}
+      updateEmailStatusBanner();
+      renderCertUnitsList();
+      const toast = document.getElementById('gasSaveToast');
+      toast.textContent = '✅ Berjaya disimpan! Semua QR Sijil kini disertakan dengan penghantaran e-mel automatik.';
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+        closeEmailSetupModal();
+      }, 1800);
+    }
+
     function formatSerial(prefix, seq) {
       return `${prefix}${String(seq).padStart(4, '0')}`;
     }
@@ -601,20 +773,16 @@
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      // Draw KPM Logo (left) and SK Ranggu Logo (right)
       const kpmReady = kpmLogoImg.complete && kpmLogoImg.naturalWidth > 0;
       const skrReady = schoolCrestImg.complete && schoolCrestImg.naturalWidth > 0;
 
       if (kpmReady && skrReady) {
-        // KPM Jata Negara (width 70, height 56)
         ctx.drawImage(kpmLogoImg, centerX - 74, topY + 2, 70, 56);
-        // SK Ranggu Crest (width 48, height 62)
         ctx.drawImage(schoolCrestImg, centerX + 8, topY - 1, 48, 62);
       } else if (skrReady) {
         ctx.drawImage(schoolCrestImg, centerX - 24, topY, 48, 62);
       }
 
-      // Official Text Lines below logos
       ctx.fillStyle = '#0f172a';
       ctx.font = '800 10.5px sans-serif';
       ctx.fillText('KEMENTERIAN PENDIDIKAN', centerX, topY + 71);
@@ -638,7 +806,6 @@
       if (bgImg) {
         ctx.drawImage(bgImg, 0, 0, width, height);
         if (cfg.showSchoolHeader) {
-          // Soft pill backdrop for readability over custom uploaded images
           ctx.save();
           drawRoundedRect(ctx, width / 2 - 145, 16, 290, 114, 14);
           ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
@@ -652,15 +819,12 @@
       if ((preset === 'delima' || preset === 'skrg_moden') && delimaCertImg.complete && delimaCertImg.naturalWidth > 0) {
         ctx.drawImage(delimaCertImg, 0, 0, width, height);
 
-        // Draw Official KPM + SK Ranggu Header in the cleaned top area
         if (cfg.showSchoolHeader !== false) {
           drawOfficialKpmSkrgHeader(ctx, 368, 25);
         }
 
-        // If user selected 'skrg_moden' (Sebarang Kursus/Bengkel), replace the DELIMa 3.0 program section with custom title & date/time/venue
         if (preset === 'skrg_moden') {
           ctx.save();
-          // Clean cover over the DELIMa 3.0 middle section (y=392..615, x=140..585)
           drawRoundedRect(ctx, 138, 392, 450, 222, 16);
           const grad = ctx.createLinearGradient(138, 392, 588, 614);
           grad.addColorStop(0, '#f4f6fa');
@@ -675,7 +839,6 @@
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
 
-          // Wrap Course/Workshop Title in 1-3 lines
           ctx.fillStyle = '#0f2952';
           ctx.font = '900 23px sans-serif';
           const words = (certTitle || 'KURSUS PROFESIONALISME GURU').toUpperCase().split(/\s+/);
@@ -698,12 +861,10 @@
             ctx.fillText(ln, 364, startY + idx * 28);
           });
 
-          // Sub-label
           ctx.fillStyle = '#1e3a8a';
           ctx.font = '800 12px sans-serif';
           ctx.fillText('ANJURAN SEKOLAH KEBANGSAAN RANGGU, TAWAU', 364, 518);
 
-          // Date, Time, Venue Badges
           const badges = [
             { icon: '📅', text: cfg.eventDate || '16 Oktober 2026', x: 215 },
             { icon: '⏰', text: cfg.eventTime || '2.30 Petang', x: 364 },
@@ -729,7 +890,6 @@
         return;
       }
 
-      // Landscape Classic Templates (Gold, Blue, Emerald) with KPM + SK Ranggu Header
       const palettes = {
         gold: { bg1: '#fffdf7', bg2: '#fef9e7', border: '#b45309', accent: '#d97706', title: '#78350f' },
         blue: { bg1: '#f8fafc', bg2: '#eff6ff', border: '#1e40af', accent: '#2563eb', title: '#1e3a8a' },
@@ -751,7 +911,6 @@
       ctx.lineWidth = 2;
       ctx.strokeRect(40, 40, width - 80, height - 80);
 
-      // Draw KPM & SK Ranggu Header at Top Center
       drawOfficialKpmSkrgHeader(ctx, width / 2, 52);
 
       ctx.fillStyle = pal.title;
@@ -785,7 +944,6 @@
       ctx.fillText('SEKOLAH KEBANGSAAN RANGGU, PETI SURAT 842, 91008 TAWAU', width / 2, height - 50);
     }
 
-    // Wrap text into up to 2 lines if it exceeds maxWidth
     function drawWrappedName(ctx, text, x, y, maxWidth, fontSize, color) {
       ctx.save();
       ctx.fillStyle = color || '#0f2952';
@@ -835,7 +993,6 @@
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      // Optional: Cover existing name on uploaded certificate image with clean rounded box
       if (cfg.coverOldName) {
         const bx = el.name.x - el.name.w / 2 - 8;
         const by = el.name.y - el.name.h / 2 - 4;
@@ -849,7 +1006,6 @@
         ctx.stroke();
       }
 
-      // Draw Serial Number pill badge
       ctx.save();
       const sLabel = `No. Sijil: ${serialText}`;
       ctx.font = 'bold 11.5px monospace';
@@ -864,7 +1020,6 @@
       ctx.fillText(sLabel, el.serial.x, el.serial.y);
       ctx.restore();
 
-      // Draw Teacher Name (auto-wrapping up to 2 lines inside box)
       drawWrappedName(
         ctx,
         nameText || 'MOHAMMAD FIKREY BIN ABDUL GAPAR',
@@ -1009,7 +1164,6 @@
       renderAdminCanvas();
     }
 
-    // Drag and Drop on Admin Canvas
     function getCanvasCoords(canvas, evt) {
       const rect = canvas.getBoundingClientRect();
       return {
@@ -1087,7 +1241,7 @@
       openQrModal(newId);
     }
 
-    // Build Unique URL for a Specific Certificate Unit
+    // Build Unique URL for a Specific Certificate Unit (includes GAS Webhook URL if configured)
     function buildUnitQrUrl(unit) {
       const isHttp = window.location.protocol === 'http:' || window.location.protocol === 'https:';
       const base = isHttp
@@ -1113,6 +1267,9 @@
         sx: unit.elements.serial.x,
         sy: unit.elements.serial.y
       });
+      if (state.gasWebhookUrl) {
+        params.set('gas', state.gasWebhookUrl);
+      }
       return `${base}?${params.toString()}`;
     }
 
@@ -1186,6 +1343,7 @@
             <div>
               <span class="font-mono font-bold text-amber-300 mr-2">${r.serialNo}</span>
               <span class="font-semibold text-[var(--foreground)]">${r.name}</span>
+              ${r.email ? `<span class="block text-[11px] text-slate-400">📧 ${r.email}</span>` : ''}
             </div>
             <span class="text-[var(--muted-foreground)] shrink-0">${r.time}</span>
           </div>
@@ -1200,11 +1358,12 @@
     }
 
     function exportUnitCsv(unit) {
-      const headers = ['Urutan', 'No Siri Sijil', 'Nama Guru', 'Masa Dijana'];
+      const headers = ['Urutan', 'No Siri Sijil', 'Nama Guru', 'E-mel', 'Masa Dijana'];
       const rows = (unit.recipients || []).map((r, i) => [
         r.seqNum || (i + 1),
         `"${r.serialNo}"`,
         `"${r.name}"`,
+        `"${r.email || ''}"`,
         `"${r.time}"`
       ]);
       const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
@@ -1227,6 +1386,7 @@
       state.activeScanUnit = unit;
       state.issuedSerialForSession = null;
       document.getElementById('inputTeacherName').value = '';
+      document.getElementById('inputTeacherEmail').value = '';
       document.getElementById('teacherSuccessBox').classList.add('hidden');
 
       document.getElementById('viewAdminApp').classList.add('hidden');
@@ -1299,12 +1459,17 @@
         : '⏸️ Hentikan Putaran Sekejap (Lihat Jelas)';
     }
 
-    function handleTeacherGenerate(e) {
+    async function handleTeacherGenerate(e) {
       e.preventDefault();
       const unit = state.activeScanUnit;
       if (!unit) return;
       const name = document.getElementById('inputTeacherName').value.trim().toUpperCase();
-      if (!name) return;
+      const email = document.getElementById('inputTeacherEmail').value.trim();
+      if (!name || !email) return;
+
+      const btn = document.getElementById('btnSubmitTeacher');
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳ Sedang Menjana & Menghantar Sijil...</span>';
 
       const nextSeq = getUnitNextSeq(unit);
       const issuedSerial = formatSerial(unit.serialPrefix, nextSeq);
@@ -1317,6 +1482,7 @@
         seqNum: nextSeq,
         serialNo: issuedSerial,
         name,
+        email,
         time: `Hari ini, ${timeStr}`
       });
       saveCertUnits();
@@ -1328,12 +1494,49 @@
       state.spinPaused = true;
       document.getElementById('btnToggleSpin').textContent = '🔄 Pusingkan Semula Animasi Sijil 3D';
 
+      const serialSlug = issuedSerial.replace(/[^a-zA-Z0-9]/g, '-');
+      const nameSlug = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      const fileName = `e-sijil-skrg-${serialSlug}-${nameSlug}.png`;
+      const imageBase64 = teacherCanvas.toDataURL('image/png');
+
+      // 1. Trigger automatic download onto teacher's device immediately
+      downloadTeacherCertAgain();
+
+      // 2. If Google Apps Script Webhook URL is configured, automatically email the PNG attachment to the teacher's Inbox!
+      let emailSentViaServer = false;
+      if (state.gasWebhookUrl && state.gasWebhookUrl.startsWith('https://script.google.com/')) {
+        try {
+          await fetch(state.gasWebhookUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              email,
+              name,
+              serialNo: issuedSerial,
+              title: unit.title,
+              fileName,
+              imageBase64
+            })
+          });
+          emailSentViaServer = true;
+        } catch (err) {}
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '<span>📧 Jana Sijil, Hantar Ke E-mel & Muat Turun</span>';
+
       const successBox = document.getElementById('teacherSuccessBox');
       successBox.classList.remove('hidden');
       document.getElementById('teacherSuccessTitle').textContent = `✅ Sijil Siap! (${issuedSerial})`;
-      document.getElementById('teacherSuccessDesc').textContent = `Tahniah ${name}. Sijil rasmi SK Ranggu anda dengan No. Siri ${issuedSerial} telah dijana dan sedang dimuat turun.`;
+      document.getElementById('teacherSuccessDesc').textContent = `Tahniah ${name}. Sijil rasmi SK Ranggu anda dengan No. Siri ${issuedSerial} telah dimuat turun ke peranti anda.`;
 
-      downloadTeacherCertAgain();
+      const noteEl = document.getElementById('teacherEmailDeliveryNote');
+      if (emailSentViaServer) {
+        noteEl.textContent = `📩 Salinan sijil juga telah dihantar secara automatik ke Inbox e-mel: ${email} (Sila semak Inbox / Spam).`;
+      } else {
+        noteEl.textContent = `💡 Fail sijil telah disimpan ke dalam telefon/komputer anda. Anda juga boleh tekan "Hantar / Kongsi Ke E-mel & WhatsApp" di bawah untuk menghantar terus fail sijil ke ${email}.`;
+      }
     }
 
     function downloadTeacherCertAgain() {
@@ -1346,12 +1549,50 @@
       link.click();
     }
 
+    async function shareOrEmailCertFile() {
+      renderTeacherSpinningCanvas();
+      const unit = state.activeScanUnit || state.draft;
+      const name = document.getElementById('inputTeacherName').value.trim().toUpperCase() || 'GURU';
+      const email = document.getElementById('inputTeacherEmail').value.trim();
+      const serial = state.issuedSerialForSession || 'SKR/842/2026/0001';
+      const serialSlug = serial.replace(/[^a-zA-Z0-9]/g, '-');
+
+      try {
+        const dataUrl = teacherCanvas.toDataURL('image/png');
+        const res = await fetch(dataUrl);
+        const blob = await res.blob();
+        const file = new File([blob], `e-sijil-skrg-${serialSlug}.png`, { type: 'image/png' });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: `e-Sijil Rasmi SK Ranggu (${serial})`,
+            text: `Tahniah ${name}! Berikut adalah e-Sijil Rasmi SK Ranggu bagi ${unit.title} (No. Siri: ${serial}).`,
+            files: [file]
+          });
+          return;
+        }
+      } catch (e) {}
+
+      // Fallback mailto if Web Share API is not supported on desktop
+      const subj = encodeURIComponent(`e-Sijil Rasmi SK Ranggu: ${unit.title} (${serial})`);
+      const body = encodeURIComponent(
+        `Tahniah ${name},\n\nSijil rasmi anda bagi ${unit.title} (No. Siri: ${serial}) telah dijana dan dimuat turun.\n\nSekolah Kebangsaan Ranggu, Peti Surat 842, 91008 Tawau.`
+      );
+      window.location.href = `mailto:${email}?subject=${subj}&body=${body}`;
+    }
+
     // --- INITIALIZE APP & CHECK IF OPENED VIA UNIT QR SCAN ---
     function initApp() {
+      const params = new URLSearchParams(window.location.search);
+      const gasFromUrl = params.get('gas');
+      if (gasFromUrl && gasFromUrl.startsWith('https://script.google.com/')) {
+        state.gasWebhookUrl = gasFromUrl;
+      }
+
+      updateEmailStatusBanner();
       renderAdminCanvas();
       renderCertUnitsList();
 
-      const params = new URLSearchParams(window.location.search);
       const scannedCertId = params.get('certId');
       if (scannedCertId) {
         const fallbackUnit = {
