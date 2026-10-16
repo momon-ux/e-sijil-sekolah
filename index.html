@@ -132,6 +132,7 @@
 
     .dashboard-panels { min-width: 0; }
     .dashboard-panel[hidden] { display: none !important; }
+    .dashboard-panel:not([hidden]) { animation: panelReveal .35s ease both; }
 
     .advanced-settings summary {
       list-style: none;
@@ -146,6 +147,18 @@
       background: linear-gradient(120deg, #0f2f62 0%, #174ea6 58%, #2873d6 100%);
     }
 
+    .hero-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 30px 30px;
+      mask-image: linear-gradient(90deg, transparent, #000 45%, #000);
+      pointer-events: none;
+    }
+
     .hero-panel::after {
       content: "";
       position: absolute;
@@ -157,6 +170,81 @@
       background: rgba(255,255,255,.10);
       box-shadow: -110px 170px 0 rgba(214,155,45,.13);
       pointer-events: none;
+    }
+
+    .hero-graphic {
+      position: absolute;
+      right: 28%;
+      top: 50%;
+      width: 150px;
+      height: 106px;
+      transform: translateY(-50%) rotate(-7deg);
+      opacity: .13;
+      pointer-events: none;
+      animation: heroFloat 5s ease-in-out infinite;
+    }
+
+    .hero-certificate {
+      position: absolute;
+      inset: 0;
+      border: 2px solid #fff;
+      border-radius: 14px;
+      background: rgba(255,255,255,.12);
+      box-shadow: 0 18px 45px rgba(5,20,50,.2);
+    }
+
+    .hero-certificate::before {
+      content: "";
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      top: 25px;
+      height: 4px;
+      border-radius: 999px;
+      background: #fff;
+      box-shadow: 0 16px 0 rgba(255,255,255,.75), 0 32px 0 rgba(255,255,255,.5);
+    }
+
+    .hero-seal {
+      position: absolute;
+      right: -14px;
+      bottom: -14px;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 4px double #fff;
+      background: #d6a541;
+      animation: sealGlow 2.8s ease-in-out infinite;
+    }
+
+    .metric-card { transition: transform .2s ease, background-color .2s ease; }
+    .metric-card:hover { transform: translateY(-3px); background: rgba(255,255,255,.16); }
+
+    .metric-icon {
+      display: inline-grid;
+      place-items: center;
+      width: 1.35rem;
+      height: 1.35rem;
+      margin-right: .3rem;
+      border-radius: .45rem;
+      background: rgba(255,255,255,.14);
+      color: #f7d68e;
+      font-size: .7rem;
+    }
+
+    @keyframes panelReveal {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes heroFloat {
+      0%, 100% { transform: translateY(-50%) rotate(-7deg); }
+      50% { transform: translateY(calc(-50% - 8px)) rotate(-4deg); }
+    }
+
+    @keyframes sealGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(247,214,142,.12); }
+      50% { box-shadow: 0 0 0 12px rgba(247,214,142,0); }
     }
 
     .metric-card {
@@ -293,6 +381,7 @@
       .quick-actions { grid-template-columns: 1fr; }
       .quick-action-button { font-size: .72rem; padding-left: .75rem; padding-right: .75rem; }
       .hero-panel { border-radius: 1.25rem !important; }
+      .hero-graphic { right: -18px; top: 31%; width: 112px; height: 78px; opacity: .1; }
     }
 
     @media (max-width: 900px) {
@@ -377,6 +466,7 @@
 
       <!-- Ringkasan operasi -->
       <section class="hero-panel app-card rounded-3xl p-5 sm:p-7 text-white" aria-labelledby="dashboardTitle">
+        <div class="hero-graphic" aria-hidden="true"><div class="hero-certificate"></div><div class="hero-seal"></div></div>
         <div class="relative z-10 grid gap-5 lg:grid-cols-[1.35fr_.9fr] lg:items-end">
           <div class="space-y-3">
             <span class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[.16em] text-blue-100">
@@ -389,15 +479,15 @@
           </div>
           <div class="grid grid-cols-3 gap-2 sm:gap-3" aria-label="Ringkasan rekod">
             <div class="metric-card rounded-2xl p-3 sm:p-4">
-              <p class="text-[10px] sm:text-xs font-semibold text-blue-100">PROGRAM</p>
+              <p class="flex items-center text-[10px] sm:text-xs font-semibold text-blue-100"><span class="metric-icon">▦</span>PROGRAM</p>
               <p id="statPrograms" class="mt-1 text-xl sm:text-2xl font-black">0</p>
             </div>
             <div class="metric-card rounded-2xl p-3 sm:p-4">
-              <p class="text-[10px] sm:text-xs font-semibold text-blue-100">SIJIL</p>
+              <p class="flex items-center text-[10px] sm:text-xs font-semibold text-blue-100"><span class="metric-icon">✓</span>SIJIL</p>
               <p id="statCertificates" class="mt-1 text-xl sm:text-2xl font-black">0</p>
             </div>
             <div class="metric-card rounded-2xl p-3 sm:p-4">
-              <p class="text-[10px] sm:text-xs font-semibold text-blue-100">E-MEL</p>
+              <p class="flex items-center text-[10px] sm:text-xs font-semibold text-blue-100"><span class="metric-icon">✉</span>E-MEL</p>
               <p id="statEmail" class="mt-1 text-sm sm:text-base font-black">Belum aktif</p>
             </div>
           </div>
