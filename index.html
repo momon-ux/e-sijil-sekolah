@@ -96,6 +96,9 @@
       padding: .15rem .2rem;
     }
 
+    .school-brand-area,
+    .school-identity { min-width: 0; }
+
     .logo-cutout {
       width: auto;
       height: 3.75rem;
@@ -108,6 +111,31 @@
     .top-subtitle {
       color: #52627a;
       font-weight: 650;
+    }
+
+    .upload-zone { position: relative; isolation: isolate; }
+    .upload-zone-content { pointer-events: none; }
+    .cert-upload-input {
+      position: relative;
+      z-index: 6;
+      display: block;
+      width: 100%;
+      margin-top: .75rem;
+      color: transparent;
+      font-size: 0;
+      cursor: pointer;
+    }
+    .cert-upload-input::file-selector-button {
+      display: block;
+      margin: 0 auto;
+      padding: .58rem 1rem;
+      border: 0;
+      border-radius: .55rem;
+      background: #174ea6;
+      color: #fff;
+      font-size: .82rem;
+      font-weight: 800;
+      cursor: pointer;
     }
 
     .live-clock {
@@ -523,6 +551,44 @@
       touch-action: none;
     }
 
+    .placement-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: .45rem;
+      padding: .55rem;
+      border: 1px solid #bfdbfe;
+      border-radius: .9rem;
+      background: #eff6ff;
+    }
+
+    .placement-button {
+      min-height: 40px;
+      padding: .5rem .72rem;
+      border: 1px solid #bfdbfe;
+      border-radius: .72rem;
+      background: #fff;
+      color: #174ea6;
+      font-size: .72rem;
+      font-weight: 850;
+      box-shadow: 0 4px 10px rgba(23,78,166,.08);
+    }
+
+    .placement-button.active {
+      border-color: #174ea6;
+      background: #174ea6;
+      color: #fff;
+      box-shadow: 0 7px 16px rgba(23,78,166,.22);
+    }
+
+    .placement-hint {
+      flex: 1 1 190px;
+      color: #40526d;
+      font-size: .68rem;
+      font-weight: 650;
+      line-height: 1.05rem;
+    }
+
     /* 3D Spinning Certificate Stage when Teacher Scans QR */
     .stage-3d {
       perspective: 1400px;
@@ -619,12 +685,24 @@
       .mobile-stack { grid-template-columns: 1fr !important; }
       .stage-3d { padding: .75rem 0; }
       .app-header { padding-left: .55rem !important; padding-right: .55rem !important; }
-      .app-header-inner { gap: .35rem !important; }
+      .app-header-inner {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: .4rem !important;
+      }
+      .school-brand-area {
+        display: grid !important;
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: center;
+        width: 100%;
+        gap: .38rem !important;
+      }
       .brand-lockup { gap: .22rem; padding: .08rem; }
-      .logo-cutout { height: 2.7rem; }
-      .logo-cutout.school { height: 2.9rem; }
-      .school-title { max-width: 138px; font-size: .76rem !important; line-height: .94rem !important; }
-      .top-subtitle { max-width: 142px; font-size: .6rem !important; line-height: .76rem !important; }
+      .logo-cutout { height: 2.45rem; }
+      .logo-cutout.school { height: 2.6rem; }
+      .school-identity { width: 100%; text-align: center; }
+      .school-title { max-width: none; font-size: .72rem !important; line-height: .86rem !important; }
+      .top-subtitle { max-width: none; margin-top: .1rem; font-size: .56rem !important; line-height: .7rem !important; }
       .live-clock { min-width: 86px; padding: .28rem .36rem !important; }
       .live-clock-date { display: block; font-size: .48rem !important; line-height: .68rem !important; white-space: nowrap; }
       .live-clock-time { font-size: .75rem !important; line-height: .9rem !important; }
@@ -636,6 +714,9 @@
       .developer-name { font-size: .68rem; }
       .hero-panel { border-radius: 1rem !important; }
       .hero-graphic { right: -18px; top: 31%; width: 112px; height: 78px; opacity: .1; }
+      .placement-toolbar { gap: .35rem; padding: .45rem; }
+      .placement-button { min-height: 42px; flex: 1 1 calc(50% - .35rem); padding: .48rem .5rem; }
+      .placement-hint { flex-basis: 100%; text-align: center; }
     }
 
     @media (max-width: 900px) {
@@ -675,7 +756,7 @@
   <!-- Top Header -->
   <header class="app-header sticky top-0 z-30 backdrop-blur border-b border-[var(--border)] px-3 sm:px-4 py-2.5 shadow-sm">
     <div class="app-header-inner max-w-6xl mx-auto flex items-center justify-between gap-2">
-      <div class="flex items-center gap-2.5">
+      <div class="school-brand-area flex items-center gap-2.5">
         <div class="brand-lockup" aria-label="Logo rasmi Kementerian Pendidikan Malaysia dan Sekolah Kebangsaan Ranggu">
           <img src="./logo-kpm.png" alt="Logo Kementerian Pendidikan Malaysia" class="logo-cutout" />
           <span class="h-7 w-px bg-slate-300" aria-hidden="true"></span>
@@ -684,7 +765,6 @@
         <div class="school-identity">
           <div class="flex items-center gap-1.5">
             <h1 class="school-title text-xs sm:text-sm md:text-base font-extrabold tracking-tight text-[var(--foreground)]">SEKOLAH KEBANGSAAN RANGGU</h1>
-            <span id="standaloneBadge" class="hidden px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">PWA</span>
           </div>
           <p id="topSubtitle" class="top-subtitle text-xs leading-4">Sekolah Kebangsaan Ranggu, Peti Surat 842, 91008 Tawau, Sabah</p>
         </div>
@@ -829,13 +909,14 @@
               </div>
 
               <!-- Muat naik sijil ialah langkah utama, bukan tetapan tersembunyi -->
-              <label id="certUploadCard" class="upload-zone block cursor-pointer rounded-2xl border-2 border-dashed border-blue-500 p-5 text-center shadow-sm hover:border-blue-700">
-                <div class="upload-zone-icon mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-700 text-2xl font-black text-white shadow-lg shadow-blue-700/20">↑</div>
-                <div class="mt-3 text-sm font-extrabold text-blue-950">Muat Naik Gambar Sijil</div>
-                <div id="uploadStatusText" class="mt-1 text-xs leading-5 font-medium text-slate-600">Wajib • PNG atau JPG • Sistem hanya menambah nama dan nombor sijil</div>
-                <span class="mt-3 inline-flex rounded-lg bg-blue-700 px-4 py-2 text-sm font-bold text-white">Pilih Gambar Sijil</span>
-                <input id="certUpload" type="file" accept="image/png,image/jpeg,image/webp" onchange="handleCertUpload(event)" class="hidden" required />
-              </label>
+              <div id="certUploadCard" class="upload-zone block cursor-pointer rounded-2xl border-2 border-dashed border-blue-500 p-5 text-center shadow-sm hover:border-blue-700">
+                <div class="upload-zone-content">
+                  <div class="upload-zone-icon mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-700 text-2xl font-black text-white shadow-lg shadow-blue-700/20">↑</div>
+                  <div class="mt-3 text-sm font-extrabold text-blue-950">Muat Naik Gambar Sijil</div>
+                  <div id="uploadStatusText" class="mt-1 text-xs leading-5 font-medium text-slate-600">Wajib • PNG atau JPG • Sistem hanya menambah nama dan nombor sijil</div>
+                </div>
+                <input id="certUpload" type="file" accept="image/png,image/jpeg,image/webp" onchange="handleCertUpload(event)" class="cert-upload-input" aria-label="Pilih gambar sijil daripada telefon atau komputer" required />
+              </div>
 
               <input id="showSchoolHeaderCheckbox" type="checkbox" class="hidden" />
               <input id="certDateInput" type="hidden" value="16 Oktober 2026" />
@@ -898,6 +979,12 @@
                 <input id="showGuidesCheckbox" type="checkbox" checked onchange="renderAdminCanvas()" class="rounded" />
                 <span>Kotak Panduan</span>
               </label>
+            </div>
+
+            <div class="placement-toolbar" aria-label="Pilih ruang untuk dialihkan">
+              <button id="selectNamePosition" type="button" class="placement-button" onclick="selectOverlayElement('name')" aria-pressed="false">Nama Guru</button>
+              <button id="selectSerialPosition" type="button" class="placement-button" onclick="selectOverlayElement('serial')" aria-pressed="false">No. Siri Sijil</button>
+              <p id="placementHint" class="placement-hint">Pilih satu kotak, kemudian sentuh lokasi baharu atau seret kotak di atas sijil.</p>
             </div>
 
             <div class="canvas-container border border-[var(--border)] rounded-xl overflow-hidden bg-neutral-950 flex justify-center">
@@ -1221,7 +1308,6 @@
     });
 
     if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
-      document.getElementById('standaloneBadge').classList.remove('hidden');
       document.getElementById('btnInstallPwa').classList.add('hidden');
     }
 
@@ -1791,12 +1877,14 @@
           document.getElementById('coverOldNameCheckbox').checked = true;
 
           if (isPortrait) {
-            state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: Math.round(targetW * 0.8), y: 18, w: 220, h: 26 };
+            state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: Math.round(targetW * 0.8), y: Math.max(58, Math.round(targetH * 0.05)), w: 220, h: 30 };
             state.draft.elements.name = { id: 'name', label: 'Nama Guru', x: Math.round(targetW / 2), y: Math.round(targetH * 0.339), w: Math.round(targetW * 0.57), h: 48 };
           } else {
             state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: Math.round(targetW * 0.8), y: 55, w: 230, h: 28 };
             state.draft.elements.name = { id: 'name', label: 'Nama Guru', x: Math.round(targetW / 2), y: Math.round(targetH * 0.5), w: Math.round(targetW * 0.65), h: 50 };
           }
+          state.selectedElement = 'serial';
+          updatePlacementControls();
           const status = document.getElementById('uploadStatusText');
           status.textContent = `✓ ${cleanText(file.name, 80)} berjaya dimuat naik`;
           status.className = 'mt-1 text-xs leading-5 font-bold text-emerald-700';
@@ -1813,13 +1901,48 @@
       const h = state.draft.canvasH;
       const isPortrait = h >= w;
       if (isPortrait) {
-        state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: 585, y: 18, w: 220, h: 26 };
+        state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: Math.round(w * 0.8), y: Math.max(58, Math.round(h * 0.05)), w: 220, h: 30 };
         state.draft.elements.name = { id: 'name', label: 'Nama Guru', x: Math.round(w / 2) - 4, y: Math.round(h * 0.339), w: 415, h: 48 };
       } else {
         state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: 730, y: 68, w: 230, h: 28 };
         state.draft.elements.name = { id: 'name', label: 'Nama Guru', x: Math.round(w / 2), y: Math.round(h * 0.5), w: 600, h: 50 };
       }
       renderAdminCanvas();
+    }
+
+    function updatePlacementControls() {
+      const controls = {
+        name: document.getElementById('selectNamePosition'),
+        serial: document.getElementById('selectSerialPosition')
+      };
+      Object.entries(controls).forEach(([id, button]) => {
+        if (!button) return;
+        const active = state.selectedElement === id;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+      const hint = document.getElementById('placementHint');
+      if (hint) {
+        hint.textContent = state.selectedElement
+          ? `${state.draft.elements[state.selectedElement].label} dipilih — sentuh lokasi baharu atau seret kotak pada sijil.`
+          : 'Pilih satu kotak, kemudian sentuh lokasi baharu atau seret kotak di atas sijil.';
+      }
+    }
+
+    function selectOverlayElement(id) {
+      if (!state.draft.elements[id]) return;
+      state.selectedElement = id;
+      updatePlacementControls();
+      renderAdminCanvas();
+    }
+
+    function clampOverlayPosition(item, x, y) {
+      const halfW = Math.max(30, item.w / 2);
+      const halfH = Math.max(16, item.h / 2);
+      return {
+        x: Math.max(halfW, Math.min(adminCanvas.width - halfW, Math.round(x))),
+        y: Math.max(halfH + 24, Math.min(adminCanvas.height - halfH, Math.round(y)))
+      };
     }
 
     function getCanvasCoords(canvas, evt) {
@@ -1831,14 +1954,24 @@
     }
 
     adminCanvas.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
       const pos = getCanvasCoords(adminCanvas, e);
+      const rect = adminCanvas.getBoundingClientRect();
+      const minTapW = 48 * (adminCanvas.width / rect.width);
+      const minTapH = 48 * (adminCanvas.height / rect.height);
       const items = Object.values(state.draft.elements).reverse();
-      const hit = items.find(item =>
-        pos.x >= item.x - item.w / 2 &&
-        pos.x <= item.x + item.w / 2 &&
-        pos.y >= item.y - item.h / 2 &&
-        pos.y <= item.y + item.h / 2
+      let hit = items.find(item =>
+        pos.x >= item.x - Math.max(item.w, minTapW) / 2 &&
+        pos.x <= item.x + Math.max(item.w, minTapW) / 2 &&
+        pos.y >= item.y - Math.max(item.h, minTapH) / 2 &&
+        pos.y <= item.y + Math.max(item.h, minTapH) / 2
       );
+      if (!hit && state.selectedElement) {
+        hit = state.draft.elements[state.selectedElement];
+        const next = clampOverlayPosition(hit, pos.x, pos.y);
+        hit.x = next.x;
+        hit.y = next.y;
+      }
       if (hit) {
         state.selectedElement = hit.id;
         state.dragging = true;
@@ -1848,19 +1981,26 @@
       } else {
         state.selectedElement = null;
       }
+      updatePlacementControls();
       renderAdminCanvas();
     });
 
     adminCanvas.addEventListener('pointermove', (e) => {
       if (!state.dragging || !state.selectedElement) return;
+      e.preventDefault();
       const pos = getCanvasCoords(adminCanvas, e);
       const el = state.draft.elements[state.selectedElement];
-      el.x = Math.max(60, Math.min(adminCanvas.width - 60, Math.round(pos.x - state.dragOffsetX)));
-      el.y = Math.max(16, Math.min(adminCanvas.height - 16, Math.round(pos.y - state.dragOffsetY)));
+      const next = clampOverlayPosition(el, pos.x - state.dragOffsetX, pos.y - state.dragOffsetY);
+      el.x = next.x;
+      el.y = next.y;
       renderAdminCanvas();
     });
 
     adminCanvas.addEventListener('pointerup', () => {
+      state.dragging = false;
+    });
+
+    adminCanvas.addEventListener('pointercancel', () => {
       state.dragging = false;
     });
 
