@@ -1,13 +1,13 @@
 {
-  "name": "Sistem e-Sijil & QR Sekolah",
-  "short_name": "e-Sijil QR",
-  "description": "Aplikasi PWA Pengurusan Rekod Sijil & Penjanaan QR Unik Setiap Sijil",
+  "name": "E-SIJIL QR — SK Ranggu Tawau",
+  "short_name": "e-Sijil SKRG",
+  "description": "Aplikasi PWA Pengurusan Rekod Sijil & Penjanaan QR Unik Setiap Sijil SK Ranggu",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0b1120",
-  "theme_color": "#065f46",
+  "theme_color": "#1e40af",
   "icons": [
     {
       "src": "./icon-192.png",
