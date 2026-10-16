@@ -99,6 +99,21 @@
     .school-brand-area,
     .school-identity { min-width: 0; }
 
+    .school-brand-area { align-items: center; }
+
+    .school-identity {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      text-align: left;
+    }
+
+    .school-title {
+      line-height: 1.1;
+      text-wrap: balance;
+    }
+
     .logo-cutout {
       width: auto;
       height: 3.75rem;
@@ -108,19 +123,19 @@
 
     .logo-cutout.school { height: 4rem; }
 
-    .app-logo-mark {
-      width: 4.15rem;
-      height: 4.15rem;
+    .header-school-logo {
+      width: 4rem;
+      height: 4rem;
       flex: 0 0 auto;
-      object-fit: cover;
-      border-radius: 1rem;
-      border: 2px solid #d6a541;
-      box-shadow: 0 7px 18px rgba(11,31,72,.24);
+      object-fit: contain;
+      filter: drop-shadow(0 5px 7px rgba(15,23,42,.2));
     }
 
     .top-subtitle {
       color: #52627a;
       font-weight: 650;
+      margin-top: .18rem;
+      line-height: 1.25;
     }
 
     .upload-zone { position: relative; isolation: isolate; }
@@ -734,10 +749,10 @@
       .brand-lockup { gap: .22rem; padding: .08rem; }
       .logo-cutout { height: 2.45rem; }
       .logo-cutout.school { height: 2.6rem; }
-      .app-logo-mark { width: 3rem; height: 3rem; border-radius: .78rem; }
-      .school-identity { width: 100%; text-align: center; }
+      .header-school-logo { width: 3.15rem; height: 3.15rem; }
+      .school-identity { width: 100%; text-align: left; align-items: flex-start; }
       .school-title { max-width: none; font-size: .72rem !important; line-height: .86rem !important; }
-      .top-subtitle { max-width: none; margin-top: .1rem; font-size: .56rem !important; line-height: .7rem !important; }
+      .top-subtitle { max-width: none; margin-top: .14rem; font-size: .58rem !important; line-height: .72rem !important; }
       .live-clock { min-width: 86px; padding: .28rem .36rem !important; }
       .live-clock-date { display: block; font-size: .48rem !important; line-height: .68rem !important; white-space: nowrap; }
       .live-clock-time { font-size: .75rem !important; line-height: .9rem !important; }
@@ -800,14 +815,14 @@
   <header class="app-header sticky top-0 z-30 backdrop-blur border-b border-[var(--border)] px-3 sm:px-4 py-2.5 shadow-sm">
     <div class="app-header-inner max-w-6xl mx-auto flex items-center justify-between gap-2">
       <div class="school-brand-area flex items-center gap-2.5">
-        <div class="brand-lockup" aria-label="Logo Sistem e-Sijil QR Sekolah Kebangsaan Ranggu">
-          <img src="./e-sijil-logo.png" alt="Logo e-Sijil QR SK Ranggu Tawau" class="app-logo-mark" />
+        <div class="brand-lockup" aria-label="Logo rasmi Sekolah Kebangsaan Ranggu">
+          <img src="./skrg.png" alt="Logo rasmi Sekolah Kebangsaan Ranggu" class="header-school-logo" />
         </div>
         <div class="school-identity">
           <div class="flex items-center gap-1.5">
             <h1 class="school-title text-xs sm:text-sm md:text-base font-extrabold tracking-tight text-[var(--foreground)]">SEKOLAH KEBANGSAAN RANGGU</h1>
           </div>
-          <p id="topSubtitle" class="top-subtitle text-xs leading-4">Sekolah Kebangsaan Ranggu, Peti Surat 842, 91008 Tawau, Sabah</p>
+          <p id="topSubtitle" class="top-subtitle text-xs leading-4">Peti Surat 842, 91008 Tawau, Sabah</p>
         </div>
       </div>
 
