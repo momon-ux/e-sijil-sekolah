@@ -961,11 +961,9 @@
                   <span class="advanced-chevron text-slate-400 transition-transform">⌄</span>
                 </summary>
                 <div class="space-y-3 border-t border-[var(--border)] p-3.5">
-              <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 space-y-2">
-                <label class="flex items-center gap-2 text-sm font-semibold text-emerald-700 cursor-pointer">
-                  <input id="coverOldNameCheckbox" type="checkbox" onchange="updateDraftCert()" class="rounded" />
-                  <span>Tutup ruang nama asal pada gambar sijil</span>
-                </label>
+              <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-sm font-semibold text-emerald-800">
+                ✂️ Nama guru dan nombor sijil dipaparkan sebagai teks cut out tanpa sebarang kotak atau latar belakang.
+                <input id="coverOldNameCheckbox" type="checkbox" class="hidden" aria-hidden="true" tabindex="-1" />
               </div>
 
               <!-- Font & Color Controls -->
@@ -1008,8 +1006,8 @@
                 </div>
               </div>
               <label class="flex items-center gap-1.5 text-sm text-[var(--muted-foreground)] cursor-pointer">
-                <input id="showGuidesCheckbox" type="checkbox" checked onchange="renderAdminCanvas()" class="rounded" />
-                <span>Kotak Panduan</span>
+                <input id="showGuidesCheckbox" type="checkbox" onchange="renderAdminCanvas()" class="rounded" />
+                <span>Kotak Panduan <span class="font-normal">(pratonton sahaja)</span></span>
               </label>
             </div>
 
@@ -1154,10 +1152,10 @@
         </form>
 
         <!-- Success Box -->
-        <div id="teacherSuccessBox" class="hidden max-w-md mx-auto mt-4 p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-center space-y-2.5">
-          <p class="text-sm font-bold text-emerald-300" id="teacherSuccessTitle">✅ Sijil Anda Telah Dijana!</p>
-          <p class="text-xs text-slate-200" id="teacherSuccessDesc"></p>
-          <p class="text-[11px] text-amber-300 font-medium" id="teacherEmailDeliveryNote"></p>
+        <div id="teacherSuccessBox" class="hidden max-w-md mx-auto mt-4 p-4 md:p-5 rounded-xl bg-emerald-50 border-2 border-emerald-400 text-center space-y-3 shadow-sm">
+          <p class="text-lg md:text-xl leading-tight font-extrabold text-emerald-900" id="teacherSuccessTitle">✅ Sijil Anda Telah Dijana!</p>
+          <p class="text-sm md:text-base leading-relaxed font-semibold text-slate-800" id="teacherSuccessDesc"></p>
+          <p class="text-sm md:text-base leading-relaxed text-amber-900 font-bold" id="teacherEmailDeliveryNote"></p>
           <div class="flex flex-wrap justify-center gap-2 pt-1">
             <button type="button" onclick="saveCertificateToGallery()" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 hover:opacity-90">
               📸 Simpan ke Galeri Foto
@@ -1801,29 +1799,9 @@
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      if (cfg.coverOldName) {
-        const bx = el.name.x - el.name.w / 2 - 8;
-        const by = el.name.y - el.name.h / 2 - 4;
-        const bw = el.name.w + 16;
-        const bh = el.name.h + 8;
-        drawRoundedRect(ctx, bx, by, bw, bh, Math.min(24, bh / 2));
-        ctx.fillStyle = '#f7f5f0';
-        ctx.fill();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#b59c6b';
-        ctx.stroke();
-      }
-
       ctx.save();
       const sLabel = `No. Sijil: ${serialText}`;
       ctx.font = 'bold 11.5px monospace';
-      const sw = Math.max(ctx.measureText(sLabel).width + 18, 155);
-      drawRoundedRect(ctx, el.serial.x - sw / 2, el.serial.y - 12, sw, 24, 8);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
-      ctx.fill();
-      ctx.lineWidth = 1.2;
-      ctx.strokeStyle = 'rgba(180, 150, 90, 0.65)';
-      ctx.stroke();
       ctx.fillStyle = '#0f2952';
       ctx.fillText(sLabel, el.serial.x, el.serial.y);
       ctx.restore();
@@ -1912,8 +1890,8 @@
           state.draft.customBgDataUrl = off.toDataURL('image/jpeg', 0.84);
           state.draft.customBgImage = img;
           state.placementLocked = false;
-          state.draft.coverOldName = true;
-          document.getElementById('coverOldNameCheckbox').checked = true;
+          state.draft.coverOldName = false;
+          document.getElementById('coverOldNameCheckbox').checked = false;
 
           if (isPortrait) {
             state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: Math.round(targetW * 0.8), y: Math.max(58, Math.round(targetH * 0.05)), w: 220, h: 30 };
