@@ -278,6 +278,36 @@
     .preview-workflow-card {
       position: relative;
       overflow: hidden;
+      min-width: 0;
+    }
+
+    .preview-workflow-card { padding: 1rem; }
+
+    .preview-heading-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+      gap: .75rem;
+    }
+
+    .preview-guide-toggle {
+      white-space: nowrap;
+      align-self: start;
+      padding-top: .25rem;
+    }
+
+    .certificate-preview-shell {
+      min-width: 0;
+      padding: .5rem;
+      background: linear-gradient(145deg, #f8fafc, #e8eef7);
+    }
+
+    .certificate-preview-shell canvas {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      border-radius: .55rem;
+      box-shadow: 0 10px 28px rgba(15,23,42,.12);
     }
 
     .create-workflow-card::before,
@@ -796,6 +826,10 @@
       .side-nav-button { justify-content: center; padding: .48rem .3rem; font-size: .7rem; gap: .25rem; text-align: center; }
       .side-nav-icon { width: 1.55rem; height: 1.55rem; font-size: .78rem; border-radius: .5rem; }
       .qr-action-button { min-width: 0; }
+      .preview-heading-row { grid-template-columns: 1fr; gap: .4rem; }
+      .preview-guide-toggle { padding-top: 0; white-space: normal; }
+      .preview-workflow-card { padding: .85rem; }
+      .certificate-preview-shell { padding: .35rem; }
     }
 
     @media (max-width: 1023px) {
@@ -926,8 +960,8 @@
       </section>
 
       <!-- Section 1: Create / Edit Certificate Record & Upload Certificate Image -->
-      <section id="panelCreate" class="dashboard-panel grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div class="lg:col-span-5 space-y-4">
+      <section id="panelCreate" class="dashboard-panel grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <div class="lg:col-span-4 space-y-4">
           <div class="create-workflow-card app-card bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 space-y-4">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div class="relative z-[1]">
@@ -1019,17 +1053,17 @@
         </div>
 
         <!-- Right Column: Interactive Certificate Position Canvas -->
-        <div class="lg:col-span-7 space-y-4">
+        <div class="lg:col-span-8 space-y-4">
           <div class="preview-workflow-card app-card bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 space-y-3">
-            <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="preview-heading-row">
               <div class="flex min-w-0 flex-1 items-start gap-3">
                 <span class="preview-symbol" aria-hidden="true">▣</span>
-                <div>
-                  <h3 class="text-lg font-black tracking-tight text-[var(--foreground)]">Pratonton Gambar Sijil</h3>
+                <div class="min-w-0">
+                  <h3 class="text-base font-black tracking-tight text-[var(--foreground)]">Pratonton Gambar Sijil</h3>
                   <p class="text-sm leading-5 text-[var(--muted-foreground)]">Selepas gambar dimuat naik, sentuh dan tarik kotak biru <strong>Nama Guru</strong> atau <strong>No. Siri Sijil</strong> ke kedudukan yang betul.</p>
                 </div>
               </div>
-              <label class="flex items-center gap-1.5 text-sm text-[var(--muted-foreground)] cursor-pointer">
+              <label class="preview-guide-toggle flex items-center gap-1.5 text-sm text-[var(--muted-foreground)] cursor-pointer">
                 <input id="showGuidesCheckbox" type="checkbox" onchange="renderAdminCanvas()" class="rounded" />
                 <span>Kotak Panduan <span class="font-normal">(pratonton sahaja)</span></span>
               </label>
@@ -1042,7 +1076,7 @@
               <p id="placementHint" class="placement-hint">Pilih satu kotak, kemudian sentuh lokasi baharu atau seret kotak di atas sijil.</p>
             </div>
 
-            <div class="canvas-container border border-[var(--border)] rounded-xl overflow-hidden bg-neutral-950 flex justify-center">
+            <div class="canvas-container certificate-preview-shell border border-[var(--border)] rounded-xl overflow-hidden flex justify-center">
               <canvas id="adminCertCanvas" width="900" height="636" class="max-h-[680px] w-auto max-w-full h-auto block cursor-move"></canvas>
             </div>
           </div>
