@@ -1,10 +1,12 @@
-const CACHE_NAME = 'admin-esijil-v3';
+const CACHE_NAME = 'admin-esijil-v4';
 const ASSETS = [
+  './',
   './index.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
-  './skrg.png'
+  './skrg.png',
+  './sijil-delima.jpg'
 ];
 
 self.addEventListener('install', (event) => {
@@ -17,14 +19,13 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+      Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : null)))
     )
   );
   self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
   event.respondWith(
     fetch(event.request).catch(() => caches.match(event.request))
   );
