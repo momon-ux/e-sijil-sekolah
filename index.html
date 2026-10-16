@@ -581,6 +581,30 @@
       box-shadow: 0 7px 16px rgba(23,78,166,.22);
     }
 
+    .placement-button:disabled {
+      cursor: not-allowed;
+      opacity: .55;
+      box-shadow: none;
+    }
+
+    .placement-lock-button {
+      min-height: 40px;
+      padding: .5rem .78rem;
+      border: 1px solid #16a34a;
+      border-radius: .72rem;
+      background: #16a34a;
+      color: #fff;
+      font-size: .72rem;
+      font-weight: 900;
+      box-shadow: 0 5px 12px rgba(22,163,74,.18);
+    }
+
+    .placement-lock-button.locked {
+      border-color: #b45309;
+      background: #f59e0b;
+      color: #172033;
+    }
+
     .placement-hint {
       flex: 1 1 190px;
       color: #40526d;
@@ -992,6 +1016,7 @@
             <div class="placement-toolbar" aria-label="Pilih ruang untuk dialihkan">
               <button id="selectNamePosition" type="button" class="placement-button" onclick="selectOverlayElement('name')" aria-pressed="false">Nama Guru</button>
               <button id="selectSerialPosition" type="button" class="placement-button" onclick="selectOverlayElement('serial')" aria-pressed="false">No. Siri Sijil</button>
+              <button id="togglePlacementLock" type="button" class="placement-lock-button" onclick="togglePlacementLock()" aria-pressed="false">🔒 Kunci Kedudukan</button>
               <p id="placementHint" class="placement-hint">Pilih satu kotak, kemudian sentuh lokasi baharu atau seret kotak di atas sijil.</p>
             </div>
 
@@ -1008,7 +1033,7 @@
           <div>
             <h2 class="text-base font-bold text-[var(--foreground)]">2. Senarai Unit Sijil & Kod QR Unik Setiap Sijil</h2>
             <p class="text-xs text-[var(--muted-foreground)]">
-              Setiap rekod sijil di bawah mempunyai <strong>Kod QR uniknya sendiri</strong>. Bila guru imbas QR mana-mana sijil, mereka akan nampak sijil tersebut berpusing-pusing dalam animasi 3D, masukkan Nama & E-mel, dan sijil terus dihantar ke e-mel serta dimuat turun!
+              Setiap rekod sijil di bawah mempunyai <strong>Kod QR uniknya sendiri</strong>. Guru mengimbas QR, memasukkan Nama & E-mel, menjana sijil, kemudian menyimpan imej ke Galeri Foto. E-mel automatik digunakan hanya apabila telah diaktifkan oleh admin.
             </p>
           </div>
           <div class="grid grid-cols-2 sm:flex gap-2">
@@ -1048,7 +1073,7 @@
           Pratonton Sijil Rasmi SK Ranggu Anda
         </h2>
         <p class="text-xs md:text-sm text-[var(--muted-foreground)] max-w-lg mx-auto">
-          Masukkan <strong>Nama Penuh</strong> dan <strong>Alamat E-mel</strong> anda di bawah. Sijil akan dihantar ke e-mel anda dan dimuat turun secara automatik.
+          Masukkan <strong>Nama Penuh</strong> dan <strong>Alamat E-mel</strong> anda. Selepas sijil dijana, tekan <strong>Simpan ke Galeri Foto</strong>. Penghantaran e-mel hanya berlaku apabila perkhidmatan e-mel admin aktif.
         </p>
 
         <!-- 3D Rotating Certificate Showcase -->
@@ -1124,7 +1149,7 @@
             type="submit"
             class="w-full py-3.5 px-6 rounded-xl text-sm md:text-base font-bold bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-95 shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2"
           >
-            <span>📧 Jana Sijil, Hantar Ke E-mel & Muat Turun</span>
+            <span>✨ Jana Sijil Saya</span>
           </button>
         </form>
 
@@ -1134,8 +1159,11 @@
           <p class="text-xs text-slate-200" id="teacherSuccessDesc"></p>
           <p class="text-[11px] text-amber-300 font-medium" id="teacherEmailDeliveryNote"></p>
           <div class="flex flex-wrap justify-center gap-2 pt-1">
-            <button type="button" onclick="downloadTeacherCertAgain()" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 hover:opacity-90">
-              ⬇️ Muat Turun Gambar Sijil (PNG)
+            <button type="button" onclick="saveCertificateToGallery()" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 hover:opacity-90">
+              📸 Simpan ke Galeri Foto
+            </button>
+            <button type="button" onclick="downloadTeacherCertAgain()" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-amber-400 text-slate-950 hover:opacity-90">
+              ⬇️ Muat Turun Fail PNG
             </button>
             <button type="button" onclick="shareOrEmailCertFile()" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-blue-500 text-white hover:opacity-90">
               📤 Hantar / Kongsi Ke E-mel & WhatsApp
@@ -1441,6 +1469,7 @@
         }
       },
       selectedElement: null,
+      placementLocked: false,
       dragging: false,
       dragOffsetX: 0,
       dragOffsetY: 0,
@@ -1881,6 +1910,7 @@
           state.draft.canvasH = targetH;
           state.draft.customBgDataUrl = off.toDataURL('image/jpeg', 0.84);
           state.draft.customBgImage = img;
+          state.placementLocked = false;
           state.draft.coverOldName = true;
           document.getElementById('coverOldNameCheckbox').checked = true;
 
@@ -1925,19 +1955,41 @@
       };
       Object.entries(controls).forEach(([id, button]) => {
         if (!button) return;
-        const active = state.selectedElement === id;
+        const active = !state.placementLocked && state.selectedElement === id;
         button.classList.toggle('active', active);
         button.setAttribute('aria-pressed', String(active));
+        button.disabled = state.placementLocked;
       });
+      const lockButton = document.getElementById('togglePlacementLock');
+      if (lockButton) {
+        lockButton.classList.toggle('locked', state.placementLocked);
+        lockButton.setAttribute('aria-pressed', String(state.placementLocked));
+        lockButton.textContent = state.placementLocked ? '🔓 Buka Kunci' : '🔒 Kunci Kedudukan';
+      }
+      adminCanvas.style.cursor = state.placementLocked ? 'not-allowed' : 'move';
       const hint = document.getElementById('placementHint');
       if (hint) {
-        hint.textContent = state.selectedElement
+        hint.textContent = state.placementLocked
+          ? 'Kedudukan sudah dikunci — Nama Guru dan No. Siri tidak akan bergerak apabila tersentuh.'
+          : state.selectedElement
           ? `${state.draft.elements[state.selectedElement].label} dipilih — sentuh lokasi baharu atau seret kotak pada sijil.`
           : 'Pilih satu kotak, kemudian sentuh lokasi baharu atau seret kotak di atas sijil.';
       }
     }
 
+    function togglePlacementLock(forceLocked) {
+      state.placementLocked = typeof forceLocked === 'boolean' ? forceLocked : !state.placementLocked;
+      state.dragging = false;
+      if (state.placementLocked) state.selectedElement = null;
+      updatePlacementControls();
+      renderAdminCanvas();
+      showToast(state.placementLocked
+        ? 'Kedudukan Nama Guru dan No. Siri sudah dikunci.'
+        : 'Kunci dibuka. Kedudukan boleh dilaraskan semula.');
+    }
+
     function selectOverlayElement(id) {
+      if (state.placementLocked) return;
       if (!state.draft.elements[id]) return;
       state.selectedElement = id;
       updatePlacementControls();
@@ -1962,6 +2014,7 @@
     }
 
     adminCanvas.addEventListener('pointerdown', (e) => {
+      if (state.placementLocked) return;
       e.preventDefault();
       const pos = getCanvasCoords(adminCanvas, e);
       const rect = adminCanvas.getBoundingClientRect();
@@ -1994,6 +2047,7 @@
     });
 
     adminCanvas.addEventListener('pointermove', (e) => {
+      if (state.placementLocked) return;
       if (!state.dragging || !state.selectedElement) return;
       e.preventDefault();
       const pos = getCanvasCoords(adminCanvas, e);
@@ -2056,6 +2110,7 @@
 
       state.certUnits.unshift(newUnit);
       saveCertUnits();
+      togglePlacementLock(true);
       renderCertUnitsList();
       updateDashboardMetrics();
 
@@ -2319,6 +2374,10 @@
 
       document.getElementById('scanCertUnitTitle').textContent = unit.title;
       document.getElementById('backCertTitle').textContent = unit.title;
+      const submitLabel = document.querySelector('#btnSubmitTeacher span');
+      if (submitLabel) submitLabel.textContent = state.gasWebhookUrl
+        ? '📧 Jana Sijil & Mohon Hantar E-mel'
+        : '✨ Jana Sijil Saya';
 
       const cw = unit.canvasW || 728;
       const ch = unit.canvasH || 1024;
@@ -2397,7 +2456,7 @@
 
       const btn = document.getElementById('btnSubmitTeacher');
       btn.disabled = true;
-      btn.innerHTML = '<span>⏳ Sedang Menjana & Menghantar Sijil...</span>';
+      btn.innerHTML = `<span>${state.gasWebhookUrl ? '⏳ Sedang Menjana & Memohon Penghantaran...' : '⏳ Sedang Menjana Sijil...'}</span>`;
 
       const nextSeq = getUnitNextSeq(unit);
       const issuedSerial = formatSerial(unit.serialPrefix, nextSeq);
@@ -2427,10 +2486,7 @@
       const fileName = `e-sijil-skrg-${serialSlug}-${nameSlug}.png`;
       const imageBase64 = teacherCanvas.toDataURL('image/png');
 
-      // 1. Trigger automatic download onto teacher's device immediately
-      downloadTeacherCertAgain();
-
-      // 2. If Google Apps Script Webhook URL is configured, automatically email the PNG attachment to the teacher's Inbox!
+      // E-mel hanya boleh diminta apabila Google Apps Script admin telah disediakan.
       let emailRequestSubmitted = false;
       if (state.gasWebhookUrl && state.gasWebhookUrl.startsWith('https://script.google.com/')) {
         try {
@@ -2454,18 +2510,54 @@
       }
 
       btn.disabled = false;
-      btn.innerHTML = '<span>📧 Jana Sijil, Hantar Ke E-mel & Muat Turun</span>';
+      btn.innerHTML = `<span>${state.gasWebhookUrl ? '📧 Jana Sijil & Mohon Hantar E-mel' : '✨ Jana Sijil Saya'}</span>`;
 
       const successBox = document.getElementById('teacherSuccessBox');
       successBox.classList.remove('hidden');
       document.getElementById('teacherSuccessTitle').textContent = `✅ Sijil Siap! (${issuedSerial})`;
-      document.getElementById('teacherSuccessDesc').textContent = `Tahniah ${name}. Sijil rasmi SK Ranggu anda dengan No. Siri ${issuedSerial} telah dimuat turun ke peranti anda.`;
+      document.getElementById('teacherSuccessDesc').textContent = `Tahniah ${name}. Sijil rasmi SK Ranggu anda dengan No. Siri ${issuedSerial} sudah siap. Tekan “Simpan ke Galeri Foto” di bawah.`;
 
       const noteEl = document.getElementById('teacherEmailDeliveryNote');
       if (emailRequestSubmitted) {
-        noteEl.textContent = `📩 Permintaan penghantaran telah dihantar ke pelayan untuk ${email}. Sila semak Inbox / Spam sebentar lagi.`;
+        noteEl.textContent = `📩 Permintaan e-mel telah dihantar untuk ${email}. Sistem tidak akan mendakwa e-mel diterima; sila semak Inbox dan Spam.`;
       } else {
-        noteEl.textContent = `💡 Fail sijil telah disimpan ke dalam telefon/komputer anda. Anda juga boleh tekan "Hantar / Kongsi Ke E-mel & WhatsApp" di bawah untuk menghantar terus fail sijil ke ${email}.`;
+        noteEl.textContent = `⚠️ E-mel automatik admin belum aktif atau gagal dicapai. Simpan sijil ke Galeri Foto, kemudian gunakan butang Kongsi untuk menghantarnya.`;
+      }
+    }
+
+    function getTeacherCertificateFile() {
+      renderTeacherSpinningCanvas();
+      const serial = state.issuedSerialForSession || 'sijil';
+      const serialSlug = serial.replace(/[^a-zA-Z0-9]/g, '-');
+      return new Promise((resolve, reject) => {
+        teacherCanvas.toBlob((blob) => {
+          if (!blob) return reject(new Error('Gambar sijil tidak dapat disediakan.'));
+          resolve(new File([blob], `e-sijil-skrg-${serialSlug}.png`, { type: 'image/png' }));
+        }, 'image/png');
+      });
+    }
+
+    async function saveCertificateToGallery() {
+      if (!state.issuedSerialForSession) {
+        showToast('Jana sijil dahulu sebelum menyimpannya.', 'error');
+        return;
+      }
+      try {
+        const file = await getTeacherCertificateFile();
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          showToast('Dalam menu telefon yang terbuka, pilih “Simpan Imej” untuk masuk Galeri Foto.');
+          await navigator.share({
+            title: 'Simpan e-Sijil SK Ranggu',
+            text: 'Pilih “Simpan Imej” untuk menyimpan sijil ini ke Galeri Foto.',
+            files: [file]
+          });
+          return;
+        }
+        downloadTeacherCertAgain();
+        showToast('Telefon/pelayar ini tidak menyokong simpan terus ke Galeri. Fail PNG telah dimuat turun; buka fail itu dan pilih Simpan Imej.', 'error');
+      } catch (error) {
+        if (error && error.name === 'AbortError') return;
+        showToast('Menu simpan tidak dapat dibuka. Cuba butang Muat Turun Fail PNG.', 'error');
       }
     }
 

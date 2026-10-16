@@ -1,4 +1,4 @@
-const CACHE_NAME = 'esijil-skrg-v23';
+const CACHE_NAME = 'esijil-skrg-v24';
 const ASSETS = [
   './',
   './index.html',
