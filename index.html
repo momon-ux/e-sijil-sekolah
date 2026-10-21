@@ -189,9 +189,9 @@
           <span class="hidden sm:inline">Simpan App</span>
           <span class="sm:hidden">App</span>
         </button>
-        <!-- Back to Admin List Button -->
+        <!-- Back to Creator View Button -->
         <button id="btnBackToAdmin" onclick="exitQrScanView()" class="hidden px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--border)] active:scale-95">
-          ⚙️ Admin
+          ⚙️ Panel Pencipta Sijil
         </button>
       </div>
     </div>
@@ -220,23 +220,23 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- MODE A: ADMIN PWA VIEW (CREATE CERTIFICATE RECORDS & UNIQUE QR CODES) -->
+    <!-- MODE A: PENCIPTA SIJIL VIEW (CREATE CERTIFICATE RECORDS & UNIQUE QR)  -->
     <!-- ===================================================================== -->
     <div id="viewAdminApp" class="space-y-5">
 
-      <!-- Banner Status Google Drive & Penghantaran E-mel Automatik -->
+      <!-- Banner Status Google Drive Pencipta Sijil & Penghantaran E-mel Automatik -->
       <div class="bg-blue-950/60 border border-blue-500/40 rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div class="space-y-1">
           <div class="flex items-center gap-2">
             <span id="emailStatusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0"></span>
-            <h3 id="emailStatusTitle" class="text-xs sm:text-sm font-bold text-white">Status Kumpul Google Drive & E-mel Automatik</h3>
+            <h3 id="emailStatusTitle" class="text-xs sm:text-sm font-bold text-white">Status Kumpul Google Drive Pencipta Sijil &amp; E-mel Peserta</h3>
           </div>
           <p id="emailStatusDesc" class="text-xs text-slate-300 leading-relaxed">
-            Masukkan <strong>E-mel Google Drive Admin</strong> semasa cipta sijil di bawah supaya semua sijil yang dijana oleh guru terkumpul automatik di dalam folder Google Drive Admin & dihantar ke e-mel guru.
+            Masukkan <strong>E-mel Google Drive Pencipta Sijil</strong> semasa mencipta sijil di bawah supaya semua sijil peserta terkumpul automatik ke dalam Google Drive &amp; E-mel Pencipta Sijil.
           </p>
         </div>
         <button onclick="openEmailSetupModal()" class="w-full sm:w-auto shrink-0 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-500 active:scale-98 shadow text-center">
-          ☁️ Panduan Sambung Drive & E-mel
+          ☁️ Panduan Sambung Drive &amp; E-mel
         </button>
       </div>
 
@@ -247,20 +247,20 @@
             <div class="flex items-center justify-between">
               <div>
                 <span class="text-[11px] font-bold uppercase tracking-wider text-blue-400">LANGKAH PENCIPTA SIJIL</span>
-                <h2 class="text-sm sm:text-base font-bold text-[var(--foreground)]">1. Cipta Sijil & Tetapkan E-mel Pencipta</h2>
+                <h2 class="text-sm sm:text-base font-bold text-[var(--foreground)]">1. Cipta Sijil &amp; Drive Pencipta Sijil</h2>
               </div>
               <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]">Jana QR Unik</span>
             </div>
 
             <div class="space-y-3">
-              <!-- Creator Email to Receive All Participant Certificates -->
+              <!-- Creator Google Drive Email to Receive All Participant Certificates -->
               <div class="p-3.5 rounded-xl bg-emerald-500/10 border-2 border-emerald-500/40 space-y-2.5">
                 <div>
                   <label for="adminDriveEmailInput" class="block text-xs font-bold text-emerald-300 mb-1">
-                    📩 E-mel Anda (Pencipta Sijil — Terima Semua Sijil Peserta) *
+                    ☁️ E-mel Google Drive Pencipta Sijil (Tempat Semua Sijil Peserta Terkumpul) *
                   </label>
                   <p class="text-[11px] text-slate-300 mb-2 leading-relaxed">
-                    Siapa yang mencipta sijil ini, sila masukkan <strong>e-mel anda sendiri</strong>. Semua sijil peserta yang menjana sijil melalui QR ini akan masuk terkumpul ke e-mel &amp; Drive anda.
+                    Siapa yang mencipta sijil ini, sila masukkan <strong>e-mel Google Drive anda sendiri</strong>. Semua sijil peserta yang menjana sijil melalui QR ini akan masuk terkumpul ke Google Drive &amp; e-mel anda.
                   </p>
                   <input
                     id="adminDriveEmailInput"
@@ -268,14 +268,14 @@
                     inputmode="email"
                     autocomplete="email"
                     value=""
-                    placeholder="Masukkan e-mel anda (pencipta sijil) di sini..."
+                    placeholder="Contoh: cikgu.pencipta@moe-dl.edu.my / @gmail.com"
                     oninput="updateDraftCert()"
                     class="w-full px-3 py-2.5 text-sm font-semibold rounded-xl bg-[var(--background)] border-2 border-emerald-500/50 text-[var(--foreground)] placeholder-slate-400 focus:outline-none focus:border-emerald-400"
                   />
                 </div>
                 <div>
                   <label for="adminDriveFolderInput" class="block text-xs font-medium text-slate-300 mb-1">
-                    📁 Nama Folder Kumpulan Sijil Peserta:
+                    📁 Nama Folder Dalam Google Drive Pencipta Sijil:
                   </label>
                   <input
                     id="adminDriveFolderInput"
@@ -429,9 +429,9 @@
       <div id="sectionQrList" class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-5 shadow-md space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
-            <h2 class="text-sm sm:text-base font-bold text-[var(--foreground)]">2. Senarai Unit Sijil, QR Unik & Drive Sijil Terkumpul</h2>
+            <h2 class="text-sm sm:text-base font-bold text-[var(--foreground)]">2. Senarai Unit Sijil, QR Unik &amp; Google Drive Pencipta Sijil</h2>
             <p class="text-xs text-[var(--muted-foreground)]">
-              Setiap rekod sijil mempunyai <strong>Kod QR unik</strong> dan <strong>E-mel Google Drive Admin</strong> tempat semua sijil terkumpul.
+              Setiap rekod sijil mempunyai <strong>Kod QR unik</strong> dan <strong>E-mel Google Drive Pencipta Sijil</strong> tempat semua sijil peserta terkumpul.
             </p>
           </div>
         </div>
@@ -457,7 +457,7 @@
           Pratonton Sijil Rasmi SK Ranggu Anda
         </h2>
         <p class="text-xs sm:text-sm text-[var(--muted-foreground)] max-w-lg mx-auto">
-          Isi <strong>Nama Penuh</strong>, <strong>No. Kad Pengenalan</strong> & <strong>E-mel</strong> di bawah. Sijil anda berpusing secara langsung di atas skrin!
+          Isi <strong>Nama Penuh</strong>, <strong>No. Kad Pengenalan</strong> &amp; <strong>E-mel</strong> di bawah. Sijil anda berpusing secara langsung di atas skrin!
         </p>
 
         <!-- 3D Rotating Certificate Showcase (Mobile-Sized so Form is Easily Accessible) -->
@@ -550,7 +550,7 @@
           </button>
 
           <p id="scanCreatorInfoLine" class="text-[11px] text-center text-slate-400 pt-1">
-            📩 Salinan sijil peserta turut dihantar ke E-mel Pencipta Sijil: <strong id="scanAdminDriveLabel" class="text-emerald-300">-</strong>
+            ☁️ Salinan sijil peserta turut dikumpul ke Google Drive &amp; E-mel Pencipta Sijil: <strong id="scanAdminDriveLabel" class="text-emerald-300">-</strong>
           </p>
         </form>
 
@@ -575,21 +575,21 @@
     <div id="qrModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
       <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl max-w-xl w-full p-4 sm:p-6 space-y-4 text-center shadow-2xl my-auto max-h-[92vh] overflow-y-auto">
         <div class="flex items-center justify-between border-b border-[var(--border)] pb-3 sticky top-0 bg-[var(--card)] z-10">
-          <h3 id="modalCertTitle" class="text-xs sm:text-sm font-bold text-[var(--foreground)] truncate pr-2">Kod QR Sijil &amp; E-mel Pencipta</h3>
+          <h3 id="modalCertTitle" class="text-xs sm:text-sm font-bold text-[var(--foreground)] truncate pr-2">Kod QR Sijil &amp; Google Drive Pencipta Sijil</h3>
           <button onclick="closeQrModal()" class="text-xs px-3 py-1.5 rounded-lg bg-[var(--secondary)] text-[var(--foreground)] font-bold shrink-0">✕ Tutup</button>
         </div>
 
         <!-- Editable Creator Email inside QR Modal so whoever created/owns this certificate sets their own email -->
         <div class="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-left space-y-2">
           <label class="block text-[11px] font-bold text-emerald-300">
-            📩 E-mel Pencipta Sijil Ini (Akan Terima Semua Sijil Peserta):
+            ☁️ E-mel Google Drive Pencipta Sijil (Tempat Semua Sijil Peserta Terkumpul):
           </label>
           <div class="flex flex-col sm:flex-row gap-2">
             <input
               id="modalCreatorEmailInput"
               type="email"
               inputmode="email"
-              placeholder="Masukkan e-mel anda (pencipta sijil)..."
+              placeholder="Masukkan e-mel Google Drive pencipta sijil..."
               class="flex-1 px-3 py-2 text-xs font-mono font-bold rounded-xl bg-[var(--background)] border border-emerald-500/40 text-white"
             />
             <button type="button" id="modalBtnSaveCreatorEmail" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 shrink-0 active:scale-95">
@@ -636,17 +636,17 @@
       <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl max-w-2xl w-full p-4 sm:p-6 space-y-4 text-left shadow-2xl my-auto max-h-[92vh] overflow-y-auto">
         <div class="flex items-center justify-between border-b border-[var(--border)] pb-3 sticky top-0 bg-[var(--card)] z-10">
           <div>
-            <span class="text-[10px] font-bold uppercase text-emerald-400">HANTAR SIJIL TERKUMPUL KE E-MEL PENCIPTA SIJIL &amp; PESERTA</span>
-            <h3 class="text-sm sm:text-base font-bold text-[var(--foreground)]">☁️ Tetapan E-mel Pencipta Sijil &amp; Drive Automatik</h3>
+            <span class="text-[10px] font-bold uppercase text-emerald-400">HANTAR SIJIL TERKUMPUL KE GOOGLE DRIVE &amp; E-MEL PENCIPTA SIJIL</span>
+            <h3 class="text-sm sm:text-base font-bold text-[var(--foreground)]">☁️ Tetapan Google Drive Pencipta Sijil &amp; E-mel Automatik</h3>
           </div>
           <button onclick="closeEmailSetupModal()" class="text-xs px-3 py-1.5 rounded-lg bg-[var(--secondary)] text-[var(--foreground)] font-bold shrink-0">✕ Tutup</button>
         </div>
 
         <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-slate-200 space-y-1">
-          <p class="font-bold text-emerald-300">Bagaimana semua sijil peserta masuk ke E-mel Pencipta Sijil secara automatik?</p>
+          <p class="font-bold text-emerald-300">Bagaimana semua sijil peserta masuk ke Google Drive &amp; E-mel Pencipta Sijil secara automatik?</p>
           <ul class="list-disc list-inside text-slate-300 space-y-0.5 pt-1">
-            <li>Siapa yang mencipta sijil akan memasukkan <strong>e-melnya sendiri</strong> semasa mencipta sijil.</li>
-            <li>Setiap kali peserta menjana sijil, salinan sijil peserta (PNG) dihantar terus ke <strong>Inbox E-mel Pencipta Sijil</strong> tersebut serta dikumpul dalam Google Drive.</li>
+            <li>Siapa yang mencipta sijil akan memasukkan <strong>E-mel Google Drive Pencipta Sijil</strong> semasa mencipta sijil.</li>
+            <li>Setiap kali peserta menjana sijil, salinan sijil peserta (PNG) dihantar terus ke <strong>E-mel &amp; Folder Google Drive Pencipta Sijil</strong> tersebut.</li>
             <li>Peserta juga menerima sijil rasmi mereka di dalam <strong>Inbox E-mel Peserta</strong>.</li>
           </ul>
         </div>
@@ -670,7 +670,7 @@
   var folder = folders.hasNext() ? folders.next() : DriveApp.createFolder(folderName);
   folder.createFile(blob);
 
-  // 1. Hantar Sijil Peserta Terkumpul ke E-mel Pencipta Sijil (Siapa yang cipta sijil ini)
+  // 1. Hantar Sijil Peserta Terkumpul ke Google Drive & E-mel Pencipta Sijil (Siapa yang cipta sijil ini)
   if (data.adminDriveEmail && data.adminDriveEmail.indexOf('@') > -1) {
     try { folder.addEditor(data.adminDriveEmail); } catch(err) {}
     MailApp.sendEmail({
@@ -700,7 +700,7 @@
   return ContentService.createTextOutput(JSON.stringify({ok: true})).setMimeType(ContentService.MimeType.JSON);
 }</pre>
             <button type="button" onclick="copyGasScript()" id="btnCopyGasCode" class="mt-2 w-full sm:w-auto sm:mt-0 sm:absolute sm:top-2 sm:right-2 px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white">
-              📋 Salin Kod Drive & E-mel
+              📋 Salin Kod Drive &amp; E-mel
             </button>
           </div>
 
@@ -719,7 +719,7 @@
             class="w-full px-3 py-2.5 text-sm font-mono rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]"
           />
           <button type="button" onclick="saveGasWebhookUrl()" class="w-full py-3 rounded-xl text-xs sm:text-sm font-bold bg-emerald-500 text-slate-950 hover:opacity-90 active:scale-98">
-            💾 Simpan & Aktifkan Kumpul Drive + E-mel Automatik
+            💾 Simpan &amp; Aktifkan Kumpul Drive + E-mel Automatik
           </button>
           <p id="gasSaveToast" class="text-xs font-semibold text-emerald-400 hidden"></p>
         </div>
@@ -728,7 +728,7 @@
 
   </main>
 
-  <!-- Mobile Bottom Navigation Bar (Only visible on Mobile in Admin Mode for 1-Thumb Access) -->
+  <!-- Mobile Bottom Navigation Bar (Only visible on Mobile in Creator Mode for 1-Thumb Access) -->
   <nav id="mobileBottomNav" class="sm:hidden fixed bottom-0 inset-x-0 z-30 bg-[var(--card)]/95 backdrop-blur border-t border-[var(--border)] mobile-bottom-nav">
     <div class="grid grid-cols-4 gap-1 px-2 py-1.5 text-center">
       <a href="#sectionCreateCert" class="py-1 rounded-xl text-[11px] font-semibold text-slate-200 active:bg-slate-800 flex flex-col items-center">
@@ -751,10 +751,12 @@
   </nav>
 
   <script>
-    // Register Service Worker for PWA
+    // Register Service Worker for PWA & Force Update Old Caches
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          reg.update().catch(() => {});
+        }).catch(() => {});
       });
     }
 
@@ -1665,13 +1667,13 @@
             <h3 class="text-sm font-bold text-[var(--foreground)] break-words">${unit.title}</h3>
             <div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-left space-y-1">
               <label class="block text-[10px] font-bold text-emerald-300">
-                📩 E-mel Pencipta Sijil (Terima Semua Sijil Peserta):
+                ☁️ E-mel Google Drive Pencipta Sijil (Tempat Semua Sijil Peserta Terkumpul):
               </label>
               <div class="flex gap-1.5">
                 <input
                   type="email"
                   value="${creatorEmail}"
-                  placeholder="Masukkan e-mel pencipta sijil..."
+                  placeholder="Masukkan e-mel Google Drive pencipta sijil..."
                   onchange="updateUnitCreatorEmail('${unit.id}', this.value)"
                   class="flex-1 min-w-0 px-2.5 py-1.5 text-xs font-mono rounded-lg bg-[var(--card)] border border-emerald-500/40 text-white"
                 />
