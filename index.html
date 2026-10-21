@@ -246,48 +246,51 @@
           <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-5 shadow-md space-y-4">
             <div class="flex items-center justify-between">
               <div>
-                <span class="text-[11px] font-bold uppercase tracking-wider text-blue-400">LANGKAH ADMIN</span>
-                <h2 class="text-sm sm:text-base font-bold text-[var(--foreground)]">1. Cipta Rekod Sijil & Drive Terkumpul</h2>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-blue-400">LANGKAH PENCIPTA SIJIL</span>
+                <h2 class="text-sm sm:text-base font-bold text-[var(--foreground)]">1. Cipta Sijil & Tetapkan E-mel Pencipta</h2>
               </div>
               <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]">Jana QR Unik</span>
             </div>
 
             <div class="space-y-3">
-              <div>
-                <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Nama / Tajuk Rekod Sijil (Program / Bengkel)</label>
-                <input id="certRecordTitle" type="text" value="BENGKEL PENGURUSAN DISIPLIN & TRANSFORMASI MINDA 2026" oninput="updateDraftCert()" class="w-full px-3 py-2.5 text-sm font-semibold rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
-              </div>
-
-              <!-- Admin Google Drive Email to Collect All Generated Certificates -->
-              <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-2.5">
+              <!-- Creator Email to Receive All Participant Certificates -->
+              <div class="p-3.5 rounded-xl bg-emerald-500/10 border-2 border-emerald-500/40 space-y-2.5">
                 <div>
-                  <label class="block text-xs font-bold text-emerald-300 mb-1">
-                    ☁️ E-mel Google Drive Admin (Tempat Sijil Terkumpul) *
+                  <label for="adminDriveEmailInput" class="block text-xs font-bold text-emerald-300 mb-1">
+                    📩 E-mel Anda (Pencipta Sijil — Terima Semua Sijil Peserta) *
                   </label>
+                  <p class="text-[11px] text-slate-300 mb-2 leading-relaxed">
+                    Siapa yang mencipta sijil ini, sila masukkan <strong>e-mel anda sendiri</strong>. Semua sijil peserta yang menjana sijil melalui QR ini akan masuk terkumpul ke e-mel &amp; Drive anda.
+                  </p>
                   <input
                     id="adminDriveEmailInput"
                     type="email"
                     inputmode="email"
-                     autocomplete="email"
-                    value="skranggu.tawau@moe-dl.edu.my"
-                    placeholder="Contoh: admin.skranggu@moe-dl.edu.my"
+                    autocomplete="email"
+                    value=""
+                    placeholder="Masukkan e-mel anda (pencipta sijil) di sini..."
                     oninput="updateDraftCert()"
-                    class="w-full px-3 py-2.5 text-sm font-semibold rounded-xl bg-[var(--background)] border border-emerald-500/40 text-[var(--foreground)]"
+                    class="w-full px-3 py-2.5 text-sm font-semibold rounded-xl bg-[var(--background)] border-2 border-emerald-500/50 text-[var(--foreground)] placeholder-slate-400 focus:outline-none focus:border-emerald-400"
                   />
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-slate-300 mb-1">
-                    📁 Nama Folder Dalam Google Drive Admin:
+                  <label for="adminDriveFolderInput" class="block text-xs font-medium text-slate-300 mb-1">
+                    📁 Nama Folder Kumpulan Sijil Peserta:
                   </label>
                   <input
                     id="adminDriveFolderInput"
                     type="text"
-                    value="Sijil Terkumpul - SK Ranggu 2026"
+                    value="Sijil Terkumpul Peserta - SK Ranggu 2026"
                     placeholder="Contoh: Sijil Bengkel Disiplin 2026"
                     oninput="updateDraftCert()"
                     class="w-full px-3 py-2 text-sm rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Nama / Tajuk Rekod Sijil (Program / Bengkel)</label>
+                <input id="certRecordTitle" type="text" value="BENGKEL PENGURUSAN DISIPLIN & TRANSFORMASI MINDA 2026" oninput="updateDraftCert()" class="w-full px-3 py-2.5 text-sm font-semibold rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
               </div>
 
               <div class="grid grid-cols-2 gap-3">
@@ -525,7 +528,7 @@
 
           <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)] mb-1 text-center">
-              3. Masukkan Alamat E-mel Anda (Untuk Terima Sijil)
+              3. Masukkan Alamat E-mel Anda (Untuk Terima Sijil Anda)
             </label>
             <input
               id="inputTeacherEmail"
@@ -533,13 +536,9 @@
               inputmode="email"
               autocomplete="email"
               required
-              placeholder="Contoh: cikgu@moe-dl.edu.my / @gmail.com"
+              placeholder="Contoh: peserta@moe-dl.edu.my / @gmail.com"
               class="w-full px-4 py-3 text-center font-medium rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:border-blue-400"
             />
-          </div>
-
-          <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-center text-[11px] text-slate-300 break-words">
-            ☁️ Sijil ini juga akan dikumpul secara automatik ke Google Drive Admin: <strong id="scanAdminDriveLabel" class="text-emerald-300">skranggu.tawau@moe-dl.edu.my</strong>
           </div>
 
           <button
@@ -547,8 +546,12 @@
             type="submit"
             class="w-full py-4 px-5 rounded-xl text-sm sm:text-base font-bold bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-95 active:scale-98 shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2"
           >
-            <span>📧 Jana Sijil, Hantar E-mel & Simpan Ke Drive</span>
+            <span>📧 Jana Sijil &amp; Hantar Ke E-mel</span>
           </button>
+
+          <p id="scanCreatorInfoLine" class="text-[11px] text-center text-slate-400 pt-1">
+            📩 Salinan sijil peserta turut dihantar ke E-mel Pencipta Sijil: <strong id="scanAdminDriveLabel" class="text-emerald-300">-</strong>
+          </p>
         </form>
 
         <!-- Success Box -->
@@ -572,19 +575,28 @@
     <div id="qrModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
       <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl max-w-xl w-full p-4 sm:p-6 space-y-4 text-center shadow-2xl my-auto max-h-[92vh] overflow-y-auto">
         <div class="flex items-center justify-between border-b border-[var(--border)] pb-3 sticky top-0 bg-[var(--card)] z-10">
-          <h3 id="modalCertTitle" class="text-xs sm:text-sm font-bold text-[var(--foreground)] truncate pr-2">Kod QR Sijil & Arkib Drive</h3>
+          <h3 id="modalCertTitle" class="text-xs sm:text-sm font-bold text-[var(--foreground)] truncate pr-2">Kod QR Sijil &amp; E-mel Pencipta</h3>
           <button onclick="closeQrModal()" class="text-xs px-3 py-1.5 rounded-lg bg-[var(--secondary)] text-[var(--foreground)] font-bold shrink-0">✕ Tutup</button>
         </div>
 
-        <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-left flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div class="min-w-0">
-            <span class="text-[11px] text-slate-300 block">☁️ E-mel Google Drive Admin (Sijil Terkumpul):</span>
-            <strong id="modalAdminDriveEmail" class="text-emerald-300 font-mono break-all">skranggu.tawau@moe-dl.edu.my</strong>
-            <span id="modalAdminDriveFolder" class="block text-[11px] text-amber-300 truncate">📁 Folder: Sijil Terkumpul - SK Ranggu 2026</span>
+        <!-- Editable Creator Email inside QR Modal so whoever created/owns this certificate sets their own email -->
+        <div class="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-left space-y-2">
+          <label class="block text-[11px] font-bold text-emerald-300">
+            📩 E-mel Pencipta Sijil Ini (Akan Terima Semua Sijil Peserta):
+          </label>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input
+              id="modalCreatorEmailInput"
+              type="email"
+              inputmode="email"
+              placeholder="Masukkan e-mel anda (pencipta sijil)..."
+              class="flex-1 px-3 py-2 text-xs font-mono font-bold rounded-xl bg-[var(--background)] border border-emerald-500/40 text-white"
+            />
+            <button type="button" id="modalBtnSaveCreatorEmail" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 shrink-0 active:scale-95">
+              💾 Tetapkan E-mel Saya
+            </button>
           </div>
-          <a href="https://drive.google.com" target="_blank" class="px-3 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 text-center shrink-0">
-            ☁️ Buka Drive
-          </a>
+          <span id="modalAdminDriveFolder" class="block text-[11px] text-amber-300 truncate">📁 Folder: Sijil Terkumpul Peserta</span>
         </div>
 
         <div class="inline-block bg-white p-3 sm:p-4 rounded-2xl border-4 border-blue-500/30">
@@ -593,7 +605,7 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <button id="modalBtnSimulate" class="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-[var(--primary)] text-[var(--primary-foreground)] active:scale-95">
-            📱 Cuba Scan QR Ini (Paparan Guru)
+            📱 Cuba Scan QR Ini (Paparan Peserta)
           </button>
           <button id="modalBtnCopy" class="w-full py-2.5 px-4 rounded-xl text-xs font-semibold bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--border)] active:scale-95">
             🔗 Salin Link QR Sijil Ini
@@ -603,7 +615,7 @@
         <!-- Recipients List & Bulk Download for this Certificate Unit -->
         <div class="text-left border-t border-[var(--border)] pt-3 space-y-2">
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <span class="text-xs font-bold text-[var(--foreground)]">Senarai Sijil Terkumpul:</span>
+            <span class="text-xs font-bold text-[var(--foreground)]">Senarai Sijil Peserta Terkumpul:</span>
             <div class="flex items-center gap-1.5">
               <button id="modalBtnBulkPng" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-amber-500 text-slate-950">
                 📦 Muat Turun Semua
@@ -624,18 +636,18 @@
       <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl max-w-2xl w-full p-4 sm:p-6 space-y-4 text-left shadow-2xl my-auto max-h-[92vh] overflow-y-auto">
         <div class="flex items-center justify-between border-b border-[var(--border)] pb-3 sticky top-0 bg-[var(--card)] z-10">
           <div>
-            <span class="text-[10px] font-bold uppercase text-emerald-400">AUTO-SIMPAN KE GOOGLE DRIVE ADMIN & E-MEL GURU</span>
-            <h3 class="text-sm sm:text-base font-bold text-[var(--foreground)]">☁️ Tetapan Kumpul Sijil Ke Google Drive & E-mel</h3>
+            <span class="text-[10px] font-bold uppercase text-emerald-400">HANTAR SIJIL TERKUMPUL KE E-MEL PENCIPTA SIJIL &amp; PESERTA</span>
+            <h3 class="text-sm sm:text-base font-bold text-[var(--foreground)]">☁️ Tetapan E-mel Pencipta Sijil &amp; Drive Automatik</h3>
           </div>
           <button onclick="closeEmailSetupModal()" class="text-xs px-3 py-1.5 rounded-lg bg-[var(--secondary)] text-[var(--foreground)] font-bold shrink-0">✕ Tutup</button>
         </div>
 
         <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-slate-200 space-y-1">
-          <p class="font-bold text-emerald-300">Bagaimana semua sijil terkumpul ke dalam Google Drive Admin secara automatik?</p>
+          <p class="font-bold text-emerald-300">Bagaimana semua sijil peserta masuk ke E-mel Pencipta Sijil secara automatik?</p>
           <ul class="list-disc list-inside text-slate-300 space-y-0.5 pt-1">
-            <li>Mencipta folder khas di dalam <strong>Google Drive</strong> dan menyimpan setiap fail sijil (`No Siri - Nama - No KP.png`).</li>
-            <li>Memberikan akses & menghantar salinan terkumpul ke <strong>E-mel Google Drive Admin</strong> yang mencipta rekod sijil.</li>
-            <li>Menghantar e-mel berserta lampiran sijil terus ke <strong>Inbox E-mel Guru</strong>.</li>
+            <li>Siapa yang mencipta sijil akan memasukkan <strong>e-melnya sendiri</strong> semasa mencipta sijil.</li>
+            <li>Setiap kali peserta menjana sijil, salinan sijil peserta (PNG) dihantar terus ke <strong>Inbox E-mel Pencipta Sijil</strong> tersebut serta dikumpul dalam Google Drive.</li>
+            <li>Peserta juga menerima sijil rasmi mereka di dalam <strong>Inbox E-mel Peserta</strong>.</li>
           </ul>
         </div>
 
@@ -643,7 +655,7 @@
           <p class="font-bold text-white">Langkah Mudah (Hanya Buat Sekali Sahaja):</p>
           <ol class="list-decimal list-inside space-y-1">
             <li>Buka <a href="https://script.google.com/home/start" target="_blank" class="text-blue-400 underline font-semibold">script.google.com</a> dan klik <strong>"New Project"</strong>.</li>
-            <li>Klik <strong>"📋 Salin Kod Drive & E-mel"</strong> di bawah dan tampal (*paste*):</li>
+            <li>Klik <strong>"📋 Salin Kod Drive &amp; E-mel"</strong> di bawah dan tampal (*paste*):</li>
           </ol>
 
           <div class="relative">
@@ -658,20 +670,23 @@
   var folder = folders.hasNext() ? folders.next() : DriveApp.createFolder(folderName);
   folder.createFile(blob);
 
+  // 1. Hantar Sijil Peserta Terkumpul ke E-mel Pencipta Sijil (Siapa yang cipta sijil ini)
   if (data.adminDriveEmail && data.adminDriveEmail.indexOf('@') > -1) {
     try { folder.addEditor(data.adminDriveEmail); } catch(err) {}
     MailApp.sendEmail({
       to: data.adminDriveEmail,
-      subject: '[Drive Terkumpul] Sijil Dijana: ' + data.name + ' (' + data.serialNo + ')',
-      htmlBody: '&lt;p&gt;Sijil baharu disimpan ke Google Drive:&lt;/p&gt;' +
-                '&lt;ul&gt;&lt;li&gt;&lt;b&gt;Nama:&lt;/b&gt; ' + data.name + '&lt;/li&gt;' +
+      subject: '[Sijil Peserta Terkumpul] ' + data.title + ' - ' + data.name + ' (' + data.serialNo + ')',
+      htmlBody: '&lt;p&gt;Peserta baharu telah menjana sijil bagi program yang anda cipta (&lt;b&gt;' + data.title + '&lt;/b&gt;):&lt;/p&gt;' +
+                '&lt;ul&gt;&lt;li&gt;&lt;b&gt;Nama Peserta:&lt;/b&gt; ' + data.name + '&lt;/li&gt;' +
                 '&lt;li&gt;&lt;b&gt;No. KP:&lt;/b&gt; ' + (data.icNo || '-') + '&lt;/li&gt;' +
+                '&lt;li&gt;&lt;b&gt;E-mel Peserta:&lt;/b&gt; ' + (data.email || '-') + '&lt;/li&gt;' +
                 '&lt;li&gt;&lt;b&gt;No. Siri:&lt;/b&gt; ' + data.serialNo + '&lt;/li&gt;' +
-                '&lt;li&gt;&lt;b&gt;Folder Drive:&lt;/b&gt; &lt;a href="' + folder.getUrl() + '"&gt;' + folderName + '&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;',
+                '&lt;li&gt;&lt;b&gt;Folder Drive Terkumpul:&lt;/b&gt; &lt;a href="' + folder.getUrl() + '"&gt;' + folderName + '&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;',
       attachments: [blob]
     });
   }
 
+  // 2. Hantar Sijil ke E-mel Peserta
   if (data.email && data.email.indexOf('@') > -1) {
     MailApp.sendEmail({
       to: data.email,
@@ -803,6 +818,8 @@
     kpmLogoImg.src = './logo-kpm.png';
 
     // --- DEFAULT CERTIFICATE UNITS DATABASE ---
+    const savedCreatorEmail = localStorage.getItem('esijil_creator_email') || '';
+
     const defaultCertUnits = [
       {
         id: 'cert-disiplin-2026',
@@ -812,7 +829,7 @@
         canvasW: 1024,
         canvasH: 768,
         customBgDataUrl: null,
-        adminDriveEmail: 'skranggu.tawau@moe-dl.edu.my',
+        adminDriveEmail: savedCreatorEmail,
         driveFolderName: 'Sijil Terkumpul - Bengkel Disiplin SK Ranggu 2026',
         showIcOnCert: true,
         showSchoolHeader: false,
@@ -839,7 +856,7 @@
         canvasW: 1024,
         canvasH: 725,
         customBgDataUrl: null,
-        adminDriveEmail: 'skranggu.tawau@moe-dl.edu.my',
+        adminDriveEmail: savedCreatorEmail,
         driveFolderName: 'Sijil Penceramah GCE Level 1 - SK Ranggu',
         showIcOnCert: true,
         showSchoolHeader: false,
@@ -864,7 +881,7 @@
         canvasW: 728,
         canvasH: 1024,
         customBgDataUrl: null,
-        adminDriveEmail: 'skranggu.tawau@moe-dl.edu.my',
+        adminDriveEmail: savedCreatorEmail,
         driveFolderName: 'Sijil Literasi DELIMa 3.0 - SK Ranggu',
         showIcOnCert: true,
         showSchoolHeader: true,
@@ -885,7 +902,7 @@
 
     function loadCertUnits() {
       try {
-        const saved = JSON.parse(localStorage.getItem('esijil_units_v7') || 'null');
+        const saved = JSON.parse(localStorage.getItem('esijil_units_v9') || 'null');
         if (Array.isArray(saved) && saved.length > 0) return saved;
       } catch (e) {}
       return defaultCertUnits;
@@ -893,7 +910,7 @@
 
     function saveCertUnits() {
       try {
-        localStorage.setItem('esijil_units_v7', JSON.stringify(state.certUnits));
+        localStorage.setItem('esijil_units_v9', JSON.stringify(state.certUnits));
       } catch (e) {}
     }
 
@@ -908,8 +925,8 @@
         canvasH: 768,
         customBgDataUrl: null,
         customBgImage: null,
-        adminDriveEmail: 'skranggu.tawau@moe-dl.edu.my',
-        driveFolderName: 'Sijil Terkumpul - SK Ranggu 2026',
+        adminDriveEmail: savedCreatorEmail,
+        driveFolderName: 'Sijil Terkumpul Peserta - SK Ranggu 2026',
         showIcOnCert: true,
         showSchoolHeader: false,
         coverOldName: false,
@@ -977,12 +994,12 @@
       const desc = document.getElementById('emailStatusDesc');
       if (state.gasWebhookUrl && state.gasWebhookUrl.startsWith('https://script.google.com/')) {
         dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0';
-        title.textContent = 'Status Kumpul Google Drive Admin & E-mel Guru: AKTIF';
-        desc.textContent = 'Setiap sijil yang dijana oleh guru akan disimpan automatik ke Folder Google Drive Admin dan dihantar terus ke Inbox e-mel guru.';
+        title.textContent = 'Status Penghantaran Sijil Ke E-mel Pencipta Sijil & Peserta: AKTIF';
+        desc.textContent = 'Siapa yang mencipta sijil akan menerima kesemua sijil peserta di dalam e-mel & Google Drive miliknya, manakala peserta menerima sijil masing-masing.';
       } else {
         dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0';
-        title.textContent = 'Status Kumpul Google Drive Admin & E-mel: Sedia Disambungkan';
-        desc.textContent = 'Masukkan E-mel Google Drive Admin di bawah dan klik "Panduan Sambung Drive & E-mel" untuk mengaktifkan simpanan automatik ke Google Drive.';
+        title.textContent = 'Pastikan Anda Masukkan E-mel Pencipta Sijil Semasa Mencipta Sijil';
+        desc.textContent = 'Siapa yang buat sijil ini, masukkan e-mel anda di Langkah 1 supaya semua sijil peserta dihantar terus kepada e-mel anda.';
       }
     }
 
@@ -1002,28 +1019,29 @@
   var fileName = data.fileName || (data.serialNo + '_' + data.name + '.png');
   var blob = Utilities.newBlob(Utilities.base64Decode(base64), 'image/png', fileName);
 
-  // 1. Kumpul Sijil Dalam Folder Google Drive Admin
+  // 1. Kumpul Sijil Dalam Folder Google Drive
   var folderName = data.driveFolderName || ('e-Sijil SK Ranggu - ' + data.title);
   var folders = DriveApp.getFoldersByName(folderName);
   var folder = folders.hasNext() ? folders.next() : DriveApp.createFolder(folderName);
   folder.createFile(blob);
 
-  // Kongsi folder Drive kepada E-mel Google Drive Admin
+  // 2. Hantar Sijil Peserta Terkumpul Ke E-mel Pencipta Sijil (Siapa yang cipta sijil ini)
   if (data.adminDriveEmail && data.adminDriveEmail.indexOf('@') > -1) {
     try { folder.addEditor(data.adminDriveEmail); } catch(err) {}
     MailApp.sendEmail({
       to: data.adminDriveEmail,
-      subject: '[Drive Terkumpul] Sijil Dijana: ' + data.name + ' (' + data.serialNo + ')',
-      htmlBody: '<p>Sijil baharu telah dijana dan disimpan ke dalam Google Drive anda:</p>' +
-                '<ul><li><b>Nama:</b> ' + data.name + '</li>' +
+      subject: '[Sijil Peserta Terkumpul] ' + data.title + ' - ' + data.name + ' (' + data.serialNo + ')',
+      htmlBody: '<p>Peserta baharu telah menjana sijil bagi program yang anda cipta (<b>' + data.title + '</b>):</p>' +
+                '<ul><li><b>Nama Peserta:</b> ' + data.name + '</li>' +
                 '<li><b>No. KP:</b> ' + (data.icNo || '-') + '</li>' +
-                '<li><b>No. Siri:</b> ' + data.serialNo + '</li>' +
-                '<li><b>Folder Google Drive:</b> <a href="' + folder.getUrl() + '">' + folderName + '</a></li></ul>',
+                '<li><b>E-mel Peserta:</b> ' + (data.email || '-') + '</li>' +
+                '<li><b>No. Siri Sijil:</b> ' + data.serialNo + '</li>' +
+                '<li><b>Folder Google Drive Terkumpul:</b> <a href="' + folder.getUrl() + '">' + folderName + '</a></li></ul>',
       attachments: [blob]
     });
   }
 
-  // 2. Hantar Sijil Ke Inbox E-mel Guru Penerima
+  // 3. Hantar Sijil Ke Inbox E-mel Peserta
   if (data.email && data.email.indexOf('@') > -1) {
     MailApp.sendEmail({
       to: data.email,
@@ -1051,7 +1069,7 @@
       updateEmailStatusBanner();
       renderCertUnitsList();
       const toast = document.getElementById('gasSaveToast');
-      toast.textContent = '✅ Berjaya disimpan! Semua QR Sijil kini disertakan dengan simpanan automatik ke Google Drive Admin & penghantaran e-mel guru.';
+      toast.textContent = '✅ Berjaya disimpan! Semua sijil peserta akan dihantar automatik ke E-mel Pencipta Sijil & E-mel Peserta.';
       toast.classList.remove('hidden');
       setTimeout(() => {
         toast.classList.add('hidden');
@@ -1513,7 +1531,23 @@
 
     // --- SAVE NEW CERTIFICATE RECORD & GENERATE ITS UNIQUE QR ---
     function saveNewCertificateRecord() {
+      updateDraftCert();
       const d = state.draft;
+      const creatorEmail = (d.adminDriveEmail || '').trim();
+      if (!creatorEmail || !creatorEmail.includes('@')) {
+        alert('⚠️ Sila masukkan alamat E-mel anda (Pencipta Sijil) terlebih dahulu di ruangan "E-mel Anda (Pencipta Sijil)" supaya semua sijil peserta dapat dihantar ke e-mel anda!');
+        const inp = document.getElementById('adminDriveEmailInput');
+        if (inp) {
+          inp.focus();
+          inp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+
+      try {
+        localStorage.setItem('esijil_creator_email', creatorEmail);
+      } catch (e) {}
+
       const newId = 'sijil-' + Date.now().toString(36);
       const newUnit = {
         id: newId,
@@ -1523,7 +1557,7 @@
         canvasW: d.canvasW,
         canvasH: d.canvasH,
         customBgDataUrl: d.customBgDataUrl,
-        adminDriveEmail: d.adminDriveEmail || 'skranggu.tawau@moe-dl.edu.my',
+        adminDriveEmail: creatorEmail,
         driveFolderName: d.driveFolderName || ('Sijil Terkumpul - ' + d.title.trim()),
         showIcOnCert: d.showIcOnCert !== false,
         showSchoolHeader: d.showSchoolHeader,
@@ -1542,11 +1576,30 @@
       renderCertUnitsList();
 
       const toast = document.getElementById('saveRecordToast');
-      toast.textContent = `✅ Rekod "${newUnit.title}" disimpan! Semua sijil akan terkumpul ke Google Drive (${newUnit.adminDriveEmail}).`;
+      toast.textContent = `✅ Rekod "${newUnit.title}" disimpan! Semua sijil peserta akan dihantar ke e-mel pencipta sijil (${newUnit.adminDriveEmail}).`;
       toast.classList.remove('hidden');
       setTimeout(() => toast.classList.add('hidden'), 5000);
 
       openQrModal(newId);
+    }
+
+    function updateUnitCreatorEmail(unitId, newEmail) {
+      const unit = state.certUnits.find(u => u.id === unitId);
+      if (!unit) return;
+      const clean = (newEmail || '').trim();
+      unit.adminDriveEmail = clean;
+      if (clean && clean.includes('@')) {
+        try {
+          localStorage.setItem('esijil_creator_email', clean);
+        } catch (e) {}
+        const draftInp = document.getElementById('adminDriveEmailInput');
+        if (draftInp && !draftInp.value.trim()) {
+          draftInp.value = clean;
+          state.draft.adminDriveEmail = clean;
+        }
+      }
+      saveCertUnits();
+      renderCertUnitsList();
     }
 
     function buildUnitQrUrl(unit) {
@@ -1562,7 +1615,7 @@
         preset: unit.preset,
         cw: unit.canvasW || 1024,
         ch: unit.canvasH || 768,
-        adm: unit.adminDriveEmail || 'skranggu.tawau@moe-dl.edu.my',
+        adm: unit.adminDriveEmail || '',
         fdr: unit.driveFolderName || ('Sijil Terkumpul - ' + unit.title),
         ic: unit.showIcOnCert !== false ? '1' : '0',
         hdr: unit.showSchoolHeader ? '1' : '0',
@@ -1592,7 +1645,7 @@
         const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrUrl)}`;
         const nextSerial = formatSerial(unit.serialPrefix, getUnitNextSeq(unit));
         const count = (unit.recipients || []).length;
-        const driveEmail = unit.adminDriveEmail || 'skranggu.tawau@moe-dl.edu.my';
+        const creatorEmail = (unit.adminDriveEmail || '').trim();
 
         const card = document.createElement('div');
         card.className = 'bg-[var(--background)] border border-[var(--border)] rounded-xl p-4 flex flex-col sm:flex-row items-center gap-4';
@@ -1600,18 +1653,38 @@
           <div class="bg-white p-2 rounded-xl border border-[var(--border)] shrink-0 cursor-pointer" onclick="openQrModal('${unit.id}')">
             <img src="${qrImgSrc}" alt="QR ${unit.title}" class="w-24 h-24 block" />
           </div>
-          <div class="flex-1 space-y-1.5 text-center sm:text-left min-w-0 w-full">
+          <div class="flex-1 space-y-2 text-center sm:text-left min-w-0 w-full">
             <div class="flex flex-wrap items-center justify-center sm:justify-start gap-1.5">
               <span class="px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-amber-500/15 text-amber-300">
                 Giliran: ${nextSerial}
               </span>
               <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-500/15 text-emerald-300">
-                ${count} Sijil Terkumpul
+                ${count} Sijil Peserta Terkumpul
               </span>
             </div>
             <h3 class="text-sm font-bold text-[var(--foreground)] break-words">${unit.title}</h3>
-            <p class="text-[11px] text-slate-400 truncate">☁️ Drive Admin: <span class="text-emerald-300 font-mono">${driveEmail}</span></p>
-            <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 pt-1.5">
+            <div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-left space-y-1">
+              <label class="block text-[10px] font-bold text-emerald-300">
+                📩 E-mel Pencipta Sijil (Terima Semua Sijil Peserta):
+              </label>
+              <div class="flex gap-1.5">
+                <input
+                  type="email"
+                  value="${creatorEmail}"
+                  placeholder="Masukkan e-mel pencipta sijil..."
+                  onchange="updateUnitCreatorEmail('${unit.id}', this.value)"
+                  class="flex-1 min-w-0 px-2.5 py-1.5 text-xs font-mono rounded-lg bg-[var(--card)] border border-emerald-500/40 text-white"
+                />
+                <button
+                  type="button"
+                  onclick="updateUnitCreatorEmail('${unit.id}', this.previousElementSibling.value)"
+                  class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-emerald-500 text-slate-950 shrink-0"
+                >
+                  Simpan
+                </button>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 pt-1">
               <button onclick="openQrModal('${unit.id}')" class="px-3 py-2 rounded-xl text-xs font-bold bg-[var(--primary)] text-[var(--primary-foreground)] active:scale-95">
                 📱 QR & Arkib (${count})
               </button>
@@ -1630,16 +1703,41 @@
       if (!unit) return;
       const qrUrl = buildUnitQrUrl(unit);
       document.getElementById('modalCertTitle').textContent = unit.title;
-      document.getElementById('modalAdminDriveEmail').textContent = unit.adminDriveEmail || 'skranggu.tawau@moe-dl.edu.my';
+      const emailInp = document.getElementById('modalCreatorEmailInput');
+      emailInp.value = unit.adminDriveEmail || '';
       document.getElementById('modalAdminDriveFolder').textContent = `📁 Folder: ${unit.driveFolderName || ('Sijil Terkumpul - ' + unit.title)}`;
       document.getElementById('modalQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(qrUrl)}`;
 
+      const saveBtn = document.getElementById('modalBtnSaveCreatorEmail');
+      saveBtn.onclick = () => {
+        const val = emailInp.value.trim();
+        if (!val || !val.includes('@')) {
+          alert('Sila masukkan alamat e-mel yang sah.');
+          emailInp.focus();
+          return;
+        }
+        updateUnitCreatorEmail(unit.id, val);
+        const updatedUrl = buildUnitQrUrl(unit);
+        document.getElementById('modalQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(updatedUrl)}`;
+        saveBtn.textContent = '✅ E-mel Ditetapkan!';
+        setTimeout(() => { saveBtn.textContent = '💾 Tetapkan E-mel Saya'; }, 1800);
+      };
+
       document.getElementById('modalBtnSimulate').onclick = () => {
+        const val = emailInp.value.trim();
+        if (val && val.includes('@')) {
+          updateUnitCreatorEmail(unit.id, val);
+        }
         closeQrModal();
         enterTeacherQrScanMode(unit.id);
       };
       document.getElementById('modalBtnCopy').onclick = () => {
-        navigator.clipboard.writeText(qrUrl);
+        const val = emailInp.value.trim();
+        if (val && val.includes('@')) {
+          updateUnitCreatorEmail(unit.id, val);
+        }
+        const latestQrUrl = buildUnitQrUrl(unit);
+        navigator.clipboard.writeText(latestQrUrl);
         document.getElementById('modalBtnCopy').textContent = '✅ Link QR Disalin!';
         setTimeout(() => {
           document.getElementById('modalBtnCopy').textContent = '🔗 Salin Link QR Sijil Ini';
@@ -1651,7 +1749,7 @@
       const listEl = document.getElementById('modalRecipientsList');
       const recs = unit.recipients || [];
       if (recs.length === 0) {
-        listEl.innerHTML = `<div class="p-3 text-center text-[var(--muted-foreground)]">Belum ada sijil terkumpul bagi unit ini.</div>`;
+        listEl.innerHTML = `<div class="p-3 text-center text-[var(--muted-foreground)]">Belum ada sijil peserta terkumpul bagi unit ini.</div>`;
       } else {
         listEl.innerHTML = recs.map((r, idx) => `
           <div class="p-2.5 flex items-center justify-between gap-2">
@@ -1708,7 +1806,7 @@
     }
 
     function exportUnitCsv(unit) {
-      const headers = ['Urutan', 'No Siri Sijil', 'Nama Guru', 'No Kad Pengenalan', 'E-mel Guru', 'E-mel Drive Admin', 'Masa Dijana'];
+      const headers = ['Urutan', 'No Siri Sijil', 'Nama Peserta', 'No Kad Pengenalan', 'E-mel Peserta', 'E-mel Pencipta Sijil', 'Masa Dijana'];
       const rows = (unit.recipients || []).map((r, i) => [
         r.seqNum || (i + 1),
         `"${r.serialNo}"`,
@@ -1735,6 +1833,19 @@
       }
       if (!unit) unit = state.certUnits[0];
 
+      // If opened from Admin Panel ("Uji Scan QR") and creator hasn't entered their email yet, check draft input or prompt them
+      if (!urlFallbackUnit && (!unit.adminDriveEmail || !unit.adminDriveEmail.includes('@'))) {
+        const draftEmail = (document.getElementById('adminDriveEmailInput')?.value || '').trim();
+        if (draftEmail && draftEmail.includes('@')) {
+          updateUnitCreatorEmail(unit.id, draftEmail);
+        } else {
+          const entered = prompt('📩 Siapa yang mencipta sijil ini?\n\nSila masukkan alamat E-mel anda (Pencipta Sijil) yang akan menerima kesemua sijil peserta bagi program ini:');
+          if (entered && entered.trim().includes('@')) {
+            updateUnitCreatorEmail(unit.id, entered.trim());
+          }
+        }
+      }
+
       state.activeScanUnit = unit;
       state.issuedSerialForSession = null;
       document.getElementById('inputTeacherName').value = '';
@@ -1749,7 +1860,15 @@
 
       document.getElementById('scanCertUnitTitle').textContent = unit.title;
       document.getElementById('backCertTitle').textContent = unit.title;
-      document.getElementById('scanAdminDriveLabel').textContent = unit.adminDriveEmail || 'skranggu.tawau@moe-dl.edu.my';
+
+      const infoLine = document.getElementById('scanCreatorInfoLine');
+      const creatorLabel = document.getElementById('scanAdminDriveLabel');
+      if (unit.adminDriveEmail && unit.adminDriveEmail.includes('@')) {
+        infoLine.classList.remove('hidden');
+        creatorLabel.textContent = unit.adminDriveEmail;
+      } else {
+        infoLine.classList.add('hidden');
+      }
 
       const icGroup = document.getElementById('teacherIcInputGroup');
       const icInput = document.getElementById('inputTeacherIc');
@@ -1860,7 +1979,7 @@
 
       const btn = document.getElementById('btnSubmitTeacher');
       btn.disabled = true;
-      btn.innerHTML = '<span>⏳ Sedang Menjana, Hantar E-mel & Simpan Ke Drive...</span>';
+      btn.innerHTML = '<span>⏳ Sedang Menjana &amp; Menghantar Sijil...</span>';
 
       const nextSeq = getUnitNextSeq(unit);
       const issuedSerial = formatSerial(unit.serialPrefix, nextSeq);
@@ -1889,6 +2008,7 @@
       const nameSlug = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
       const fileName = `e-sijil-skrg-${serialSlug}-${nameSlug}.png`;
       const imageBase64 = teacherCanvas.toDataURL('image/png');
+      const creatorEmail = (unit.adminDriveEmail || '').trim();
 
       downloadTeacherCertAgain();
 
@@ -1905,7 +2025,7 @@
               icNo,
               serialNo: issuedSerial,
               title: unit.title,
-              adminDriveEmail: unit.adminDriveEmail || 'skranggu.tawau@moe-dl.edu.my',
+              adminDriveEmail: creatorEmail,
               driveFolderName: unit.driveFolderName || ('Sijil Terkumpul - ' + unit.title),
               fileName,
               imageBase64
@@ -1916,7 +2036,7 @@
       }
 
       btn.disabled = false;
-      btn.innerHTML = '<span>📧 Jana Sijil, Hantar E-mel & Simpan Ke Drive</span>';
+      btn.innerHTML = '<span>📧 Jana Sijil &amp; Hantar Ke E-mel</span>';
 
       const successBox = document.getElementById('teacherSuccessBox');
       successBox.classList.remove('hidden');
@@ -1924,10 +2044,12 @@
       document.getElementById('teacherSuccessDesc').textContent = `Tahniah ${name} (${icNo}). Sijil rasmi SK Ranggu anda dengan No. Siri ${issuedSerial} telah dimuat turun dan direkodkan.`;
 
       const noteEl = document.getElementById('teacherEmailDeliveryNote');
-      if (sentViaGas) {
-        noteEl.textContent = `☁️ Sijil telah disimpan ke Google Drive Admin (${unit.adminDriveEmail}) dan dihantar ke Inbox e-mel anda (${email}).`;
+      if (sentViaGas && creatorEmail) {
+        noteEl.textContent = `📩 Salinan sijil telah dihantar ke E-mel Pencipta Sijil (${creatorEmail}) dan ke Inbox e-mel anda (${email}).`;
+      } else if (creatorEmail) {
+        noteEl.textContent = `📩 Rekod sijil peserta telah dikumpul untuk Pencipta Sijil (${creatorEmail}) & fail PNG telah dimuat turun ke peranti anda.`;
       } else {
-        noteEl.textContent = `☁️ Rekod sijil telah dikumpul ke dalam Arkib Admin (${unit.adminDriveEmail}) & fail PNG telah dimuat turun ke peranti anda.`;
+        noteEl.textContent = `✅ Fail PNG sijil telah dimuat turun ke peranti anda.`;
       }
 
       successBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -1946,10 +2068,10 @@
     async function shareOrEmailCertFile() {
       renderTeacherSpinningCanvas();
       const unit = state.activeScanUnit || state.draft;
-      const name = document.getElementById('inputTeacherName').value.trim().toUpperCase() || 'GURU';
+      const name = document.getElementById('inputTeacherName').value.trim().toUpperCase() || 'PESERTA';
       const icNo = document.getElementById('inputTeacherIc').value.trim() || '';
       const email = document.getElementById('inputTeacherEmail').value.trim();
-      const adminEmail = unit.adminDriveEmail || '';
+      const creatorEmail = (unit.adminDriveEmail || '').trim();
       const serial = state.issuedSerialForSession || '000001';
       const serialSlug = serial.replace(/[^a-zA-Z0-9]/g, '-');
 
@@ -1969,10 +2091,10 @@
         }
       } catch (e) {}
 
-      const recipients = [email, adminEmail].filter(Boolean).join(',');
-      const subj = encodeURIComponent(`e-Sijil Rasmi SK Ranggu: ${unit.title} (${serial})`);
+      const recipients = [creatorEmail, email].filter(Boolean).join(',');
+      const subj = encodeURIComponent(`[Sijil Peserta] ${unit.title} - ${name} (${serial})`);
       const body = encodeURIComponent(
-        `Tahniah ${name} (${icNo}),\n\nSijil rasmi anda bagi ${unit.title} (No. Siri: ${serial}) telah dijana.\n\nSekolah Kebangsaan Ranggu, Peti Surat 842, 91008 Tawau.`
+        `Sijil Peserta bagi ${unit.title}:\n- Nama: ${name}\n- No. KP: ${icNo}\n- No. Siri: ${serial}\n- E-mel Peserta: ${email}\n\nSekolah Kebangsaan Ranggu, Peti Surat 842, 91008 Tawau.`
       );
       window.location.href = `mailto:${recipients}?subject=${subj}&body=${body}`;
     }
@@ -1983,6 +2105,11 @@
       const gasFromUrl = params.get('gas');
       if (gasFromUrl && gasFromUrl.startsWith('https://script.google.com/')) {
         state.gasWebhookUrl = gasFromUrl;
+      }
+
+      if (savedCreatorEmail) {
+        const draftInp = document.getElementById('adminDriveEmailInput');
+        if (draftInp) draftInp.value = savedCreatorEmail;
       }
 
       updateEmailStatusBanner();
@@ -2001,8 +2128,8 @@
           canvasW: parseInt(params.get('cw') || '1024', 10),
           canvasH: parseInt(params.get('ch') || '768', 10),
           customBgDataUrl: null,
-          adminDriveEmail: params.get('adm') || 'skranggu.tawau@moe-dl.edu.my',
-          driveFolderName: params.get('fdr') || 'Sijil Terkumpul - SK Ranggu 2026',
+          adminDriveEmail: params.get('adm') || '',
+          driveFolderName: params.get('fdr') || 'Sijil Terkumpul Peserta - SK Ranggu 2026',
           showIcOnCert: params.get('ic') !== '0',
           showSchoolHeader: params.get('hdr') === '1',
           coverOldName: params.get('cov') === '1',
