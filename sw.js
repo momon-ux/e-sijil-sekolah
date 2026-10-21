@@ -1,4 +1,4 @@
-const CACHE_NAME = 'admin-esijil-v10';
+const CACHE_NAME = 'admin-esijil-v12-rasmi';
 const ASSETS = [
   './',
   './index.html',
