@@ -114,75 +114,17 @@
       touch-action: none;
     }
 
-    .position-control-panel {
-      background: linear-gradient(145deg, #eef6ff, #f9fcff);
-      border: 1px solid #b9d4ef;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    }
-
-    .element-selector {
-      min-height: 3rem;
-      border: 1px solid #b9d4ef;
-      background: #ffffff;
-      color: #234f79;
-      transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
-    }
-
-    .element-selector.is-selected {
-      color: #ffffff !important;
-      background: linear-gradient(135deg, #2f73b3, #5b9bd4) !important;
-      border-color: #2f73b3;
-      box-shadow: 0 8px 18px rgba(47, 115, 179, 0.22);
-    }
-
-    .nudge-step-button {
-      min-height: 2.75rem;
-      border: 1px solid #c5d9ee;
-      background: #ffffff;
-      color: #315d86;
-    }
-
-    .nudge-step-button.is-selected {
-      color: #ffffff;
-      background: #3478b6;
-      border-color: #3478b6;
-    }
-
-    .nudge-pad {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(3.25rem, 4.5rem));
-      grid-template-rows: repeat(3, minmax(3.25rem, 4.5rem));
-      justify-content: center;
-      gap: 0.45rem;
-    }
-
-    .nudge-button {
+    .preview-touch-hint {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      min-width: 3.25rem;
-      min-height: 3.25rem;
-      border-radius: 1rem;
-      border: 1px solid #abc9e6;
-      background: #ffffff;
-      color: #194b78;
-      font-size: 1.3rem;
-      font-weight: 800;
-      box-shadow: 0 5px 12px rgba(45, 91, 136, 0.10);
-      touch-action: manipulation;
-      transition: transform 100ms ease, background 100ms ease;
-    }
-
-    .nudge-button:active {
-      transform: scale(0.93);
-      background: #dcecff;
-    }
-
-    .nudge-center {
+      gap: 0.4rem;
+      color: #315d86;
+      background: #e8f3ff;
+      border: 1px solid #bfd8ef;
+      border-radius: 999px;
+      padding: 0.38rem 0.7rem;
       font-size: 0.72rem;
-      line-height: 1.1;
-      color: #ffffff;
-      background: linear-gradient(135deg, #d9a33f, #f0c86c);
+      font-weight: 700;
     }
 
     /* 3D Spinning Certificate Stage when Teacher Scans QR */
@@ -514,38 +456,84 @@
       }
       #sectionCreateCert > div:first-child,
       #sectionPreviewCanvas { width: 100%; }
-      #sectionPreviewCanvas > div {
-        padding: 0.75rem !important;
+      body.preview-mode main {
+        padding-top: 0.25rem !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
       }
-      .preview-heading-copy {
+      body.preview-mode #sectionPreviewCanvas > .preview-card {
+        padding: 0.35rem !important;
+        border-left: 0 !important;
+        border-right: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+      }
+      body.preview-mode .preview-header {
+        padding: 0.2rem 0.35rem 0.35rem;
+      }
+      body.preview-mode .preview-header h3 {
+        font-size: 0.82rem !important;
+      }
+      body.preview-mode .preview-header > label {
+        display: none !important;
+      }
+      body.preview-mode .preview-touch-hint {
         width: 100%;
+        justify-content: center;
+        padding: 0.42rem 0.55rem;
       }
-      .position-control-panel {
-        padding: 0.9rem !important;
-        border-radius: 1.15rem;
-      }
-      .element-selector {
-        min-height: 3.4rem;
-        font-size: 0.82rem;
-      }
-      .nudge-pad {
+      body.preview-mode .canvas-container {
         width: 100%;
-        grid-template-columns: repeat(3, minmax(4rem, 5.25rem));
-        grid-template-rows: repeat(3, minmax(4rem, 5.25rem));
-        gap: 0.6rem;
+        border-radius: 0.55rem;
       }
-      .nudge-button {
-        min-width: 4rem;
-        min-height: 4rem;
-        border-radius: 1.15rem;
-        font-size: 1.6rem;
-      }
-      .nudge-center {
-        font-size: 0.75rem;
+      body.preview-mode #adminCertCanvas {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        max-height: calc(100dvh - 10.5rem) !important;
       }
       .teacher-home-button {
         top: 66px;
         width: 100%;
+      }
+    }
+
+    @media (orientation: landscape) and (max-height: 500px) {
+      body.preview-mode header,
+      body.preview-mode #emailStatusBanner,
+      body.preview-mode .workspace-tabs,
+      body.preview-mode #mobileBottomNav,
+      body.preview-mode .preview-header {
+        display: none !important;
+      }
+      body.preview-mode main {
+        padding: 0 !important;
+      }
+      body.preview-mode #sectionPreviewCanvas {
+        position: fixed;
+        inset: 0;
+        z-index: 80;
+        background: #07101f;
+      }
+      body.preview-mode #sectionPreviewCanvas > .preview-card {
+        min-height: 100dvh;
+        padding: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #07101f !important;
+      }
+      body.preview-mode .canvas-container {
+        height: 100dvh;
+        border: 0 !important;
+        border-radius: 0;
+        align-items: center;
+      }
+      body.preview-mode #adminCertCanvas {
+        width: auto !important;
+        height: 100dvh !important;
+        max-width: 100vw !important;
+        max-height: 100dvh !important;
       }
     }
 
@@ -794,13 +782,13 @@
           </div>
         </div>
 
-        <!-- Right Column: Interactive Certificate Position Canvas + Touch Nudge Pad -->
+        <!-- Touch-first certificate preview: drag text directly on the certificate -->
         <div id="sectionPreviewCanvas" class="hidden space-y-4">
-          <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-5 shadow-md space-y-3">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <div class="preview-heading-copy">
+          <div class="preview-card bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-5 shadow-md space-y-2 sm:space-y-3">
+            <div class="preview-header flex flex-wrap items-center justify-between gap-2">
+              <div>
                 <h3 class="text-sm sm:text-base font-bold text-[var(--foreground)]">Pratonton Sijil & Kedudukan Teks</h3>
-                <p class="text-xs text-[var(--muted-foreground)]">Sentuh & tarik kotak pada gambar, atau guna <strong>Butang Kawalan Jari</strong> di bawah.</p>
+                <p class="preview-touch-hint mt-1">👆 Sentuh Nama, No. KP atau No. Siri pada sijil, kemudian seret.</p>
               </div>
               <label class="flex items-center gap-1.5 text-xs text-[var(--muted-foreground)] cursor-pointer bg-[var(--background)] px-2.5 py-1.5 rounded-lg border border-[var(--border)]">
                 <input id="showGuidesCheckbox" type="checkbox" checked onchange="renderAdminCanvas()" class="w-4 h-4 rounded" />
@@ -810,46 +798,6 @@
 
             <div class="canvas-container border border-[var(--border)] rounded-xl overflow-hidden bg-neutral-950 flex justify-center">
               <canvas id="adminCertCanvas" width="1024" height="768" class="max-h-[620px] w-full sm:w-auto max-w-full h-auto block cursor-move"></canvas>
-            </div>
-
-            <!-- Large touch controls for precise placement on phone screens -->
-            <div class="position-control-panel p-3 sm:p-4 rounded-xl space-y-4">
-              <div class="space-y-2">
-                <div class="flex items-center justify-between gap-2">
-                  <span class="text-xs font-extrabold text-[var(--foreground)]">1. Pilih maklumat untuk digerakkan</span>
-                  <span id="selectedElementLabel" class="text-[11px] font-bold text-blue-700 bg-blue-100 px-2.5 py-1 rounded-full">Nama Guru</span>
-                </div>
-                <div class="grid grid-cols-3 gap-2 w-full">
-                  <button type="button" id="btnSelName" onclick="selectCanvasElement('name')" class="element-selector is-selected rounded-xl px-2 py-2 text-xs font-bold">👤 Nama Guru</button>
-                  <button type="button" id="btnSelIc" onclick="selectCanvasElement('ic')" class="element-selector rounded-xl px-2 py-2 text-xs font-bold">🪪 No. KP</button>
-                  <button type="button" id="btnSelSerial" onclick="selectCanvasElement('serial')" class="element-selector rounded-xl px-2 py-2 text-xs font-bold">#️⃣ No. Siri</button>
-                </div>
-              </div>
-
-              <div class="space-y-2">
-                <span class="text-xs font-extrabold text-[var(--foreground)]">2. Pilih jarak setiap gerakan</span>
-                <div class="grid grid-cols-3 gap-2">
-                  <button type="button" id="btnStepFine" onclick="setNudgeStep(2, this)" class="nudge-step-button rounded-xl px-2 py-2 text-xs font-bold">Halus · 2px</button>
-                  <button type="button" id="btnStepNormal" onclick="setNudgeStep(6, this)" class="nudge-step-button is-selected rounded-xl px-2 py-2 text-xs font-bold">Biasa · 6px</button>
-                  <button type="button" id="btnStepFast" onclick="setNudgeStep(12, this)" class="nudge-step-button rounded-xl px-2 py-2 text-xs font-bold">Pantas · 12px</button>
-                </div>
-              </div>
-
-              <div class="space-y-2 text-center">
-                <span class="block text-xs font-extrabold text-[var(--foreground)]">3. Tekan arah untuk menggerakkan</span>
-                <div class="nudge-pad" aria-label="Kawalan kedudukan teks">
-                  <span></span>
-                  <button type="button" onclick="nudgeSelectedByDirection(0, -1)" class="nudge-button" title="Gerak Atas" aria-label="Gerak Atas">↑</button>
-                  <span></span>
-                  <button type="button" onclick="nudgeSelectedByDirection(-1, 0)" class="nudge-button" title="Gerak Kiri" aria-label="Gerak Kiri">←</button>
-                  <button type="button" onclick="centerSelectedElementHorizontally()" class="nudge-button nudge-center" title="Letak Di Tengah" aria-label="Letak Di Tengah">TENGAH</button>
-                  <button type="button" onclick="nudgeSelectedByDirection(1, 0)" class="nudge-button" title="Gerak Kanan" aria-label="Gerak Kanan">→</button>
-                  <span></span>
-                  <button type="button" onclick="nudgeSelectedByDirection(0, 1)" class="nudge-button" title="Gerak Bawah" aria-label="Gerak Bawah">↓</button>
-                  <span></span>
-                </div>
-                <p class="text-[11px] text-[var(--muted-foreground)]">Boleh juga sentuh dan seret teks terus pada sijil.</p>
-              </div>
             </div>
           </div>
         </div>
@@ -1305,8 +1253,6 @@
       spinPaused: false
     };
 
-    let nudgeStep = 6;
-
     const adminCanvas = document.getElementById('adminCertCanvas');
     const adminCtx = adminCanvas.getContext('2d');
     const teacherCanvas = document.getElementById('teacherCertCanvas');
@@ -1318,21 +1264,13 @@
       ['name', 'ic', 'serial'].forEach(id => {
         const btn = document.getElementById(id === 'name' ? 'btnSelName' : (id === 'ic' ? 'btnSelIc' : 'btnSelSerial'));
         if (!btn) return;
-        btn.classList.toggle('is-selected', id === elId);
+        if (id === elId) {
+          btn.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white shadow';
+        } else {
+          btn.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold bg-[var(--secondary)] text-slate-200 border border-[var(--border)]';
+        }
       });
-      const label = document.getElementById('selectedElementLabel');
-      if (label) label.textContent = elId === 'name' ? 'Nama Guru' : (elId === 'ic' ? 'No. KP' : 'No. Siri');
       renderAdminCanvas();
-    }
-
-    function setNudgeStep(step, activeButton) {
-      nudgeStep = step;
-      document.querySelectorAll('.nudge-step-button').forEach(btn => btn.classList.remove('is-selected'));
-      if (activeButton) activeButton.classList.add('is-selected');
-    }
-
-    function nudgeSelectedByDirection(xDirection, yDirection) {
-      nudgeSelectedElement(xDirection * nudgeStep, yDirection * nudgeStep);
     }
 
     function nudgeSelectedElement(dx, dy) {
@@ -1374,6 +1312,8 @@
       const qrSection = document.getElementById('sectionQrList');
 
       if (!['create', 'preview', 'qr'].includes(step)) step = 'create';
+
+      document.body.classList.toggle('preview-mode', step === 'preview');
 
       if (createSection) createSection.classList.toggle('hidden', step === 'qr');
       if (createForm) createForm.classList.toggle('hidden', step !== 'create');

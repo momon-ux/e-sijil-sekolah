@@ -1,4 +1,4 @@
-const CACHE_NAME = 'admin-esijil-v18-roomy-position-controls';
+const CACHE_NAME = 'admin-esijil-v19-touch-preview';
 const ASSETS = [
   './',
   './index.html',
