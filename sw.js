@@ -1,4 +1,4 @@
-const CACHE_NAME = 'admin-esijil-v17-mobile-header-layout';
+const CACHE_NAME = 'admin-esijil-v18-roomy-position-controls';
 const ASSETS = [
   './',
   './index.html',
