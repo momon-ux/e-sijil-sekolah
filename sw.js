@@ -1,4 +1,4 @@
-const CACHE_NAME = 'admin-esijil-v19-touch-preview';
+const CACHE_NAME = 'admin-esijil-v20-developer-credit';
 const ASSETS = [
   './',
   './index.html',

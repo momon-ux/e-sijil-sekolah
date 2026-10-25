@@ -227,6 +227,36 @@
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
+    .developer-credit {
+      position: relative;
+      z-index: 20;
+      width: min(100% - 2rem, 64rem);
+      margin: 0.85rem auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      padding: 0.65rem 1rem;
+      color: #173652;
+      background: rgba(247, 251, 255, 0.96);
+      border: 1px solid rgba(95, 148, 203, 0.35);
+      border-radius: 999px;
+      box-shadow: 0 8px 24px rgba(45, 91, 136, 0.10);
+      font-size: 0.78rem;
+    }
+
+    .developer-credit-label {
+      color: #ffffff;
+      background: linear-gradient(135deg, #3478b6, #245a9d);
+      border-radius: 999px;
+      padding: 0.32rem 0.7rem;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
     /* Biru lembut, rasmi dan selesa untuk urusan penjanaan sijil. */
     body .text-white,
     body .text-slate-200 { color: #14395c !important; }
@@ -445,7 +475,30 @@
       main {
         width: 100%;
         max-width: 100%;
-        padding: 0.75rem 0.65rem calc(6rem + env(safe-area-inset-bottom, 0px)) !important;
+        padding: 0.75rem 0.65rem calc(8rem + env(safe-area-inset-bottom, 0px)) !important;
+      }
+      .developer-credit {
+        position: fixed;
+        left: 0.55rem;
+        right: 0.55rem;
+        bottom: calc(3.65rem + env(safe-area-inset-bottom, 0px));
+        z-index: 29;
+        width: auto;
+        margin: 0;
+        gap: 0.45rem;
+        padding: 0.42rem 0.55rem;
+        font-size: 0.68rem;
+        line-height: 1.15;
+      }
+      .developer-credit-label {
+        padding: 0.28rem 0.55rem;
+        font-size: 0.58rem;
+      }
+      .developer-credit strong {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       #emailStatusBanner { display: none; }
       .workspace-panel {
@@ -503,6 +556,7 @@
       body.preview-mode #emailStatusBanner,
       body.preview-mode .workspace-tabs,
       body.preview-mode #mobileBottomNav,
+      body.preview-mode .developer-credit,
       body.preview-mode .preview-header {
         display: none !important;
       }
@@ -1101,6 +1155,11 @@
     </div>
 
   </main>
+
+  <footer class="developer-credit" aria-label="Kredit pembangun sistem">
+    <span class="developer-credit-label">Pembangun Sistem</span>
+    <strong>Mohammad Fikrey bin Abdul Gapar</strong>
+  </footer>
 
   <!-- Mobile Bottom Navigation Bar (Only visible on Mobile in Creator Mode for 1-Thumb Access) -->
   <nav id="mobileBottomNav" class="sm:hidden fixed bottom-0 inset-x-0 z-30 bg-[var(--card)]/95 backdrop-blur border-t border-[var(--border)] mobile-bottom-nav">
