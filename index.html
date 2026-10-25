@@ -7,7 +7,7 @@
 
   <!-- PWA Manifest & Mobile App Meta Tags (Single Unified Link) -->
   <link rel="manifest" href="./manifest.json" />
-  <meta name="theme-color" content="#fbf6e9" />
+  <meta name="theme-color" content="#eaf3ff" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="e-Sijil SKRG" />
@@ -17,18 +17,20 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root {
-      --background: #f8f3e7;
-      --foreground: #173652;
-      --card: #fffdf8;
-      --border: #dfd2b7;
-      --primary: #1c4b78;
+      --background: #eaf3ff;
+      --foreground: #14395c;
+      --card: #fbfdff;
+      --border: #bfd4eb;
+      --primary: #2e6fb2;
       --primary-foreground: #ffffff;
-      --secondary: #f5eedf;
-      --secondary-foreground: #304c63;
-      --muted-foreground: #6b756f;
-      --gold: #bd8425;
-      --gold-soft: #f3e5be;
-      --green: #26705c;
+      --secondary: #e4effb;
+      --secondary-foreground: #365a7b;
+      --muted-foreground: #637b91;
+      --gold: #d2a34a;
+      --gold-soft: #f7e8bc;
+      --green: #2f806b;
+      --blue-soft: #dcecff;
+      --blue-glow: #8fbae6;
     }
 
     html {
@@ -40,11 +42,59 @@
       -webkit-tap-highlight-color: transparent;
       padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
       overflow-x: hidden;
+      position: relative;
+      isolation: isolate;
       background:
-        radial-gradient(circle at 8% 2%, rgba(208, 157, 58, 0.18), transparent 25rem),
-        radial-gradient(circle at 92% 12%, rgba(28, 75, 120, 0.10), transparent 28rem),
-        linear-gradient(180deg, #fffdf8 0%, var(--background) 100%);
+        radial-gradient(circle at 8% 0%, rgba(111, 168, 224, 0.27), transparent 28rem),
+        radial-gradient(circle at 94% 18%, rgba(187, 219, 249, 0.52), transparent 30rem),
+        linear-gradient(155deg, #f9fcff 0%, #edf6ff 48%, var(--background) 100%);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    /* Corak sijil bergerak perlahan supaya identiti sistem jelas tanpa mengganggu bacaan. */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -170px -240px;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.36;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='170' viewBox='0 0 240 170'%3E%3Cg fill='none' stroke='%236d9ed3' stroke-width='2'%3E%3Crect x='31' y='27' width='137' height='92' rx='10'/%3E%3Cpath d='M48 47h76M48 59h102M48 71h86M48 91h54'/%3E%3Ccircle cx='142' cy='93' r='14' fill='%23dbeafe'/%3E%3Cpath d='m135 105-5 20 12-7 9 8-2-22'/%3E%3Cpath d='M184 54h26M197 41v26' stroke='%23d2a34a'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 240px 170px;
+      animation: certificateDrift 36s linear infinite;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 12% 72%, rgba(92, 154, 215, 0.16), transparent 18rem),
+        radial-gradient(circle at 84% 36%, rgba(210, 163, 74, 0.10), transparent 15rem);
+      animation: certificateGlow 12s ease-in-out infinite alternate;
+    }
+
+    body > main {
+      position: relative;
+      z-index: 1;
+    }
+
+    body > header,
+    body > nav {
+      z-index: 2;
+    }
+
+    @keyframes certificateDrift {
+      from { background-position: 0 0; }
+      to { background-position: 240px 170px; }
+    }
+
+    @keyframes certificateGlow {
+      from { opacity: 0.68; transform: scale(1); }
+      to { opacity: 1; transform: scale(1.04); }
     }
 
     /* Prevent iOS Safari auto-zoom on input focus by ensuring >=16px on mobile */
@@ -164,25 +214,31 @@
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
-    /* Cerah, rasmi dan selesa untuk urusan penjanaan sijil. */
+    /* Biru lembut, rasmi dan selesa untuk urusan penjanaan sijil. */
     body .text-white,
-    body .text-slate-200 { color: #173652 !important; }
-    body .text-slate-300 { color: #596b72 !important; }
-    body .text-slate-400 { color: #738079 !important; }
+    body .text-slate-200 { color: #14395c !important; }
+    body .text-slate-300 { color: #56748f !important; }
+    body .text-slate-400 { color: #728ca4 !important; }
     body .text-blue-300,
-    body .text-blue-400 { color: #1c4b78 !important; }
+    body .text-blue-400 { color: #2e6fb2 !important; }
     body .text-emerald-300,
     body .text-emerald-400 { color: #26705c !important; }
     body .text-amber-300 { color: #946214 !important; }
     body .bg-blue-950\/60,
     body .bg-blue-950\/90,
     body .bg-slate-900\/80,
-    body .bg-slate-950 { background: #fffaf0 !important; }
+    body .bg-slate-950 { background: #f5faff !important; }
+
+    #sectionCreateCert .bg-emerald-500\/10,
+    #emailSetupModal .bg-emerald-500\/10 {
+      background: rgba(220, 236, 255, 0.78) !important;
+      border-color: rgba(91, 155, 212, 0.46) !important;
+    }
 
     header {
-      background: rgba(255, 253, 248, 0.96) !important;
-      border-color: rgba(189, 132, 37, 0.35) !important;
-      box-shadow: 0 8px 28px rgba(58, 48, 27, 0.09);
+      background: rgba(247, 251, 255, 0.94) !important;
+      border-color: rgba(95, 148, 203, 0.35) !important;
+      box-shadow: 0 8px 28px rgba(45, 91, 136, 0.11);
     }
 
     header::after {
@@ -192,7 +248,7 @@
       right: 0;
       bottom: -1px;
       height: 3px;
-      background: linear-gradient(90deg, transparent, var(--gold), #e1bd67, var(--gold), transparent);
+      background: linear-gradient(90deg, transparent, #6aa4dd, #d8b15d, #6aa4dd, transparent);
       opacity: 0.9;
     }
 
@@ -225,47 +281,48 @@
 
     .workspace-tab {
       color: #445b6d;
-      background: #fffdf8;
+      background: rgba(250, 253, 255, 0.96);
       border: 1px solid var(--border);
       transition: 160ms ease;
     }
 
     .workspace-tab.is-active {
       color: #ffffff;
-      background: linear-gradient(135deg, #173e68, #235d8d);
-      border-color: #173e68;
-      box-shadow: inset 0 -3px 0 var(--gold), 0 8px 18px rgba(28, 75, 120, 0.18);
+      background: linear-gradient(135deg, #397fbd, #5b9bd4);
+      border-color: #397fbd;
+      box-shadow: inset 0 -3px 0 #e1bd67, 0 8px 18px rgba(60, 124, 184, 0.22);
     }
 
     .workspace-tabs {
-      background: rgba(255, 253, 248, 0.96) !important;
-      border-color: rgba(189, 132, 37, 0.30) !important;
-      box-shadow: 0 10px 30px rgba(58, 48, 27, 0.08);
+      background: rgba(247, 251, 255, 0.94) !important;
+      border-color: rgba(95, 148, 203, 0.30) !important;
+      box-shadow: 0 10px 30px rgba(45, 91, 136, 0.10);
     }
 
     #sectionCreateCert > div > div,
     #sectionPreviewCanvas > div,
     #sectionQrList,
     #viewTeacherScan > div {
-      border-color: rgba(189, 132, 37, 0.32) !important;
-      border-top: 4px solid var(--gold) !important;
-      box-shadow: 0 16px 42px rgba(58, 48, 27, 0.10) !important;
+      background: rgba(251, 253, 255, 0.94) !important;
+      border-color: rgba(95, 148, 203, 0.34) !important;
+      border-top: 4px solid #74a9dc !important;
+      box-shadow: 0 16px 42px rgba(45, 91, 136, 0.12) !important;
     }
 
     input, select {
-      background: #fffefb !important;
-      border-color: #d9c9a7 !important;
+      background: #ffffff !important;
+      border-color: #bfd4eb !important;
       color: var(--foreground) !important;
     }
 
     input:focus, select:focus {
-      border-color: var(--gold) !important;
-      box-shadow: 0 0 0 3px rgba(189, 132, 37, 0.14);
+      border-color: #5b9bd4 !important;
+      box-shadow: 0 0 0 3px rgba(91, 155, 212, 0.18);
     }
 
     button.bg-\[var\(--primary\)\],
     .bg-blue-600 {
-      background: linear-gradient(135deg, #173e68, #235d8d) !important;
+      background: linear-gradient(135deg, #3478b6, #5b9bd4) !important;
       color: #ffffff !important;
     }
 
@@ -280,14 +337,14 @@
     }
 
     #emailStatusBanner {
-      background: linear-gradient(105deg, rgba(243, 229, 190, 0.78), rgba(255, 253, 248, 0.94)) !important;
-      border-color: rgba(189, 132, 37, 0.38) !important;
+      background: linear-gradient(105deg, rgba(220, 236, 255, 0.92), rgba(250, 253, 255, 0.96)) !important;
+      border-color: rgba(95, 148, 203, 0.38) !important;
     }
 
     #mobileBottomNav {
-      background: rgba(255, 253, 248, 0.97) !important;
-      border-color: rgba(189, 132, 37, 0.32) !important;
-      box-shadow: 0 -10px 28px rgba(58, 48, 27, 0.10);
+      background: rgba(247, 251, 255, 0.97) !important;
+      border-color: rgba(95, 148, 203, 0.34) !important;
+      box-shadow: 0 -10px 28px rgba(45, 91, 136, 0.12);
     }
 
     .teacher-home-button {
@@ -296,7 +353,7 @@
       z-index: 25;
       width: max-content;
       max-width: 100%;
-      background: linear-gradient(135deg, #173e68, #235d8d);
+      background: linear-gradient(135deg, #3478b6, #5b9bd4);
       color: #ffffff;
       border: 2px solid rgba(255, 255, 255, 0.92);
       box-shadow: 0 8px 24px rgba(23, 62, 104, 0.24);
@@ -330,6 +387,15 @@
       .teacher-home-button {
         top: 66px;
         width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body::before,
+      body::after,
+      .cert-3d-wrapper,
+      .shimmer-overlay {
+        animation: none !important;
       }
     }
   </style>
@@ -855,7 +921,6 @@
           </div>
         </div>
 
-        <p class="text-[11px] text-[var(--muted-foreground)] text-center">Tetapan teknikal diurus di belakang tabir dan tidak dipaparkan kepada pengguna.</p>
       </div>
     </div>
 

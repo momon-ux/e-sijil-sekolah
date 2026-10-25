@@ -1,4 +1,4 @@
-const CACHE_NAME = 'admin-esijil-v13-back-button';
+const CACHE_NAME = 'admin-esijil-v15-soft-blue-cert-theme';
 const ASSETS = [
   './',
   './index.html',
