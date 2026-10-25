@@ -1,4 +1,4 @@
-const CACHE_NAME = 'admin-esijil-v16-private-ticket-archive';
+const CACHE_NAME = 'admin-esijil-v17-mobile-header-layout';
 const ASSETS = [
   './',
   './index.html',

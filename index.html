@@ -371,16 +371,75 @@
     }
 
     @media (max-width: 639px) {
-      .brand-logos img { height: 38px !important; }
-      .workspace-tabs { top: 65px; }
-      main { padding-top: 0.75rem !important; }
+      header {
+        padding-top: calc(0.65rem + env(safe-area-inset-top, 0px)) !important;
+        padding-left: 0.65rem !important;
+        padding-right: 0.65rem !important;
+        overflow: visible;
+      }
+      .header-inner {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 0.55rem !important;
+        width: 100%;
+      }
+      .school-brand {
+        min-width: 0;
+        gap: 0.45rem !important;
+      }
+      .brand-logos {
+        gap: 0.35rem;
+      }
+      .brand-logos img { height: 34px !important; }
+      .school-copy {
+        min-width: 0;
+        overflow: visible;
+      }
+      .school-copy h1 {
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        font-size: 0.72rem !important;
+        line-height: 1.15 !important;
+      }
+      #topSubtitle {
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        font-size: 0.57rem !important;
+        line-height: 1.2 !important;
+        margin-top: 0.15rem;
+      }
+      .header-actions {
+        gap: 0.35rem !important;
+      }
+      #btnEmailSetupTop {
+        display: none !important;
+      }
+      #btnInstallPwa {
+        min-width: 3.1rem;
+        justify-content: center;
+        padding: 0.5rem 0.6rem !important;
+      }
+      #btnBackToAdmin {
+        max-width: 5.5rem;
+        white-space: normal;
+        line-height: 1.15;
+        padding: 0.5rem 0.6rem !important;
+      }
+      .workspace-tabs { top: 70px; }
+      main {
+        width: 100%;
+        max-width: 100%;
+        padding: 0.75rem 0.65rem calc(6rem + env(safe-area-inset-bottom, 0px)) !important;
+      }
       #emailStatusBanner { display: none; }
       .workspace-panel {
-        min-height: calc(100dvh - 9.5rem);
-        max-height: calc(100dvh - 9.5rem);
-        overflow-y: auto;
-        overscroll-behavior: contain;
-        padding-bottom: 1rem;
+        min-height: auto;
+        max-height: none;
+        overflow: visible;
+        padding-bottom: 1.25rem;
       }
       #sectionCreateCert > div:first-child,
       #sectionPreviewCanvas { width: 100%; }
@@ -404,13 +463,13 @@
 
   <!-- Top Header (Responsive for Phone, Tablet & Desktop) -->
   <header class="sticky top-0 z-30 bg-[var(--card)]/95 backdrop-blur border-b border-[var(--border)] px-3 sm:px-4 py-2.5">
-    <div class="max-w-5xl mx-auto flex items-center justify-between gap-2">
-      <div class="flex items-center gap-2 min-w-0">
+    <div class="header-inner max-w-5xl mx-auto flex items-center justify-between gap-2">
+      <div class="school-brand flex items-center gap-2 min-w-0">
         <div class="brand-logos flex items-center shrink-0" aria-label="Logo rasmi Kementerian Pendidikan Malaysia dan SK Ranggu">
           <img src="./logo-kpm.png" alt="Logo KPM" class="h-6 sm:h-7 w-auto object-contain" />
           <img src="./skrg.png" alt="Logo SK Ranggu" class="h-6 sm:h-7 w-auto object-contain" />
         </div>
-        <div class="min-w-0">
+        <div class="school-copy min-w-0">
           <div class="flex items-center gap-1.5">
             <h1 class="text-xs sm:text-sm md:text-base font-bold text-[var(--foreground)] truncate">SK RANGGU TAWAU</h1>
             <span id="standaloneBadge" class="hidden px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 shrink-0">PWA</span>
@@ -419,7 +478,7 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+      <div class="header-actions flex items-center gap-1.5 sm:gap-2 shrink-0">
         <!-- Email & Drive Server Setup Button -->
         <button id="btnEmailSetupTop" onclick="openEmailSetupModal()" class="px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 active:scale-95 transition-transform flex items-center gap-1">
           <span>☁️</span>
@@ -696,7 +755,7 @@
           <label for="ticketLookupInput" class="block text-xs font-bold text-blue-950">🎫 Nombor Tiket Anda</label>
           <div class="flex flex-col sm:flex-row gap-2">
             <input id="ticketLookupInput" type="text" inputmode="text" autocomplete="off" autocapitalize="characters"
-              placeholder="Contoh: SKRG-ABCD-1234" onkeydown="if(event.key === 'Enter') openTicketRecord()"
+              placeholder="SKRG-ABCD-1234" onkeydown="if(event.key === 'Enter') openTicketRecord()"
               class="flex-1 min-w-0 rounded-xl border-2 border-blue-200 bg-white px-4 py-3 text-center font-mono text-base font-black uppercase tracking-wider text-blue-950 focus:border-blue-500 focus:outline-none" />
             <button type="button" onclick="openTicketRecord()" class="rounded-xl bg-blue-700 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-blue-600/20 active:scale-95">
               Buka QR Saya
