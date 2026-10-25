@@ -1,4 +1,4 @@
-const CACHE_NAME = 'admin-esijil-v15-soft-blue-cert-theme';
+const CACHE_NAME = 'admin-esijil-v16-private-ticket-archive';
 const ASSETS = [
   './',
   './index.html',

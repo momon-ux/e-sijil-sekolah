@@ -682,19 +682,56 @@
         </div>
       </div>
 
-      <!-- Section 2: List of Saved Certificate Units & Their Unique QR Codes -->
+      <!-- Section 2: Private ticket lookup + admin-only archive -->
       <div id="sectionQrList" class="workspace-panel hidden bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-5 shadow-md space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-          <div>
-            <h2 class="text-sm sm:text-base font-bold text-[var(--foreground)]">2. Senarai Unit Sijil, QR Unik &amp; Google Drive Pencipta Sijil</h2>
-            <p class="text-xs text-[var(--muted-foreground)]">
-              Setiap rekod sijil mempunyai <strong>Kod QR unik</strong> dan <strong>E-mel Google Drive Pencipta Sijil</strong> tempat semua sijil peserta terkumpul.
-            </p>
-          </div>
+        <div class="text-center space-y-1">
+          <span class="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-[11px] font-bold text-blue-800">🔐 RUANG PERIBADI</span>
+          <h2 class="text-lg sm:text-xl font-bold text-[var(--foreground)]">Buka QR Dengan Nombor Tiket</h2>
+          <p class="text-xs sm:text-sm text-[var(--muted-foreground)] max-w-xl mx-auto">
+            Masukkan tiket yang diterima selepas mencipta sijil. Anda hanya akan melihat QR dan rekod milik anda sendiri.
+          </p>
         </div>
 
-        <div id="certUnitsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Populated dynamically by JS -->
+        <div class="max-w-xl mx-auto w-full rounded-2xl border border-blue-200 bg-blue-50/80 p-4 sm:p-5 space-y-3">
+          <label for="ticketLookupInput" class="block text-xs font-bold text-blue-950">🎫 Nombor Tiket Anda</label>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input id="ticketLookupInput" type="text" inputmode="text" autocomplete="off" autocapitalize="characters"
+              placeholder="Contoh: SKRG-ABCD-1234" onkeydown="if(event.key === 'Enter') openTicketRecord()"
+              class="flex-1 min-w-0 rounded-xl border-2 border-blue-200 bg-white px-4 py-3 text-center font-mono text-base font-black uppercase tracking-wider text-blue-950 focus:border-blue-500 focus:outline-none" />
+            <button type="button" onclick="openTicketRecord()" class="rounded-xl bg-blue-700 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-blue-600/20 active:scale-95">
+              Buka QR Saya
+            </button>
+          </div>
+          <p id="ticketLookupMessage" class="hidden text-center text-xs font-bold"></p>
+        </div>
+
+        <div id="ticketRecordResult" class="hidden max-w-3xl mx-auto w-full">
+          <div id="ticketRecordGrid" class="grid grid-cols-1 gap-4"></div>
+        </div>
+
+        <details id="adminArchiveDetails" class="max-w-3xl mx-auto w-full rounded-2xl border border-slate-200 bg-white/80 p-4">
+          <summary class="cursor-pointer text-sm font-bold text-slate-700">🔒 Ruang Admin</summary>
+          <div class="mt-4 space-y-3">
+            <p class="text-xs text-slate-500">Senarai penuh hanya boleh dibuka oleh pentadbir.</p>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <input id="adminArchiveCode" type="password" autocomplete="current-password" placeholder="Masukkan kod akses admin"
+                onkeydown="if(event.key === 'Enter') unlockAdminArchive()"
+                class="flex-1 min-w-0 rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-900 focus:border-blue-500 focus:outline-none" />
+              <button type="button" onclick="unlockAdminArchive()" class="rounded-xl bg-slate-900 px-5 py-3 text-sm font-bold text-white active:scale-95">Buka Arkib Admin</button>
+            </div>
+            <p id="adminArchiveMessage" class="hidden text-xs font-bold"></p>
+          </div>
+        </details>
+
+        <div id="adminArchivePanel" class="hidden space-y-3">
+          <div class="flex items-center justify-between gap-3 border-b border-[var(--border)] pb-3">
+            <div>
+              <h3 class="text-sm font-bold text-[var(--foreground)]">Arkib Penuh Admin</h3>
+              <p class="text-xs text-[var(--muted-foreground)]">Semua unit sijil pada peranti ini.</p>
+            </div>
+            <button type="button" onclick="lockAdminArchive()" class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700">Kunci</button>
+          </div>
+          <div id="certUnitsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
       </div>
     </div>
@@ -829,6 +866,24 @@
             </button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Modal: Secret ticket issued after a certificate unit is created -->
+    <div id="ticketIssuedModal" class="hidden fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+      <div class="bg-white border border-blue-200 rounded-3xl max-w-md w-full p-5 sm:p-7 space-y-4 text-center shadow-2xl">
+        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 text-3xl">🎫</div>
+        <div class="space-y-1">
+          <span class="text-[11px] font-black uppercase tracking-widest text-blue-600">Tiket Peribadi Anda</span>
+          <h3 class="text-xl font-black text-slate-950">Simpan Nombor Tiket Ini</h3>
+          <p class="text-xs text-slate-600">Tiket diperlukan untuk membuka semula QR dan rekod sijil anda. Jangan kongsikan kepada orang lain.</p>
+        </div>
+        <div id="issuedTicketCode" class="rounded-2xl border-2 border-dashed border-blue-300 bg-blue-50 px-4 py-4 font-mono text-xl sm:text-2xl font-black tracking-wider text-blue-950 select-all">SKRG-XXXX-0000</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <button id="copyIssuedTicketBtn" type="button" onclick="copyIssuedTicket()" class="rounded-xl bg-blue-700 px-4 py-3 text-sm font-bold text-white active:scale-95">📋 Salin Tiket</button>
+          <button type="button" onclick="openIssuedTicketQr()" class="rounded-xl bg-emerald-500 px-4 py-3 text-sm font-bold text-slate-950 active:scale-95">Lihat QR Saya</button>
+        </div>
+        <button type="button" onclick="closeTicketIssuedModal()" class="text-xs font-bold text-slate-500 underline underline-offset-4">Tutup dan simpan dahulu</button>
       </div>
     </div>
 
@@ -1017,100 +1072,23 @@
     };
     kpmLogoImg.src = './logo-kpm.png';
 
-    // --- DEFAULT CERTIFICATE UNITS DATABASE ---
+    // --- PRIVATE CERTIFICATE UNITS DATABASE (starts empty; no demo records) ---
     const savedCreatorEmail = localStorage.getItem('esijil_creator_email') || '';
-
-    const defaultCertUnits = [
-      {
-        id: 'cert-disiplin-2026',
-        title: 'BENGKEL PENGURUSAN DISIPLIN & TRANSFORMASI MINDA 2026',
-        serialPrefix: '00',
-        preset: 'disiplin',
-        canvasW: 1024,
-        canvasH: 768,
-        customBgDataUrl: null,
-        adminDriveEmail: savedCreatorEmail,
-        driveFolderName: 'Sijil Terkumpul - Bengkel Disiplin SK Ranggu 2026',
-        showIcOnCert: true,
-        showSchoolHeader: false,
-        coverOldName: false,
-        eventDate: '07 Ogos 2026',
-        eventTime: 'Rabu',
-        eventVenue: 'Bilik Al Furqan, SK Ranggu',
-        nameFontSize: 23,
-        textColor: '#0b264f',
-        elements: {
-          serial: { id: 'serial', label: 'No. Siri Sijil', x: 700, y: 626, w: 210, h: 26 },
-          name: { id: 'name', label: 'Nama Guru', x: 508, y: 232, w: 540, h: 36 },
-          ic: { id: 'ic', label: 'No. Kad Pengenalan', x: 508, y: 258, w: 280, h: 24 }
-        },
-        recipients: [
-          { seqNum: 2024, serialNo: '002024', name: 'MOHAMMAD FIKREY BIN ABDUL GAPAR', icNo: '880512-12-5431', email: 'fikrey@moe-dl.edu.my', time: '16 Okt 2026, 2:30 PTG' }
-        ]
-      },
-      {
-        id: 'cert-gce-penceramah-2026',
-        title: 'SIJIL PENCERAMAH — BENGKEL GOOGLE CERTIFIED EDUCATOR LEVEL 1',
-        serialPrefix: 'SKR/GCE/2026/',
-        preset: 'penceramah1',
-        canvasW: 1024,
-        canvasH: 725,
-        customBgDataUrl: null,
-        adminDriveEmail: savedCreatorEmail,
-        driveFolderName: 'Sijil Penceramah GCE Level 1 - SK Ranggu',
-        showIcOnCert: true,
-        showSchoolHeader: false,
-        coverOldName: false,
-        eventDate: '09 Mei 2026',
-        eventTime: 'Sabtu',
-        eventVenue: 'Bilik Al Furqan, SK Ranggu',
-        nameFontSize: 23,
-        textColor: '#0b264f',
-        elements: {
-          serial: { id: 'serial', label: 'No. Siri Sijil', x: 865, y: 24, w: 210, h: 26 },
-          name: { id: 'name', label: 'Nama Guru', x: 500, y: 298, w: 510, h: 34 },
-          ic: { id: 'ic', label: 'No. Kad Pengenalan', x: 500, y: 322, w: 280, h: 22 }
-        },
-        recipients: []
-      },
-      {
-        id: 'cert-delima-skrg-2026',
-        title: 'SESI LITERASI DELIMa 3.0 TAHUN 2026',
-        serialPrefix: 'SKR/842/2026/',
-        preset: 'delima',
-        canvasW: 728,
-        canvasH: 1024,
-        customBgDataUrl: null,
-        adminDriveEmail: savedCreatorEmail,
-        driveFolderName: 'Sijil Literasi DELIMa 3.0 - SK Ranggu',
-        showIcOnCert: true,
-        showSchoolHeader: true,
-        coverOldName: false,
-        eventDate: '12 Oktober 2026',
-        eventTime: '2.30 petang',
-        eventVenue: 'SK Ranggu Tawau',
-        nameFontSize: 20,
-        textColor: '#0f2952',
-        elements: {
-          serial: { id: 'serial', label: 'No. Siri Sijil', x: 585, y: 18, w: 220, h: 26 },
-          name: { id: 'name', label: 'Nama Guru', x: 360, y: 338, w: 410, h: 36 },
-          ic: { id: 'ic', label: 'No. Kad Pengenalan', x: 360, y: 361, w: 260, h: 22 }
-        },
-        recipients: []
-      }
-    ];
+    const PRIVATE_UNITS_STORAGE_KEY = 'esijil_units_v10_private_tickets';
 
     function loadCertUnits() {
       try {
-        const saved = JSON.parse(localStorage.getItem('esijil_units_v9') || 'null');
-        if (Array.isArray(saved) && saved.length > 0) return saved;
+        // One-time privacy reset: permanently remove the former public/demo archive.
+        localStorage.removeItem('esijil_units_v9');
+        const saved = JSON.parse(localStorage.getItem(PRIVATE_UNITS_STORAGE_KEY) || '[]');
+        if (Array.isArray(saved)) return saved;
       } catch (e) {}
-      return defaultCertUnits;
+      return [];
     }
 
     function saveCertUnits() {
       try {
-        localStorage.setItem('esijil_units_v9', JSON.stringify(state.certUnits));
+        localStorage.setItem(PRIVATE_UNITS_STORAGE_KEY, JSON.stringify(state.certUnits));
       } catch (e) {}
     }
 
@@ -1148,6 +1126,9 @@
       activeScanUnit: null,
       activeScanBgImg: null,
       issuedSerialForSession: null,
+      lastIssuedTicketUnitId: null,
+      ticketAccessUnitId: null,
+      adminArchiveUnlocked: false,
       spinPaused: false
     };
 
@@ -1223,7 +1204,7 @@
       });
 
       if (step === 'preview') requestAnimationFrame(renderAdminCanvas);
-      if (step === 'qr') renderCertUnitsList();
+      if (step === 'qr') preparePrivateQrView();
 
       if (updateHash && window.history && window.history.replaceState) {
         window.history.replaceState({}, document.title, `#${step}`);
@@ -1700,6 +1681,124 @@
       state.dragging = false;
     });
 
+    function generatePrivateTicket() {
+      const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      const bytes = new Uint8Array(8);
+      if (window.crypto && window.crypto.getRandomValues) {
+        window.crypto.getRandomValues(bytes);
+      } else {
+        for (let i = 0; i < bytes.length; i += 1) bytes[i] = Math.floor(Math.random() * 256);
+      }
+      const chars = Array.from(bytes, byte => alphabet[byte % alphabet.length]).join('');
+      return `SKRG-${chars.slice(0, 4)}-${chars.slice(4)}`;
+    }
+
+    function normalizeTicket(value) {
+      return (value || '').toUpperCase().replace(/\s+/g, '').trim();
+    }
+
+    function preparePrivateQrView() {
+      const result = document.getElementById('ticketRecordResult');
+      const message = document.getElementById('ticketLookupMessage');
+      if (result) result.classList.add('hidden');
+      if (message) message.classList.add('hidden');
+      if (state.adminArchiveUnlocked) renderCertUnitsList();
+    }
+
+    function openTicketRecord() {
+      const input = document.getElementById('ticketLookupInput');
+      const message = document.getElementById('ticketLookupMessage');
+      const result = document.getElementById('ticketRecordResult');
+      const ticket = normalizeTicket(input?.value);
+      const unit = state.certUnits.find(item => normalizeTicket(item.ticketCode) === ticket);
+
+      if (!ticket || !unit) {
+        if (result) result.classList.add('hidden');
+        if (message) {
+          message.textContent = 'Tiket tidak dijumpai. Semak semula nombor tiket anda.';
+          message.className = 'text-center text-xs font-bold text-red-600';
+        }
+        return;
+      }
+
+      if (input) input.value = unit.ticketCode;
+      state.ticketAccessUnitId = unit.id;
+      if (message) {
+        message.textContent = '✅ Tiket sah. Hanya rekod anda dipaparkan.';
+        message.className = 'text-center text-xs font-bold text-emerald-700';
+      }
+      renderCertUnitsList([unit], 'ticketRecordGrid');
+      if (result) result.classList.remove('hidden');
+    }
+
+    async function sha256Text(value) {
+      const data = new TextEncoder().encode(value);
+      const digest = await crypto.subtle.digest('SHA-256', data);
+      return Array.from(new Uint8Array(digest)).map(byte => byte.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function unlockAdminArchive() {
+      const input = document.getElementById('adminArchiveCode');
+      const message = document.getElementById('adminArchiveMessage');
+      const expectedHash = 'f4cf6f28cd1d68e6394b136e8877ab487018648509770a73153bf0af2b3168d9';
+      const enteredHash = await sha256Text(input?.value || '');
+
+      if (enteredHash !== expectedHash) {
+        message.textContent = 'Kod akses tidak sah.';
+        message.className = 'text-xs font-bold text-red-600';
+        return;
+      }
+
+      state.adminArchiveUnlocked = true;
+      if (input) input.value = '';
+      message.textContent = '✅ Arkib admin dibuka.';
+      message.className = 'text-xs font-bold text-emerald-700';
+      document.getElementById('adminArchiveDetails')?.classList.add('hidden');
+      document.getElementById('adminArchivePanel')?.classList.remove('hidden');
+      renderCertUnitsList();
+    }
+
+    function lockAdminArchive() {
+      state.adminArchiveUnlocked = false;
+      document.getElementById('adminArchivePanel')?.classList.add('hidden');
+      document.getElementById('adminArchiveDetails')?.classList.remove('hidden');
+      const grid = document.getElementById('certUnitsGrid');
+      if (grid) grid.innerHTML = '';
+    }
+
+    function showIssuedTicket(unit) {
+      state.lastIssuedTicketUnitId = unit.id;
+      document.getElementById('issuedTicketCode').textContent = unit.ticketCode;
+      document.getElementById('ticketIssuedModal').classList.remove('hidden');
+    }
+
+    function closeTicketIssuedModal() {
+      document.getElementById('ticketIssuedModal').classList.add('hidden');
+    }
+
+    async function copyIssuedTicket() {
+      const unit = state.certUnits.find(item => item.id === state.lastIssuedTicketUnitId);
+      if (!unit) return;
+      try {
+        await navigator.clipboard.writeText(unit.ticketCode);
+        const button = document.getElementById('copyIssuedTicketBtn');
+        button.textContent = '✅ Tiket Disalin';
+        setTimeout(() => { button.textContent = '📋 Salin Tiket'; }, 1800);
+      } catch (e) {
+        alert(`Nombor tiket anda: ${unit.ticketCode}`);
+      }
+    }
+
+    function openIssuedTicketQr() {
+      const unit = state.certUnits.find(item => item.id === state.lastIssuedTicketUnitId);
+      if (!unit) return;
+      closeTicketIssuedModal();
+      showWorkspaceStep('qr');
+      const input = document.getElementById('ticketLookupInput');
+      if (input) input.value = unit.ticketCode;
+      openTicketRecord();
+    }
+
     // --- SAVE NEW CERTIFICATE RECORD & GENERATE ITS UNIQUE QR ---
     function saveNewCertificateRecord() {
       updateDraftCert();
@@ -1722,6 +1821,7 @@
       const newId = 'sijil-' + Date.now().toString(36);
       const newUnit = {
         id: newId,
+        ticketCode: generatePrivateTicket(),
         title: d.title.trim() || 'SIJIL PROGRAM SEKOLAH',
         serialPrefix: d.serialPrefix.trim() || 'SKR/842/2026/',
         preset: d.preset,
@@ -1744,14 +1844,14 @@
 
       state.certUnits.unshift(newUnit);
       saveCertUnits();
-      renderCertUnitsList();
+      if (state.adminArchiveUnlocked) renderCertUnitsList();
 
       const toast = document.getElementById('saveRecordToast');
       toast.textContent = `✅ Rekod "${newUnit.title}" disimpan! Semua sijil peserta akan dihantar ke e-mel pencipta sijil (${newUnit.adminDriveEmail}).`;
       toast.classList.remove('hidden');
       setTimeout(() => toast.classList.add('hidden'), 5000);
 
-      openQrModal(newId);
+      showIssuedTicket(newUnit);
     }
 
     function updateUnitCreatorEmail(unitId, newEmail) {
@@ -1807,11 +1907,18 @@
       return `${base}?${params.toString()}`;
     }
 
-    function renderCertUnitsList() {
-      const grid = document.getElementById('certUnitsGrid');
+    function renderCertUnitsList(units = state.certUnits, targetId = 'certUnitsGrid') {
+      if (targetId === 'certUnitsGrid' && !state.adminArchiveUnlocked) return;
+      const grid = document.getElementById(targetId);
+      if (!grid) return;
       grid.innerHTML = '';
 
-      state.certUnits.forEach((unit) => {
+      if (!units.length) {
+        grid.innerHTML = '<div class="md:col-span-2 rounded-xl border border-dashed border-slate-300 bg-white/70 p-6 text-center text-sm font-semibold text-slate-500">Belum ada rekod sijil. Arkib bermula kosong.</div>';
+        return;
+      }
+
+      units.forEach((unit) => {
         const qrUrl = buildUnitQrUrl(unit);
         const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrUrl)}`;
         const nextSerial = formatSerial(unit.serialPrefix, getUnitNextSeq(unit));
@@ -1826,6 +1933,9 @@
           </div>
           <div class="flex-1 space-y-2 text-center sm:text-left min-w-0 w-full">
             <div class="flex flex-wrap items-center justify-center sm:justify-start gap-1.5">
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-blue-100 text-blue-800">
+                🎫 ${unit.ticketCode || 'TIADA-TIKET'}
+              </span>
               <span class="px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-amber-500/15 text-amber-300">
                 Giliran: ${nextSerial}
               </span>
@@ -1870,6 +1980,10 @@
     }
 
     function openQrModal(unitId) {
+      if (!state.adminArchiveUnlocked && state.ticketAccessUnitId !== unitId) {
+        alert('Masukkan nombor tiket yang sah untuk membuka QR ini.');
+        return;
+      }
       const unit = state.certUnits.find(u => u.id === unitId);
       if (!unit) return;
       const qrUrl = buildUnitQrUrl(unit);
