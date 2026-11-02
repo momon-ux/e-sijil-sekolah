@@ -787,6 +787,7 @@
                 </div>
               </div>
 
+              <label class="block text-xs font-bold mt-3"><input id="allowRoleCheckbox" type="checkbox" onchange="updateDraftCert()" /> Benarkan Jawatan / AJK pada sijil (pilihan)</label>
               <details class="rounded-xl bg-[#f8fbfe] border border-[var(--border)] p-3">
                 <summary class="cursor-pointer text-xs font-bold text-[var(--foreground)] flex items-center justify-between">
                   <span>⚙️ Pilihan Tambahan Sijil</span>
@@ -802,10 +803,6 @@
                 <label class="flex items-center gap-2.5 text-xs font-semibold text-blue-300 cursor-pointer py-0.5">
                   <input id="showSchoolHeaderCheckbox" type="checkbox" onchange="updateDraftCert()" class="w-4 h-4 rounded shrink-0" />
                   <span>🏫 Tambah Lencana KPM & SK Ranggu Di Atas Gambar Sijil</span>
-                </label>
-                <label class="flex items-center gap-2.5 text-xs font-semibold text-emerald-300 cursor-pointer py-0.5">
-                  <input id="coverOldNameCheckbox" type="checkbox" onchange="updateDraftCert()" class="w-4 h-4 rounded shrink-0" />
-                  <span>✨ Tutup Nama Asal Atas Gambar Sijil Dimuat Naik</span>
                 </label>
               </div>
 
@@ -984,6 +981,7 @@
             />
           </div>
 
+          <div id="teacherRoleInputGroup" class="hidden"><label for="inputTeacherRole" class="block text-xs font-bold mb-1">Jawatan / AJK (pilihan)</label><input id="inputTeacherRole" maxlength="80" placeholder="Contoh: Pengerusi / AJK Dokumentasi" oninput="renderTeacherSpinningCanvas()" class="w-full rounded-xl border p-3 text-slate-900" /><p class="text-xs mt-1">Kosongkan jika tidak perlu. Dipaparkan di bawah nombor pengenalan.</p></div>
           <div id="teacherIcInputGroup">
             <label class="block text-xs font-bold uppercase tracking-wider text-amber-300 mb-1 text-center">
               2. Masukkan No. Kad Pengenalan (Dipapar Pada Sijil)
@@ -1604,21 +1602,11 @@
       ctx.restore();
     }
 
-    function drawCertOverlay(ctx, cfg, nameText, icText, serialText, showGuides) {
+    function drawCertOverlay(ctx, cfg, nameText, icText, serialText, showGuides, roleText = '') {
       const el = cfg.elements;
       ctx.save();
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-
-      if (cfg.coverOldName) {
-        const bx = el.name.x - el.name.w / 2 - 8;
-        const by = el.name.y - el.name.h / 2 - 4;
-        const bw = el.name.w + 16;
-        const bh = (cfg.showIcOnCert !== false && el.ic) ? (el.ic.y - el.name.y + el.ic.h + 14) : (el.name.h + 8);
-        drawRoundedRect(ctx, bx, by, bw, bh, 12);
-        ctx.fillStyle = '#ffffff';
-        ctx.fill();
-      }
 
       // 1. Draw Serial Number
       ctx.save();
@@ -1663,6 +1651,14 @@
         ctx.restore();
       }
 
+      if (cfg.allowRole && roleText.trim()) {
+        ctx.save();
+        ctx.font = '600 14px sans-serif';
+        ctx.fillStyle = cfg.textColor || '#0b264f';
+        const anchor = cfg.showIcOnCert !== false && el.ic ? el.ic : el.name;
+        ctx.fillText(roleText.trim(), anchor.x, anchor.y + 27, el.name.w || 520);
+        ctx.restore();
+      }
       if (showGuides) {
         Object.values(el).forEach(item => {
           if (item.id === 'ic' && cfg.showIcOnCert === false) return;
@@ -1698,7 +1694,7 @@
 
       adminCtx.clearRect(0, 0, adminCanvas.width, adminCanvas.height);
       drawCertBg(adminCtx, adminCanvas.width, adminCanvas.height, d, d.customBgImage);
-      drawCertOverlay(adminCtx, d, 'MOHAMMAD FIKREY BIN ABDUL GAPAR', '880512-12-5431', sampleSerial, showGuides);
+      drawCertOverlay(adminCtx, d, 'MOHAMMAD FIKREY BIN ABDUL GAPAR', '880512-12-5431', sampleSerial, showGuides, d.allowRole ? 'AJK DOKUMENTASI' : '');
     }
 
     function updateDraftCert() {
@@ -1708,9 +1704,10 @@
       state.draft.serialPrefix = document.getElementById('serialPrefix').value;
       state.draft.nameFontSize = parseInt(document.getElementById('nameFontSize').value, 10);
       state.draft.textColor = document.getElementById('textColorPicker').value;
+      state.draft.allowRole = document.getElementById('allowRoleCheckbox').checked;
       state.draft.showIcOnCert = document.getElementById('showIcCheckbox').checked;
       state.draft.showSchoolHeader = document.getElementById('showSchoolHeaderCheckbox').checked;
-      state.draft.coverOldName = document.getElementById('coverOldNameCheckbox').checked;
+      state.draft.coverOldName = false;
       state.draft.eventDate = document.getElementById('certDateInput').value;
       state.draft.eventTime = document.getElementById('certTimeInput').value;
       state.draft.eventVenue = document.getElementById('certVenueInput').value;
@@ -1795,8 +1792,8 @@
           state.draft.canvasH = targetH;
           state.draft.customBgDataUrl = off.toDataURL('image/jpeg', 0.84);
           state.draft.customBgImage = img;
-          state.draft.coverOldName = true;
-          document.getElementById('coverOldNameCheckbox').checked = true;
+          state.draft.coverOldName = false;
+
 
           if (isPortrait) {
             state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: Math.round(targetW * 0.8), y: 18, w: 220, h: 26 };
@@ -2012,6 +2009,7 @@
         customBgDataUrl: d.customBgDataUrl,
         adminDriveEmail: creatorEmail,
         driveFolderName: d.driveFolderName || ('Sijil Terkumpul - ' + d.title.trim()),
+        allowRole: !!d.allowRole,
         showIcOnCert: d.showIcOnCert !== false,
         showSchoolHeader: d.showSchoolHeader,
         coverOldName: d.coverOldName,
@@ -2070,6 +2068,7 @@
         ch: unit.canvasH || 768,
         adm: unit.adminDriveEmail || '',
         fdr: unit.driveFolderName || ('Sijil Terkumpul - ' + unit.title),
+        role: unit.allowRole ? '1' : '0',
         ic: unit.showIcOnCert !== false ? '1' : '0',
         hdr: unit.showSchoolHeader ? '1' : '0',
         cov: unit.coverOldName ? '1' : '0',
@@ -2249,7 +2248,7 @@
       off.height = unit.canvasH || 768;
       const octx = off.getContext('2d');
       drawCertBg(octx, off.width, off.height, unit, null);
-      drawCertOverlay(octx, unit, r.name, r.icNo || '', r.serialNo, false);
+      drawCertOverlay(octx, unit, r.name, r.icNo || '', r.serialNo, false, r.role || '');
 
       const link = document.createElement('a');
       const serialSlug = r.serialNo.replace(/[^a-zA-Z0-9]/g, '-');
@@ -2273,12 +2272,13 @@
     }
 
     function exportUnitCsv(unit) {
-      const headers = ['Urutan', 'No Siri Sijil', 'Nama Peserta', 'No Kad Pengenalan', 'E-mel Peserta', 'E-mel Pencipta Sijil', 'Masa Dijana'];
+      const headers = ['Urutan', 'No Siri Sijil', 'Nama Peserta', 'No Kad Pengenalan', 'Jawatan / AJK', 'E-mel Peserta', 'E-mel Pencipta Sijil', 'Masa Dijana'];
       const rows = (unit.recipients || []).map((r, i) => [
         r.seqNum || (i + 1),
         `"${r.serialNo}"`,
         `"${r.name}"`,
         `"${r.icNo || ''}"`,
+        `"${(r.role || '').replace(/"/g, '""')}"`,
         `"${r.email || ''}"`,
         `"${unit.adminDriveEmail || ''}"`,
         `"${r.time}"`
@@ -2316,6 +2316,8 @@
       state.activeScanUnit = unit;
       state.issuedSerialForSession = null;
       document.getElementById('inputTeacherName').value = '';
+      document.getElementById('inputTeacherRole').value = '';
+      document.getElementById('teacherRoleInputGroup').classList.toggle('hidden', !unit.allowRole);
       document.getElementById('inputTeacherIc').value = '';
       document.getElementById('inputTeacherEmail').value = '';
       document.getElementById('teacherSuccessBox').classList.add('hidden');
@@ -2406,7 +2408,8 @@
         typedName || 'NAMA PENUH ANDA DI SINI',
         typedIc || 'NO. KAD PENGENALAN',
         activeSerial,
-        false
+        false,
+        document.getElementById('inputTeacherRole').value
       );
     }
 
@@ -2467,6 +2470,7 @@
         serialNo: issuedSerial,
         name,
         icNo,
+        role: unit.allowRole ? document.getElementById('inputTeacherRole').value.trim() : '',
         email,
         time: `Hari ini, ${timeStr}`
       });
@@ -2607,6 +2611,7 @@
           customBgDataUrl: null,
           adminDriveEmail: params.get('adm') || '',
           driveFolderName: params.get('fdr') || 'Sijil Terkumpul Peserta - SK Ranggu 2026',
+          allowRole: params.get('role') === '1',
           showIcOnCert: params.get('ic') !== '0',
           showSchoolHeader: params.get('hdr') === '1',
           coverOldName: params.get('cov') === '1',
@@ -2648,3 +2653,4 @@
   </script>
 </body>
 </html>
+
