@@ -981,7 +981,7 @@
             />
           </div>
 
-          <div id="teacherRoleInputGroup" class="hidden"><label for="inputTeacherRole" class="block text-xs font-bold mb-1">Jawatan / AJK (pilihan)</label><input id="inputTeacherRole" maxlength="80" placeholder="Contoh: Pengerusi / AJK Dokumentasi" oninput="renderTeacherSpinningCanvas()" class="w-full rounded-xl border p-3 text-slate-900" /><p class="text-xs mt-1">Kosongkan jika tidak perlu. Dipaparkan di bawah nombor pengenalan.</p></div>
+          <div id="teacherRoleInputGroup" class="hidden"><label for="inputTeacherRole" class="block text-xs font-bold mb-1">Jawatan / AJK (pilihan)</label><input id="inputTeacherRole" maxlength="80" placeholder="JAWATAN ANDA DI SINI" oninput="renderTeacherSpinningCanvas()" class="w-full rounded-xl border p-3 text-slate-900" /><p class="text-xs mt-1">Kosongkan jika tidak perlu. Dipaparkan di bawah nombor pengenalan.</p></div>
           <div id="teacherIcInputGroup">
             <label class="block text-xs font-bold uppercase tracking-wider text-amber-300 mb-1 text-center">
               2. Masukkan No. Kad Pengenalan (Dipapar Pada Sijil)
@@ -1694,7 +1694,7 @@
 
       adminCtx.clearRect(0, 0, adminCanvas.width, adminCanvas.height);
       drawCertBg(adminCtx, adminCanvas.width, adminCanvas.height, d, d.customBgImage);
-      drawCertOverlay(adminCtx, d, 'MOHAMMAD FIKREY BIN ABDUL GAPAR', '880512-12-5431', sampleSerial, showGuides, d.allowRole ? 'AJK DOKUMENTASI' : '');
+      drawCertOverlay(adminCtx, d, 'MOHAMMAD FIKREY BIN ABDUL GAPAR', '880512-12-5431', sampleSerial, showGuides, d.allowRole ? 'JAWATAN ANDA DI SINI' : '');
     }
 
     function updateDraftCert() {
