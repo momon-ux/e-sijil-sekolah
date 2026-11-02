@@ -839,7 +839,7 @@
             <div class="preview-header flex flex-wrap items-center justify-between gap-2">
               <div>
                 <h3 class="text-sm sm:text-base font-bold text-[var(--foreground)]">Pratonton Sijil & Kedudukan Teks</h3>
-                <p class="preview-touch-hint mt-1">👆 Sentuh Nama, No. KP atau No. Siri pada sijil, kemudian seret.</p>
+                <p class="preview-touch-hint mt-1">👆 Sentuh Nama, No. KP, Jawatan atau No. Siri pada sijil, kemudian seret.</p>
               </div>
               <label class="flex items-center gap-1.5 text-xs text-[var(--muted-foreground)] cursor-pointer bg-[var(--background)] px-2.5 py-1.5 rounded-lg border border-[var(--border)]">
                 <input id="showGuidesCheckbox" type="checkbox" checked onchange="renderAdminCanvas()" class="w-4 h-4 rounded" />
@@ -1602,7 +1602,16 @@
       ctx.restore();
     }
 
+    function ensureRoleElement(cfg) {
+      if (!cfg.elements.role) {
+        const anchor = cfg.showIcOnCert !== false && cfg.elements.ic ? cfg.elements.ic : cfg.elements.name;
+        cfg.elements.role = { id: 'role', label: 'Jawatan / AJK', x: anchor.x, y: anchor.y + 27, w: cfg.elements.name.w || 520, h: 20 };
+      }
+      return cfg.elements.role;
+    }
+
     function drawCertOverlay(ctx, cfg, nameText, icText, serialText, showGuides, roleText = '') {
+      ensureRoleElement(cfg);
       const el = cfg.elements;
       ctx.save();
       ctx.textAlign = 'center';
@@ -1655,13 +1664,13 @@
         ctx.save();
         ctx.font = '600 14px sans-serif';
         ctx.fillStyle = cfg.textColor || '#0b264f';
-        const anchor = cfg.showIcOnCert !== false && el.ic ? el.ic : el.name;
-        ctx.fillText(roleText.trim(), anchor.x, anchor.y + 27, el.name.w || 520);
+        ctx.fillText(roleText.trim(), el.role.x, el.role.y, el.role.w);
         ctx.restore();
       }
       if (showGuides) {
         Object.values(el).forEach(item => {
           if (item.id === 'ic' && cfg.showIcOnCert === false) return;
+          if (item.id === 'role' && !cfg.allowRole) return;
           const isSelected = state.selectedElement === item.id;
           ctx.strokeStyle = isSelected ? '#2563eb' : (item.id === 'ic' ? 'rgba(245, 158, 11, 0.9)' : 'rgba(37, 99, 235, 0.8)');
           ctx.lineWidth = isSelected ? 3 : 2;
@@ -1763,6 +1772,8 @@
         state.draft.elements.ic = { id: 'ic', label: 'No. Kad Pengenalan', x: 360, y: 361, w: 260, h: 22 };
       }
 
+      delete state.draft.elements.role;
+      ensureRoleElement(state.draft);
       document.getElementById('certRecordTitle').value = state.draft.title;
       document.getElementById('serialPrefix').value = state.draft.serialPrefix;
       document.getElementById('nameFontSize').value = state.draft.nameFontSize;
@@ -1792,6 +1803,7 @@
           state.draft.canvasH = targetH;
           state.draft.customBgDataUrl = off.toDataURL('image/jpeg', 0.84);
           state.draft.customBgImage = img;
+          delete state.draft.elements.role;
           state.draft.coverOldName = false;
 
 
@@ -1830,6 +1842,7 @@
       const items = Object.values(state.draft.elements).reverse();
       const hit = items.find(item => {
         if (item.id === 'ic' && state.draft.showIcOnCert === false) return false;
+        if (item.id === 'role' && !state.draft.allowRole) return false;
         return (
           pos.x >= item.x - item.w / 2 - pad &&
           pos.x <= item.x + item.w / 2 + pad &&
@@ -2068,6 +2081,9 @@
         ch: unit.canvasH || 768,
         adm: unit.adminDriveEmail || '',
         fdr: unit.driveFolderName || ('Sijil Terkumpul - ' + unit.title),
+        rx: ensureRoleElement(unit).x,
+        ry: ensureRoleElement(unit).y,
+        rw: ensureRoleElement(unit).w,
         role: unit.allowRole ? '1' : '0',
         ic: unit.showIcOnCert !== false ? '1' : '0',
         hdr: unit.showSchoolHeader ? '1' : '0',
@@ -2618,6 +2634,7 @@
           nameFontSize: parseInt(params.get('fs') || '23', 10),
           textColor: params.get('col') || '#0b264f',
           elements: {
+            role: { id: 'role', label: 'Jawatan / AJK', x: parseInt(params.get('rx') || params.get('ix') || String(nx), 10), y: parseInt(params.get('ry') || String(parseInt(params.get('iy') || String(ny + 26), 10) + 27), 10), w: parseInt(params.get('rw') || '520', 10), h: 20 },
             serial: {
               id: 'serial',
               label: 'No. Siri Sijil',
