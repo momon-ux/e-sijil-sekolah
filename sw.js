@@ -1,4 +1,4 @@
-const CACHE_NAME = 'admin-esijil-v20-developer-credit';
+const CACHE_NAME = 'admin-esijil-v21-bulk-certificates';
 const ASSETS = [
   './',
   './index.html',
