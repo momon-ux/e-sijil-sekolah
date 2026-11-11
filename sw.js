@@ -1,4 +1,4 @@
-const CACHE_NAME = 'admin-esijil-v21-bulk-certificates';
+const CACHE_NAME = 'admin-esijil-v22-direct-bulk-button';
 const ASSETS = [
   './',
   './index.html',
