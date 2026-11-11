@@ -257,6 +257,11 @@
       white-space: nowrap;
     }
 
+    body.bulk-modal-open .developer-credit,
+    body.bulk-modal-open #mobileBottomNav {
+      display: none !important;
+    }
+
     /* Biru lembut, rasmi dan selesa untuk urusan penjanaan sijil. */
     body .text-white,
     body .text-slate-200 { color: #14395c !important; }
@@ -1120,6 +1125,76 @@
       </div>
     </div>
 
+    <!-- Modal: Generate many participant certificates from pasted Excel/CSV data -->
+    <div id="bulkCertificateModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl max-w-2xl w-full p-4 sm:p-6 space-y-4 text-left shadow-2xl my-auto max-h-[94vh] overflow-y-auto">
+        <div class="flex items-start justify-between gap-3 border-b border-[var(--border)] pb-3 sticky top-0 bg-[var(--card)] z-10">
+          <div class="min-w-0">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-amber-700">SIJIL PESERTA SECARA PUKAL</span>
+            <h3 class="text-sm sm:text-base font-bold text-[var(--foreground)]">Jana Banyak Sijil Sekali Gus</h3>
+            <p id="bulkCertTitle" class="text-[11px] text-[var(--muted-foreground)] truncate"></p>
+          </div>
+          <button type="button" onclick="closeBulkCertificateModal()" class="text-xs px-3 py-1.5 rounded-lg bg-[var(--secondary)] text-[var(--foreground)] font-bold shrink-0">✕ Tutup</button>
+        </div>
+
+        <div class="rounded-xl border border-blue-200 bg-blue-50 p-3 text-xs text-blue-950 leading-relaxed">
+          <strong>Cara paling mudah:</strong> salin lajur daripada Excel atau Google Sheets, kemudian tampal di bawah. Susunan lajur: <strong>Nama, No. KP, E-mel, Jawatan/Sekolah</strong>. Hanya nama diwajibkan.
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <label class="cursor-pointer rounded-xl border-2 border-dashed border-blue-300 bg-white px-3 py-3 text-center text-xs font-bold text-blue-900 hover:bg-blue-50">
+            📂 Muat Naik CSV / TXT
+            <input id="bulkFileInput" type="file" accept=".csv,.txt,text/csv,text/plain" onchange="handleBulkParticipantFile(event)" class="hidden" />
+          </label>
+          <button type="button" onclick="downloadBulkCsvTemplate()" class="rounded-xl border border-[var(--border)] bg-[var(--secondary)] px-3 py-3 text-xs font-bold text-[var(--foreground)]">
+            📊 Muat Turun Templat CSV
+          </button>
+        </div>
+
+        <div>
+          <label for="bulkParticipantText" class="block text-xs font-bold text-[var(--foreground)] mb-1.5">Tampal Senarai Peserta</label>
+          <textarea
+            id="bulkParticipantText"
+            rows="8"
+            oninput="updateBulkParticipantPreview()"
+            placeholder="Contoh:\nAHMAD BIN ALI,880101-12-1234,ahmad@example.com,PESERTA\nSITI AISYAH BINTI OMAR,,,SK RANGGU"
+            class="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-3 text-xs font-mono text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500"
+          ></textarea>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span id="bulkParticipantCount" class="rounded-full bg-amber-100 px-3 py-1.5 text-xs font-bold text-amber-900">0 peserta = 0 sijil</span>
+          <span class="text-[11px] text-[var(--muted-foreground)]">Semak nama sebelum menjana.</span>
+        </div>
+
+        <div id="bulkParticipantPreview" class="max-h-52 overflow-y-auto divide-y divide-[var(--border)] rounded-xl border border-[var(--border)] bg-white">
+          <div class="p-3 text-center text-[var(--muted-foreground)]">Pratonton nama peserta akan muncul di sini.</div>
+        </div>
+
+        <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 space-y-2">
+          <label class="flex items-start gap-2 text-xs font-bold text-emerald-950 cursor-pointer">
+            <input id="bulkSendConnected" type="checkbox" class="mt-0.5 h-4 w-4 rounded" />
+            <span>Hantar salinan kepada e-mel/Google Drive admin jika sambungan penghantaran aktif</span>
+          </label>
+          <p id="bulkDeliveryStatus" class="text-[11px] text-emerald-800"></p>
+        </div>
+
+        <p id="bulkProgressText" class="text-xs font-bold text-blue-800 text-center"></p>
+
+        <button id="bulkGenerateBtn" type="button" disabled class="w-full rounded-xl bg-[var(--primary)] px-4 py-3.5 text-sm font-bold text-[var(--primary-foreground)] shadow-lg disabled:cursor-not-allowed disabled:opacity-50 active:scale-98">
+          🎓 Masukkan Senarai Peserta Dahulu
+        </button>
+
+        <div id="bulkSuccessBox" class="hidden rounded-xl border border-emerald-300 bg-emerald-50 p-4 text-center space-y-3">
+          <p id="bulkSuccessText" class="text-sm font-bold text-emerald-900"></p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button type="button" onclick="openGeneratedBulkArchive()" class="rounded-xl bg-emerald-600 px-3 py-2.5 text-xs font-bold text-white">🗂️ Buka Arkib & Muat Turun</button>
+            <button type="button" onclick="closeBulkCertificateModal()" class="rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-xs font-bold text-slate-800">Selesai</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Ringkasan status penghantaran. Tetapan teknikal dan kod sengaja tidak dipaparkan. -->
     <div id="emailSetupModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
       <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl max-w-lg w-full p-5 sm:p-6 space-y-4 text-left shadow-2xl">
@@ -1307,7 +1382,8 @@
       lastIssuedTicketUnitId: null,
       ticketAccessUnitId: null,
       adminArchiveUnlocked: false,
-      spinPaused: false
+      spinPaused: false,
+      activeBulkUnitId: null
     };
 
     const adminCanvas = document.getElementById('adminCertCanvas');
@@ -2169,6 +2245,9 @@
               <button onclick="enterTeacherQrScanMode('${unit.id}')" class="px-3 py-2 rounded-xl text-xs font-semibold bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--border)] active:scale-95">
                 👁️ Uji Scan QR
               </button>
+              <button onclick="openBulkCertificateModal('${unit.id}')" class="col-span-2 px-3 py-2.5 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 active:scale-95 shadow-sm">
+                👥 Jana Sijil Peserta Secara Pukal
+              </button>
             </div>
           </div>
         `;
@@ -2238,7 +2317,7 @@
             <div class="min-w-0">
               <span class="font-mono font-bold text-amber-300 mr-1.5">${r.serialNo}</span>
               <span class="font-semibold text-[var(--foreground)] break-words">${r.name}</span>
-              <span class="block text-[11px] text-slate-300 truncate">🪪 No. KP: <strong class="font-mono text-amber-200">${r.icNo || '-'}</strong> • 📧 ${r.email || '-'}</span>
+              <span class="block text-[11px] text-slate-300 truncate">🪪 No. KP: <strong class="font-mono text-amber-200">${r.icNo || '-'}</strong> • 📧 ${r.email || '-'}${r.role ? ` • 👤 ${r.role}` : ''}</span>
             </div>
             <button onclick="downloadSpecificRecipientCert('${unit.id}', ${idx})" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shrink-0">
               ⬇️ Sijil
@@ -2252,6 +2331,260 @@
 
     function closeQrModal() {
       document.getElementById('qrModal').classList.add('hidden');
+    }
+
+    // --- BULK PARTICIPANT CERTIFICATE GENERATOR ---
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function parseDelimitedLine(line, delimiter) {
+      const values = [];
+      let current = '';
+      let quoted = false;
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+          if (quoted && line[i + 1] === '"') {
+            current += '"';
+            i += 1;
+          } else {
+            quoted = !quoted;
+          }
+        } else if (char === delimiter && !quoted) {
+          values.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      values.push(current.trim());
+      return values;
+    }
+
+    function parseBulkParticipantText(rawText) {
+      const lines = String(rawText || '')
+        .replace(/^\uFEFF/, '')
+        .split(/\r?\n/)
+        .map(line => line.trim())
+        .filter(Boolean);
+
+      const participants = [];
+      lines.forEach((line, lineIndex) => {
+        const delimiter = line.includes('\t') ? '\t' : (line.includes(';') ? ';' : ',');
+        let columns = parseDelimitedLine(line, delimiter);
+        if (columns.length === 1) columns = [line.trim(), '', '', ''];
+
+        const first = (columns[0] || '').trim();
+        const normalizedHeader = first.toLowerCase().replace(/[^a-z]/g, '');
+        if (lineIndex === 0 && ['nama', 'namapeserta', 'name', 'participantname'].includes(normalizedHeader)) return;
+
+        const name = first.toUpperCase().replace(/\s+/g, ' ').trim();
+        if (!name) return;
+        participants.push({
+          name,
+          icNo: (columns[1] || '').trim(),
+          email: (columns[2] || '').trim().toLowerCase(),
+          role: (columns[3] || '').trim()
+        });
+      });
+      return participants;
+    }
+
+    function openBulkCertificateModal(unitId) {
+      const unit = state.certUnits.find(u => u.id === unitId);
+      if (!unit) return;
+      state.activeBulkUnitId = unitId;
+      document.getElementById('bulkCertificateModal').dataset.unitId = unitId;
+      document.getElementById('bulkCertTitle').textContent = unit.title;
+      document.getElementById('bulkParticipantText').value = '';
+      document.getElementById('bulkFileInput').value = '';
+      const canSendToAdmin = Boolean(
+        state.gasWebhookUrl &&
+        (unit.adminDriveEmail || '').includes('@')
+      );
+      document.getElementById('bulkSendConnected').checked = canSendToAdmin;
+      document.getElementById('bulkSendConnected').disabled = !canSendToAdmin;
+      document.getElementById('bulkDeliveryStatus').textContent = canSendToAdmin
+        ? '✅ Penghantaran e-mel/Drive aktif. Salinan boleh dihantar kepada admin semasa penjanaan.'
+        : 'ℹ️ Sijil akan disimpan dalam arkib pada peranti ini. Tetapkan e-mel admin dan aktifkan sambungan penghantaran untuk salinan Google Drive/e-mel.';
+      document.getElementById('bulkSuccessBox').classList.add('hidden');
+      updateBulkParticipantPreview();
+      document.body.classList.add('bulk-modal-open');
+      document.getElementById('bulkCertificateModal').classList.remove('hidden');
+    }
+
+    function closeBulkCertificateModal() {
+      document.getElementById('bulkCertificateModal').classList.add('hidden');
+      document.body.classList.remove('bulk-modal-open');
+      delete document.getElementById('bulkCertificateModal').dataset.unitId;
+      state.activeBulkUnitId = null;
+    }
+
+    function updateBulkParticipantPreview() {
+      const participants = parseBulkParticipantText(document.getElementById('bulkParticipantText').value);
+      const countEl = document.getElementById('bulkParticipantCount');
+      const previewEl = document.getElementById('bulkParticipantPreview');
+      const generateBtn = document.getElementById('bulkGenerateBtn');
+
+      countEl.textContent = `${participants.length} peserta = ${participants.length} sijil`;
+      generateBtn.disabled = participants.length === 0;
+      generateBtn.textContent = participants.length
+        ? `🎓 Jana ${participants.length} Sijil & Simpan Untuk Admin`
+        : '🎓 Masukkan Senarai Peserta Dahulu';
+
+      if (participants.length === 0) {
+        previewEl.innerHTML = '<div class="p-3 text-center text-[var(--muted-foreground)]">Pratonton nama peserta akan muncul di sini.</div>';
+        return participants;
+      }
+
+      const shown = participants.slice(0, 8);
+      previewEl.innerHTML = shown.map((p, idx) => `
+        <div class="px-3 py-2 flex items-start gap-2">
+          <span class="w-6 h-6 rounded-full bg-[var(--primary)] text-[var(--primary-foreground)] flex items-center justify-center text-[10px] font-bold shrink-0">${idx + 1}</span>
+          <div class="min-w-0">
+            <strong class="block text-xs text-[var(--foreground)] break-words">${escapeHtml(p.name)}</strong>
+            <span class="block text-[10px] text-[var(--muted-foreground)] break-words">${escapeHtml(p.icNo || 'No. KP tidak diisi')} • ${escapeHtml(p.email || 'E-mel tidak diisi')}${p.role ? ` • ${escapeHtml(p.role)}` : ''}</span>
+          </div>
+        </div>
+      `).join('') + (participants.length > shown.length
+        ? `<div class="px-3 py-2 text-center text-[11px] font-bold text-amber-700">+ ${participants.length - shown.length} peserta lagi</div>`
+        : '');
+      return participants;
+    }
+
+    function handleBulkParticipantFile(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        document.getElementById('bulkParticipantText').value = String(reader.result || '');
+        updateBulkParticipantPreview();
+      };
+      reader.readAsText(file);
+    }
+
+    function downloadBulkCsvTemplate() {
+      const sample = [
+        ['Nama Peserta', 'No Kad Pengenalan (Pilihan)', 'E-mel Peserta (Pilihan)', 'Jawatan/Sekolah (Pilihan)'],
+        ['AHMAD BIN ALI', '880101-12-1234', 'ahmad@example.com', 'PESERTA'],
+        ['SITI AISYAH BINTI OMAR', '', '', 'SK RANGGU']
+      ];
+      const csv = sample.map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(',')).join('\n');
+      const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'templat-senarai-peserta-sijil-pukal.csv';
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    }
+
+    function loadBulkBackgroundImage(unit) {
+      return new Promise(resolve => {
+        if (!unit.customBgDataUrl) return resolve(null);
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => resolve(null);
+        img.src = unit.customBgDataUrl;
+      });
+    }
+
+    async function buildBulkCertificateImage(unit, recipient, bgImg) {
+      const off = document.createElement('canvas');
+      off.width = unit.canvasW || 1024;
+      off.height = unit.canvasH || 768;
+      const octx = off.getContext('2d');
+      drawCertBg(octx, off.width, off.height, unit, bgImg);
+      drawCertOverlay(octx, unit, recipient.name, recipient.icNo || '', recipient.serialNo, false, recipient.role || '');
+      return off.toDataURL('image/png');
+    }
+
+    async function sendBulkCertificateToConnectedService(unit, recipient, bgImg) {
+      if (!state.gasWebhookUrl || !state.gasWebhookUrl.startsWith('https://script.google.com/')) return false;
+      const imageBase64 = await buildBulkCertificateImage(unit, recipient, bgImg);
+      const serialSlug = recipient.serialNo.replace(/[^a-zA-Z0-9]/g, '-');
+      const nameSlug = recipient.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      try {
+        await fetch(state.gasWebhookUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            email: recipient.email || '',
+            name: recipient.name,
+            icNo: recipient.icNo || '',
+            role: recipient.role || '',
+            serialNo: recipient.serialNo,
+            title: unit.title,
+            adminDriveEmail: unit.adminDriveEmail || '',
+            driveFolderName: unit.driveFolderName || ('Sijil Terkumpul - ' + unit.title),
+            fileName: `e-sijil-skrg-${serialSlug}-${nameSlug}.png`,
+            imageBase64
+          })
+        });
+        return true;
+      } catch (err) {
+        return false;
+      }
+    }
+
+    async function generateBulkCertificates() {
+      const unitId = document.getElementById('bulkCertificateModal').dataset.unitId || state.activeBulkUnitId;
+      const unit = state.certUnits.find(u => u.id === unitId);
+      const participants = updateBulkParticipantPreview();
+      if (!unit || participants.length === 0) return;
+
+      const generateBtn = document.getElementById('bulkGenerateBtn');
+      const progressEl = document.getElementById('bulkProgressText');
+      const shouldSend = document.getElementById('bulkSendConnected').checked && Boolean(state.gasWebhookUrl);
+      generateBtn.disabled = true;
+
+      const startSeq = getUnitNextSeq(unit);
+      const timeLabel = new Date().toLocaleString('ms-MY', { dateStyle: 'medium', timeStyle: 'short' });
+      const newRecipients = participants.map((participant, idx) => ({
+        seqNum: startSeq + idx,
+        serialNo: formatSerial(unit.serialPrefix, startSeq + idx),
+        name: participant.name,
+        icNo: participant.icNo,
+        email: participant.email,
+        role: unit.allowRole ? participant.role : '',
+        source: 'bulk',
+        time: timeLabel
+      }));
+
+      unit.recipients = unit.recipients || [];
+      unit.recipients.push(...newRecipients);
+      saveCertUnits();
+      if (state.adminArchiveUnlocked) renderCertUnitsList();
+      if (state.ticketAccessUnitId === unit.id) renderCertUnitsList([unit], 'ticketRecordGrid');
+
+      let sentCount = 0;
+      if (shouldSend) {
+        const bgImg = await loadBulkBackgroundImage(unit);
+        for (let i = 0; i < newRecipients.length; i++) {
+          progressEl.textContent = `Menghantar ${i + 1} daripada ${newRecipients.length} sijil kepada admin…`;
+          if (await sendBulkCertificateToConnectedService(unit, newRecipients[i], bgImg)) sentCount += 1;
+        }
+      }
+
+      progressEl.textContent = '';
+      document.getElementById('bulkSuccessText').textContent = shouldSend
+        ? `✅ ${newRecipients.length} sijil telah dijana dan disimpan. ${sentCount} penghantaran telah diproses untuk admin.`
+        : `✅ ${newRecipients.length} sijil telah dijana dan disimpan dalam arkib pada peranti ini.`;
+      document.getElementById('bulkSuccessBox').classList.remove('hidden');
+      generateBtn.disabled = true;
+      generateBtn.textContent = `✅ ${newRecipients.length} Sijil Berjaya Dijana`;
+    }
+
+    function openGeneratedBulkArchive() {
+      const unitId = document.getElementById('bulkCertificateModal').dataset.unitId || state.activeBulkUnitId;
+      closeBulkCertificateModal();
+      if (unitId) openQrModal(unitId);
     }
 
     function downloadSpecificRecipientCert(unitId, recIndex) {
@@ -2666,6 +2999,7 @@
       }
     }
 
+    document.getElementById('bulkGenerateBtn').onclick = generateBulkCertificates;
     initApp();
   </script>
 </body>
