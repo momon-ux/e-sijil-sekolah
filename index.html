@@ -829,9 +829,19 @@
               </div>
               </details>
 
-              <!-- Save Certificate Record & Generate Unique QR Button -->
-              <button type="button" onclick="saveNewCertificateRecord()" class="w-full py-3.5 px-4 rounded-xl text-sm font-bold bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-95 active:scale-98 shadow-lg shadow-blue-600/30 transition-all">
-                💾 Simpan Rekod Sijil & Jana QR Unik
+              <div class="rounded-2xl border-2 border-amber-300 bg-amber-50 p-3 sm:p-4 space-y-2">
+                <div class="text-center space-y-1">
+                  <p class="text-sm font-black text-slate-950">👨‍🏫 Guru Jana Untuk Semua Peserta</p>
+                  <p class="text-[11px] leading-relaxed text-slate-700">Untuk sijil tamat Tahun 6, program atau senarai ramai. Tampal 36 atau 100 nama dan sistem akan jana semua sijil. Peserta tidak perlu scan QR.</p>
+                </div>
+                <button type="button" onclick="saveAndOpenBulkCertificate()" class="w-full py-3.5 px-4 rounded-xl text-sm font-black bg-amber-500 text-slate-950 hover:bg-amber-400 active:scale-98 shadow-lg shadow-amber-300/50 transition-all">
+                  👥 Jana Sijil Peserta Secara Pukal (Guru)
+                </button>
+              </div>
+
+              <!-- Keep the existing participant QR workflow as a separate option. -->
+              <button type="button" onclick="saveNewCertificateRecord()" class="w-full py-3 px-4 rounded-xl text-xs sm:text-sm font-bold border border-[var(--border)] bg-white text-[var(--foreground)] hover:bg-[var(--secondary)] active:scale-98 transition-all">
+                📱 Pilihan Lain: Simpan Rekod & Jana QR Peserta
               </button>
               <p id="saveRecordToast" class="text-xs font-semibold text-emerald-400 text-center hidden"></p>
             </div>
@@ -2079,7 +2089,7 @@
           inp.focus();
           inp.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-        return;
+        return null;
       }
 
       try {
@@ -2121,6 +2131,14 @@
       setTimeout(() => toast.classList.add('hidden'), 5000);
 
       showIssuedTicket(newUnit);
+      return newUnit;
+    }
+
+    function saveAndOpenBulkCertificate() {
+      const newUnit = saveNewCertificateRecord();
+      if (!newUnit) return;
+      closeTicketIssuedModal();
+      openBulkCertificateModal(newUnit.id);
     }
 
     function updateUnitCreatorEmail(unitId, newEmail) {
