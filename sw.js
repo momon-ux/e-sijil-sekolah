@@ -1,10 +1,10 @@
-const CACHE_NAME = 'admin-esijil-v23-new-pwa-logo';
+const CACHE_NAME = 'admin-esijil-v24-cutout-logos';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './icon-192.png?v=20261112',
-  './icon-512.png?v=20261112',
+  './icon-192.png?v=20261112c',
+  './icon-512.png?v=20261112c',
   './skrg.png',
   './logo-kpm.png',
   './sijil-delima.jpg',
