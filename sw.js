@@ -1,10 +1,10 @@
-const CACHE_NAME = 'admin-esijil-v22-direct-bulk-button';
+const CACHE_NAME = 'admin-esijil-v23-new-pwa-logo';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './icon-192.png',
-  './icon-512.png',
+  './icon-192.png?v=20261112',
+  './icon-512.png?v=20261112',
   './skrg.png',
   './logo-kpm.png',
   './sijil-delima.jpg',
