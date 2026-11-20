@@ -1862,6 +1862,19 @@
       }
 
       delete state.draft.elements.role;
+      if (val === 'stem_ajk_2026') {
+        Object.assign(state.draft, {
+          canvasW: 1024, canvasH: 725,
+          title: 'SIJIL PENGHARGAAN AJK — PROGRAM REKA EKSPLORASI STEM PERINGKAT DAERAH TAWAU 2026',
+          serialPrefix: '00', nameFontSize: 23, textColor: '#0b264f',
+          showSchoolHeader: false, showIcOnCert: false, allowRole: true
+        });
+        state.draft.elements.name = { id: 'name', label: 'Nama Guru', x: 556, y: 340, w: 620, h: 36 };
+        state.draft.elements.role = { id: 'role', label: 'Jawatan / AJK', x: 556, y: 410, w: 620, h: 24 };
+        state.draft.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: 302, y: 671, w: 210, h: 26 };
+        document.getElementById('allowRoleCheckbox').checked = true;
+        document.getElementById('showIcCheckbox').checked = false;
+      }
       ensureRoleElement(state.draft);
       document.getElementById('certRecordTitle').value = state.draft.title;
       document.getElementById('serialPrefix').value = state.draft.serialPrefix;
@@ -3016,6 +3029,8 @@
           },
           recipients: []
         };
+        // Keep the issued STEM QR usable on devices without the creator's local image.
+        if (scannedCertId === 'sijil-mwodbg1k') fallbackUnit.preset = 'stem_ajk_2026';
         enterTeacherQrScanMode(scannedCertId, fallbackUnit);
       }
     }
