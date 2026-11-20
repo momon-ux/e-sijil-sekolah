@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -717,11 +718,15 @@
               <!-- Creator Google Drive Email to Receive All Participant Certificates -->
               <div class="p-3.5 rounded-xl bg-emerald-500/10 border-2 border-emerald-500/40 space-y-2.5">
                 <div>
+                  <label for="creatorNameInput" class="block text-xs font-bold text-emerald-300 mb-1">👤 Nama Pencipta Sijil *</label>
+                  <input id="creatorNameInput" type="text" autocomplete="name" value="" placeholder="Contoh: Cikgu Aminah Binti Ahmad" oninput="updateDraftCert()" class="w-full px-3 py-2.5 text-sm font-semibold rounded-xl bg-[var(--background)] border-2 border-emerald-500/50 text-[var(--foreground)] placeholder-slate-400 focus:outline-none focus:border-emerald-400" />
+                </div>
+                <div>
                   <label for="adminDriveEmailInput" class="block text-xs font-bold text-emerald-300 mb-1">
                     ☁️ E-mel Google Drive Pencipta Sijil (Tempat Semua Sijil Peserta Terkumpul) *
                   </label>
                   <p class="text-[11px] text-slate-300 mb-2 leading-relaxed">
-                    Siapa yang mencipta sijil ini, sila masukkan <strong>e-mel Google Drive anda sendiri</strong>. Semua sijil peserta yang menjana sijil melalui QR ini akan masuk terkumpul ke Google Drive &amp; e-mel anda.
+                    Masukkan <strong>e-mel Google Drive anda sendiri</strong>. Folder program akan dikongsi kepada e-mel ini dan setiap sijil peserta akan disalinkan kepada pencipta.
                   </p>
                   <input
                     id="adminDriveEmailInput"
@@ -1107,6 +1112,7 @@
             </button>
           </div>
           <span id="modalAdminDriveFolder" class="block text-[11px] text-amber-300 truncate">📁 Folder: Sijil Terkumpul Peserta</span>
+          <a id="modalDriveFolderLink" href="#" target="_blank" rel="noopener" class="hidden w-full rounded-lg bg-blue-600 px-3 py-2 text-center text-[11px] font-bold text-white">☁️ Buka Folder Google Drive Program</a>
         </div>
 
         <div class="inline-block bg-white p-3 sm:p-4 rounded-2xl border-4 border-blue-500/30">
@@ -1293,24 +1299,7 @@ window.ES_SHARED_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwMheuvW7_z
 window.ESShared = (() => {
   const endpoint = () => window.ES_SHARED_ENDPOINT || '';
   function nonce() { return Array.from(crypto.getRandomValues(new Uint8Array(24)), b => b.toString(16).padStart(2,'0')).join(''); }
-  async function read(action, params = {}) {
-    if (!endpoint()) throw new Error('Sambungan rekod pusat belum diaktifkan.');
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(),15000);
-    let result;
-    try {
-      const url = endpoint() + '?' + new URLSearchParams({...params,action,_:nonce()});
-      const response = await fetch(url,{method:'GET',mode:'cors',credentials:'omit',redirect:'follow',cache:'no-store',signal:controller.signal});
-      if (!response.ok) throw new Error('HTTP ' + response.status);
-      result = await response.json();
-    } catch(error) {
-      // Older browsers can still use JSONP when anonymous CORS is unavailable.
-      return readJsonp(action,params);
-    } finally { clearTimeout(timer); }
-    if (!result.ok) throw new Error(result.error || 'Permintaan gagal.');
-    return result;
-  }
-  function readJsonp(action, params = {}) {
+  function read(action, params = {}) {
     return new Promise((resolve, reject) => {
       if (!endpoint()) return reject(new Error('Sambungan rekod pusat belum diaktifkan.'));
       const callback = 'esijil_' + nonce(), script = document.createElement('script');
@@ -1327,7 +1316,7 @@ window.ESShared = (() => {
     if (!endpoint()) throw new Error('Sambungan rekod pusat belum diaktifkan.');
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(),45000);
-    try { await fetch(endpoint(), {method:'POST',mode:'no-cors',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...input,action,requestId}),signal:controller.signal}); }
+    try { await fetch(endpoint(), {method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...input,action,requestId}),signal:controller.signal}); }
     finally { clearTimeout(timeout); }
     const until = Date.now() + 45000;
     while (Date.now() < until) {
@@ -1345,7 +1334,7 @@ window.ESShared = (() => {
     const op = (async () => {
       const lastKnownSeq = (unit.recipients || []).reduce((n,r) => Math.max(n,Number(r.seqNum)||0),0);
       const result = await write('saveProgram',{id:unit.id,ticket:unit.ticketCode,config:unit,lastKnownSeq});
-      unit.shared = true; unit.nextSeq = result.nextSeq;
+      unit.shared = true; unit.nextSeq = result.nextSeq; unit.folderUrl = result.folderUrl || unit.folderUrl || '';
       return unit;
     })();
     pending.set(unit.id,op);
@@ -1360,6 +1349,21 @@ window.ESShared = (() => {
     unit.nextSeq = Math.max(unit.nextSeq || 1,result.seqNum+1);
     return {...recipient,...result};
   }
+  async function deliver(unit, reservation, certificate) {
+    if (!reservation || !reservation.deliveryToken) throw new Error('Pengesahan nombor sijil tiada. Sila jana semula.');
+    const result = await write('deliver',{
+      id: unit.id,
+      seqNum: reservation.seqNum,
+      deliveryToken: reservation.deliveryToken,
+      email: certificate.email || '',
+      name: certificate.name || '',
+      serialNo: reservation.serialNo,
+      fileName: certificate.fileName,
+      imageBase64: certificate.imageBase64
+    });
+    unit.folderUrl = result.folderUrl || unit.folderUrl || '';
+    return result;
+  }
   function qr(url, size = 280) {
     const holder = document.createElement('div');
     new QRCode(holder,{text:url,width:size,height:size,correctLevel:QRCode.CorrectLevel.M});
@@ -1372,7 +1376,7 @@ window.ESShared = (() => {
     context.drawImage(canvas,border,border,size,size);
     return output.toDataURL('image/png');
   }
-  return {read,write,publish,reserve,qr};
+  return {read,write,publish,reserve,deliver,qr};
 })();
 
   </script>
@@ -1449,6 +1453,7 @@ window.ESShared = (() => {
 
     // --- PRIVATE CERTIFICATE UNITS DATABASE (starts empty; no demo records) ---
     const savedCreatorEmail = localStorage.getItem('esijil_creator_email') || '';
+    const savedCreatorName = localStorage.getItem('esijil_creator_name') || '';
     const PRIVATE_UNITS_STORAGE_KEY = 'esijil_units_v10_private_tickets';
 
     function loadCertUnits() {
@@ -1469,7 +1474,8 @@ window.ESShared = (() => {
 
     const state = {
       certUnits: loadCertUnits(),
-      gasWebhookUrl: localStorage.getItem('esijil_gas_url') || '',
+      cloudReady: false,
+      cloudVersion: '',
       draft: {
         title: 'BENGKEL PENGURUSAN DISIPLIN & TRANSFORMASI MINDA 2026',
         serialPrefix: '00',
@@ -1478,6 +1484,7 @@ window.ESShared = (() => {
         canvasH: 768,
         customBgDataUrl: null,
         customBgImage: null,
+        creatorName: savedCreatorName,
         adminDriveEmail: savedCreatorEmail,
         driveFolderName: 'Sijil Terkumpul Peserta - SK Ranggu 2026',
         showIcOnCert: true,
@@ -1549,15 +1556,30 @@ window.ESShared = (() => {
       const dot = document.getElementById('emailStatusDot');
       const title = document.getElementById('emailStatusTitle');
       const desc = document.getElementById('emailStatusDesc');
-      if (state.gasWebhookUrl && state.gasWebhookUrl.startsWith('https://script.google.com/')) {
+      if (state.cloudReady) {
         dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0';
-        title.textContent = 'Status Penghantaran Sijil Ke E-mel Pencipta Sijil & Peserta: AKTIF';
-        desc.textContent = 'Siapa yang mencipta sijil akan menerima kesemua sijil peserta di dalam e-mel & Google Drive miliknya, manakala peserta menerima sijil masing-masing.';
+        title.textContent = 'Sambungan Google Drive & E-mel: AKTIF';
+        desc.textContent = 'Setiap penghantaran akan disahkan dahulu. Sijil peserta disimpan dalam folder Google Drive program, disalinkan kepada pencipta, dan dihantar kepada peserta.';
       } else {
-        dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0';
-        title.textContent = 'Pastikan Anda Masukkan E-mel Pencipta Sijil Semasa Mencipta Sijil';
-        desc.textContent = 'Siapa yang buat sijil ini, masukkan e-mel anda di Langkah 1 supaya semua sijil peserta dihantar terus kepada e-mel anda.';
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-red-400 shrink-0';
+        title.textContent = 'Sambungan Google Drive & E-mel Belum Dapat Disahkan';
+        desc.textContent = 'Jangan anggap sijil sudah dihantar. Semak Internet dan cuba semula sehingga status bertukar AKTIF.';
       }
+    }
+
+    async function checkCloudService() {
+      state.cloudReady = false;
+      state.cloudVersion = '';
+      updateEmailStatusBanner();
+      try {
+        const health = await ESShared.read('health');
+        state.cloudReady = health.ok === true && health.deliveryAck === true && health.sharedTemplates === true && health.driveFolders === true;
+        state.cloudVersion = health.version || '';
+      } catch (error) {
+        state.cloudReady = false;
+      }
+      updateEmailStatusBanner();
+      return state.cloudReady;
     }
 
     function showWorkspaceStep(step, updateHash = true) {
@@ -1596,9 +1618,9 @@ window.ESShared = (() => {
     function openEmailSetupModal() {
       const status = document.getElementById('emailModalStatus');
       if (status) {
-        status.textContent = state.gasWebhookUrl
-          ? '✅ Penghantaran automatik sedang aktif.'
-          : 'ℹ️ Masukkan e-mel pencipta pada Maklumat Sijil untuk merekod salinan peserta.';
+        status.textContent = state.cloudReady
+          ? '✅ Sambungan disahkan aktif. Sistem hanya memaparkan berjaya selepas Drive dan e-mel mengesahkan penghantaran.'
+          : '⚠️ Sambungan belum disahkan. Sijil tidak akan ditanda sebagai telah dihantar.';
       }
       document.getElementById('emailSetupModal').classList.remove('hidden');
     }
@@ -1906,6 +1928,7 @@ window.ESShared = (() => {
 
     function updateDraftCert() {
       state.draft.title = document.getElementById('certRecordTitle').value;
+      state.draft.creatorName = document.getElementById('creatorNameInput').value.trim();
       state.draft.adminDriveEmail = document.getElementById('adminDriveEmailInput').value.trim();
       state.draft.driveFolderName = document.getElementById('adminDriveFolderInput').value.trim();
       state.draft.serialPrefix = document.getElementById('serialPrefix').value;
@@ -2225,7 +2248,13 @@ window.ESShared = (() => {
       if (state.savingRecord) return null;
       updateDraftCert();
       const d = state.draft;
+      const creatorName = (d.creatorName || '').trim();
       const creatorEmail = (d.adminDriveEmail || '').trim();
+      if (!creatorName) {
+        alert('⚠️ Sila masukkan Nama Pencipta Sijil terlebih dahulu.');
+        document.getElementById('creatorNameInput')?.focus();
+        return null;
+      }
       if (!creatorEmail || !creatorEmail.includes('@')) {
         alert('⚠️ Sila masukkan alamat E-mel anda (Pencipta Sijil) terlebih dahulu di ruangan "E-mel Anda (Pencipta Sijil)" supaya semua sijil peserta dapat dihantar ke e-mel anda!');
         const inp = document.getElementById('adminDriveEmailInput');
@@ -2237,6 +2266,7 @@ window.ESShared = (() => {
       }
 
       try {
+        localStorage.setItem('esijil_creator_name', creatorName);
         localStorage.setItem('esijil_creator_email', creatorEmail);
       } catch (e) {}
 
@@ -2245,6 +2275,7 @@ window.ESShared = (() => {
         id: newId,
         ticketCode: generatePrivateTicket(),
         title: d.title.trim() || 'SIJIL PROGRAM SEKOLAH',
+        creatorName,
         serialPrefix: d.serialPrefix.trim() || 'SKR/842/2026/',
         preset: d.preset,
         canvasW: d.canvasW,
@@ -2356,6 +2387,7 @@ window.ESShared = (() => {
               </span>
             </div>
             <h3 class="text-sm font-bold text-[var(--foreground)] break-words">${escapeHtml(unit.title)}</h3>
+            <p class="text-[11px] font-semibold text-[var(--muted-foreground)]">👤 Pencipta: ${escapeHtml(unit.creatorName || 'Tidak dinyatakan')}</p>
             <div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-left space-y-1">
               <label class="block text-[10px] font-bold text-emerald-300">
                 ☁️ E-mel Google Drive Pencipta Sijil (Tempat Semua Sijil Peserta Terkumpul):
@@ -2378,6 +2410,7 @@ window.ESShared = (() => {
               </div>
             </div>
             <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 pt-1">
+              ${unit.folderUrl ? `<a href="${escapeHtml(unit.folderUrl)}" target="_blank" rel="noopener" class="col-span-2 px-3 py-2 rounded-xl text-center text-xs font-bold bg-blue-600 text-white active:scale-95">☁️ Buka Folder Google Drive</a>` : ''}
               <button onclick="openQrModal('${unit.id}')" class="px-3 py-2 rounded-xl text-xs font-bold bg-[var(--primary)] text-[var(--primary-foreground)] active:scale-95">
                 📱 QR & Arkib (${count})
               </button>
@@ -2408,6 +2441,9 @@ window.ESShared = (() => {
       const emailInp = document.getElementById('modalCreatorEmailInput');
       emailInp.value = unit.adminDriveEmail || '';
       document.getElementById('modalAdminDriveFolder').textContent = `📁 Folder: ${unit.driveFolderName || ('Sijil Terkumpul - ' + unit.title)}`;
+      const folderLink = document.getElementById('modalDriveFolderLink');
+      folderLink.href = unit.folderUrl || '#';
+      folderLink.classList.toggle('hidden', !unit.folderUrl);
       document.getElementById('modalQrImg').src = ESShared.qr(qrUrl);
       document.getElementById('modalStableLink').value = qrUrl;
       document.getElementById('modalBtnWhatsapp').onclick = () => window.open('https://wa.me/?text=' + encodeURIComponent(unit.title + '\nIsi nama dan jawatan AJK untuk mendapatkan sijil:\n' + qrUrl),'_blank','noopener');
@@ -2545,14 +2581,14 @@ window.ESShared = (() => {
       document.getElementById('bulkParticipantText').value = '';
       document.getElementById('bulkFileInput').value = '';
       const canSendToAdmin = Boolean(
-        state.gasWebhookUrl &&
+        state.cloudReady && unit.shared &&
         (unit.adminDriveEmail || '').includes('@')
       );
       document.getElementById('bulkSendConnected').checked = canSendToAdmin;
       document.getElementById('bulkSendConnected').disabled = !canSendToAdmin;
       document.getElementById('bulkDeliveryStatus').textContent = canSendToAdmin
-        ? '✅ Penghantaran e-mel/Drive aktif. Salinan boleh dihantar kepada admin semasa penjanaan.'
-        : 'ℹ️ Sijil akan disimpan dalam arkib pada peranti ini. Tetapkan e-mel admin dan aktifkan sambungan penghantaran untuk salinan Google Drive/e-mel.';
+        ? '✅ Sambungan disahkan. Setiap sijil akan disimpan ke Drive program, dihantar kepada peserta (jika ada e-mel), dan disalinkan kepada pencipta.'
+        : '⚠️ Penghantaran belum tersedia. Pastikan program sudah disimpan, e-mel pencipta sah, dan status sambungan di atas ialah AKTIF.';
       document.getElementById('bulkSuccessBox').classList.add('hidden');
       updateBulkParticipantPreview();
       document.body.classList.add('bulk-modal-open');
@@ -2645,30 +2681,19 @@ window.ESShared = (() => {
     }
 
     async function sendBulkCertificateToConnectedService(unit, recipient, bgImg) {
-      if (!state.gasWebhookUrl || !state.gasWebhookUrl.startsWith('https://script.google.com/')) return false;
       const imageBase64 = await buildBulkCertificateImage(unit, recipient, bgImg);
       const serialSlug = recipient.serialNo.replace(/[^a-zA-Z0-9]/g, '-');
       const nameSlug = recipient.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
       try {
-        await fetch(state.gasWebhookUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            email: recipient.email || '',
-            name: recipient.name,
-            icNo: recipient.icNo || '',
-            role: recipient.role || '',
-            serialNo: recipient.serialNo,
-            title: unit.title,
-            adminDriveEmail: unit.adminDriveEmail || '',
-            driveFolderName: unit.driveFolderName || ('Sijil Terkumpul - ' + unit.title),
-            fileName: `e-sijil-skrg-${serialSlug}-${nameSlug}.png`,
-            imageBase64
-          })
+        const delivery = await ESShared.deliver(unit,recipient,{
+          email: recipient.email || '',
+          name: recipient.name,
+          fileName: `e-sijil-skrg-${serialSlug}-${nameSlug}.png`,
+          imageBase64
         });
-        return true;
+        return delivery.delivered === true;
       } catch (err) {
+        recipient.deliveryError = err.message || 'Penghantaran gagal.';
         return false;
       }
     }
@@ -2681,7 +2706,7 @@ window.ESShared = (() => {
 
       const generateBtn = document.getElementById('bulkGenerateBtn');
       const progressEl = document.getElementById('bulkProgressText');
-      const shouldSend = document.getElementById('bulkSendConnected').checked && Boolean(state.gasWebhookUrl);
+      const shouldSend = document.getElementById('bulkSendConnected').checked && state.cloudReady;
       generateBtn.disabled = true;
 
       const timeLabel = new Date().toLocaleString('ms-MY', { dateStyle: 'medium', timeStyle: 'short' });
@@ -2711,15 +2736,23 @@ window.ESShared = (() => {
       if (shouldSend) {
         const bgImg = await loadBulkBackgroundImage(unit);
         for (let i = 0; i < newRecipients.length; i++) {
-          progressEl.textContent = `Menghantar ${i + 1} daripada ${newRecipients.length} sijil kepada admin…`;
+          progressEl.textContent = `Menyimpan ke Drive dan mengesahkan e-mel ${i + 1} daripada ${newRecipients.length}…`;
           if (await sendBulkCertificateToConnectedService(unit, newRecipients[i], bgImg)) sentCount += 1;
         }
       }
 
       progressEl.textContent = '';
-      document.getElementById('bulkSuccessText').textContent = shouldSend
-        ? `✅ ${newRecipients.length} sijil telah dijana dan disimpan. ${sentCount} penghantaran telah diproses untuk admin.`
-        : `✅ ${newRecipients.length} sijil telah dijana dan disimpan dalam arkib pada peranti ini.`;
+      const successText = document.getElementById('bulkSuccessText');
+      if (shouldSend && sentCount === newRecipients.length) {
+        successText.textContent = `✅ DISAHKAN: Semua ${sentCount} sijil telah disimpan dalam Google Drive program dan dihantar melalui e-mel.`;
+        successText.className = 'text-sm font-bold text-emerald-900';
+      } else if (shouldSend) {
+        successText.textContent = `⚠️ ${newRecipients.length} sijil dijana, tetapi hanya ${sentCount} penghantaran disahkan. Semak ralat dan cuba semula bagi sijil yang gagal.`;
+        successText.className = 'text-sm font-bold text-red-800';
+      } else {
+        successText.textContent = `⚠️ ${newRecipients.length} sijil dijana dalam arkib peranti ini sahaja; penghantaran Drive/e-mel tidak dipilih atau belum aktif.`;
+        successText.className = 'text-sm font-bold text-amber-900';
+      }
       document.getElementById('bulkSuccessBox').classList.remove('hidden');
       generateBtn.disabled = true;
       generateBtn.textContent = `✅ ${newRecipients.length} Sijil Berjaya Dijana`;
@@ -2846,7 +2879,7 @@ window.ESShared = (() => {
       const creatorLabel = document.getElementById('scanAdminDriveLabel');
       if (unit.adminDriveEmail && unit.adminDriveEmail.includes('@')) {
         infoLine.classList.remove('hidden');
-        creatorLabel.textContent = unit.adminDriveEmail;
+        creatorLabel.textContent = `${unit.creatorName || 'Pencipta sijil'} — ${unit.adminDriveEmail}`;
       } else {
         infoLine.classList.add('hidden');
       }
@@ -3005,26 +3038,14 @@ window.ESShared = (() => {
       downloadTeacherCertAgain();
 
       let sentViaGas = false;
-      if (state.gasWebhookUrl && state.gasWebhookUrl.startsWith('https://script.google.com/')) {
-        try {
-          await fetch(state.gasWebhookUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-              email,
-              name,
-              icNo,
-              serialNo: issuedSerial,
-              title: unit.title,
-              adminDriveEmail: creatorEmail,
-              driveFolderName: unit.driveFolderName || ('Sijil Terkumpul - ' + unit.title),
-              fileName,
-              imageBase64
-            })
-          });
-          sentViaGas = true;
-        } catch (err) {}
+      let deliveryError = '';
+      try {
+        const delivery = await ESShared.deliver(unit,reservation,{email,name,fileName,imageBase64});
+        sentViaGas = delivery.delivered === true;
+        if (delivery.folderUrl) unit.folderUrl = delivery.folderUrl;
+        saveCertUnits();
+      } catch (err) {
+        deliveryError = err.message || 'Penghantaran tidak dapat disahkan.';
       }
 
       btn.disabled = false;
@@ -3038,11 +3059,11 @@ window.ESShared = (() => {
 
       const noteEl = document.getElementById('teacherEmailDeliveryNote');
       if (sentViaGas && creatorEmail) {
-        noteEl.textContent = `📩 Permintaan penghantaran e-mel telah dihantar. Sila semak peti masuk anda.`;
-      } else if (creatorEmail) {
-        noteEl.textContent = `✅ Nombor sijil disahkan oleh rekod pusat. Fail PNG dimuat turun. Penghantaran e-mel belum diaktifkan.`;
+        noteEl.textContent = `✅ DISAHKAN: Sijil disimpan ke Google Drive pencipta (${creatorEmail}) dan dihantar kepada ${email}.`;
+        noteEl.className = 'text-xs font-bold text-emerald-700';
       } else {
-        noteEl.textContent = `✅ Fail PNG sijil telah dimuat turun ke peranti anda.`;
+        noteEl.textContent = `⚠️ Sijil dimuat turun, tetapi penghantaran e-mel/Drive gagal: ${deliveryError}`;
+        noteEl.className = 'text-xs font-bold text-red-700';
       }
 
       successBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -3095,19 +3116,20 @@ window.ESShared = (() => {
     }
 
     // --- INITIALIZE APP & CHECK IF OPENED VIA UNIT QR SCAN ---
-    function initApp() {
+    async function initApp() {
       const params = new URLSearchParams(window.location.search);
-      const gasFromUrl = params.get('gas');
-      if (gasFromUrl && gasFromUrl.startsWith('https://script.google.com/')) {
-        state.gasWebhookUrl = gasFromUrl;
-      }
 
       if (savedCreatorEmail) {
         const draftInp = document.getElementById('adminDriveEmailInput');
         if (draftInp) draftInp.value = savedCreatorEmail;
       }
+      if (savedCreatorName) {
+        const creatorNameInput = document.getElementById('creatorNameInput');
+        if (creatorNameInput) creatorNameInput.value = savedCreatorName;
+      }
 
       updateEmailStatusBanner();
+      await checkCloudService();
       renderAdminCanvas();
       renderCertUnitsList();
 
