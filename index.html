@@ -746,8 +746,8 @@
                   <input
                     id="adminDriveFolderInput"
                     type="text"
-                    value="Sijil Terkumpul Peserta - SK Ranggu 2026"
-                    placeholder="Contoh: Sijil Bengkel Disiplin 2026"
+                    value=""
+                    placeholder="Contoh: Sijil Hari Anugerah 2026"
                     oninput="updateDraftCert()"
                     class="w-full px-3 py-2 text-sm rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]"
                   />
@@ -756,13 +756,13 @@
 
               <div>
                 <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Nama / Tajuk Rekod Sijil (Program / Bengkel)</label>
-                <input id="certRecordTitle" type="text" value="BENGKEL PENGURUSAN DISIPLIN & TRANSFORMASI MINDA 2026" oninput="updateDraftCert()" class="w-full px-3 py-2.5 text-sm font-semibold rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+                <input id="certRecordTitle" type="text" value="" placeholder="Contoh: Sijil Penyertaan Hari Anugerah 2026" oninput="updateDraftCert()" class="w-full px-3 py-2.5 text-sm font-semibold rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
               </div>
 
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Awalan No. Siri Sijil</label>
-                  <input id="serialPrefix" type="text" value="00" oninput="updateDraftCert()" class="w-full px-3 py-2.5 text-sm font-mono rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
+                  <input id="serialPrefix" type="text" value="" placeholder="Contoh: SK/2026/" oninput="updateDraftCert()" class="w-full px-3 py-2.5 text-sm font-mono rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
                 </div>
                 <div>
                   <label class="block text-xs font-medium text-[var(--muted-foreground)] mb-1">Contoh No. Siri Pertama</label>
@@ -776,31 +776,12 @@
               <label class="block cursor-pointer p-3.5 rounded-xl border-2 border-dashed border-blue-500/60 bg-blue-500/10 hover:bg-blue-500/15 active:bg-blue-500/20 transition-colors text-center space-y-1">
                 <div class="text-xl">🖼️</div>
                 <div class="text-xs font-bold text-[var(--foreground)]">Ketik Untuk Muat Naik Gambar Sijil Anda (PNG / JPG)</div>
-                <div class="text-[11px] text-[var(--muted-foreground)]">Mesra galeri telefon & komputer • Tegak atau Melintang</div>
+                <div id="certUploadStatus" class="text-[11px] text-[var(--muted-foreground)]">Wajib muat naik sijil sendiri • Tegak atau Melintang</div>
                 <input id="certUpload" type="file" accept="image/*" onchange="handleCertUpload(event)" class="hidden" />
               </label>
 
-              <div class="space-y-1 text-xs">
-                <span class="text-[var(--muted-foreground)]">Atau Pilih Koleksi Sijil Rasmi SK Ranggu:</span>
-                <select id="presetTemplate" onchange="changePresetTemplate(this.value)" class="w-full px-3 py-2.5 rounded-xl bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] font-medium">
-                  <option value="disiplin" selected>1. Sijil Bengkel Pengurusan Disiplin & Transformasi Minda 2026</option>
-                  <option value="penceramah1">2. Sijil Penceramah — Google Certified Educator Level 1</option>
-                  <option value="penceramah2">3. Sijil Penceramah — Bengkel HEM Smart Track (HEMST)</option>
-                  <option value="penceramah3">4. Sijil Penceramah — Microsoft Certified Educator (MCE)</option>
-                  <option value="delima">5. Sijil Penyertaan — Sesi Literasi DELIMa 3.0 (Tegak)</option>
-                  <option value="skrg_moden">6. Sijil Moden 3D SK Ranggu (Sebarang Kursus / Bengkel Baharu)</option>
-                  <option value="stem_ajk_2026">7. Sijil Penghargaan AJK — Reka Eksplorasi STEM Tawau 2026</option>
-                </select>
-              </div>
-
-              <!-- Custom Event Details Box (Shown when skrg_moden is selected) -->
-              <div id="customEventFields" class="hidden p-3 rounded-xl bg-blue-500/10 border border-blue-500/30 space-y-2">
-                <p class="text-[11px] font-bold text-blue-300 uppercase">Butiran Kursus / Bengkel Pada Sijil:</p>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  <input id="certDateInput" type="text" value="16 Oktober 2026" placeholder="Tarikh" oninput="updateDraftCert()" class="px-3 py-2 text-sm rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
-                  <input id="certTimeInput" type="text" value="2.30 Petang" placeholder="Masa" oninput="updateDraftCert()" class="px-3 py-2 text-sm rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
-                  <input id="certVenueInput" type="text" value="SK Ranggu Tawau" placeholder="Tempat" oninput="updateDraftCert()" class="px-3 py-2 text-sm rounded-lg bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]" />
-                </div>
+              <div class="rounded-xl border border-blue-200 bg-blue-50 p-3 text-xs leading-relaxed text-blue-950">
+                <strong>Gunakan sijil anda sendiri.</strong> Sistem tidak lagi menyediakan sijil bengkel atau sijil penceramah. Gambar yang anda muat naik inilah yang akan disimpan bersama tiket dan dipaparkan semula pada QR serta arkib anda.
               </div>
 
               <label class="block text-xs font-bold mt-3"><input id="allowRoleCheckbox" type="checkbox" onchange="updateDraftCert()" /> Benarkan Jawatan / AJK pada sijil (pilihan)</label>
@@ -1299,7 +1280,35 @@ window.ES_SHARED_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwMheuvW7_z
 window.ESShared = (() => {
   const endpoint = () => window.ES_SHARED_ENDPOINT || '';
   function nonce() { return Array.from(crypto.getRandomValues(new Uint8Array(24)), b => b.toString(16).padStart(2,'0')).join(''); }
-  async function read(action, params = {}) {     if (!endpoint()) throw new Error('Sambungan rekod pusat belum diaktifkan.');     const controller = new AbortController();     const timer = setTimeout(() => controller.abort(),15000);     let result;     try {       const url = endpoint() + '?' + new URLSearchParams({...params,action,_:nonce()});       const response = await fetch(url,{method:'GET',mode:'cors',credentials:'omit',redirect:'follow',cache:'no-store',signal:controller.signal});       if (!response.ok) throw new Error('HTTP ' + response.status);       result = await response.json();     } catch(error) {       return readJsonp(action,params);     } finally { clearTimeout(timer); }     if (!result.ok) throw new Error(result.error || 'Permintaan gagal.');     return result;   }   function readJsonp(action, params = {}) {     return new Promise((resolve, reject) => {       if (!endpoint()) return reject(new Error('Sambungan rekod pusat belum diaktifkan.'));       const callback = 'esijil_' + nonce(), script = document.createElement('script');       const timer = setTimeout(() => finish(new Error('Rekod pusat tidak dapat dihubungi. Cuba lagi apabila internet stabil.')), 25000);       function finish(error, result) { clearTimeout(timer); delete window[callback]; script.remove(); error ? reject(error) : resolve(result); }       window[callback] = data => data.ok ? finish(null,data) : finish(new Error(data.error || 'Permintaan gagal.'));       script.onerror = () => finish(new Error('Sambungan rekod pusat gagal. Sila cuba lagi.'));       script.src = endpoint() + '?' + new URLSearchParams({...params,action,callback,_:nonce()});       document.head.append(script);     });   }   async function write(action, input) {
+  async function read(action, params = {}) {
+    if (!endpoint()) throw new Error('Sambungan rekod pusat belum diaktifkan.');
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(),15000);
+    let result;
+    try {
+      const url = endpoint() + '?' + new URLSearchParams({...params,action,_:nonce()});
+      const response = await fetch(url,{method:'GET',mode:'cors',credentials:'omit',redirect:'follow',cache:'no-store',signal:controller.signal});
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      result = await response.json();
+    } catch(error) {
+      return readJsonp(action,params);
+    } finally { clearTimeout(timer); }
+    if (!result.ok) throw new Error(result.error || 'Permintaan gagal.');
+    return result;
+  }
+  function readJsonp(action, params = {}) {
+    return new Promise((resolve, reject) => {
+      if (!endpoint()) return reject(new Error('Sambungan rekod pusat belum diaktifkan.'));
+      const callback = 'esijil_' + nonce(), script = document.createElement('script');
+      const timer = setTimeout(() => finish(new Error('Rekod pusat tidak dapat dihubungi. Cuba lagi apabila internet stabil.')), 25000);
+      function finish(error, result) { clearTimeout(timer); delete window[callback]; script.remove(); error ? reject(error) : resolve(result); }
+      window[callback] = data => data.ok ? finish(null,data) : finish(new Error(data.error || 'Permintaan gagal.'));
+      script.onerror = () => finish(new Error('Sambungan rekod pusat gagal. Sila cuba lagi.'));
+      script.src = endpoint() + '?' + new URLSearchParams({...params,action,callback,_:nonce()});
+      document.head.append(script);
+    });
+  }
+  async function write(action, input) {
     const requestId = nonce();
     if (!endpoint()) throw new Error('Sambungan rekod pusat belum diaktifkan.');
     const controller = new AbortController();
@@ -1465,16 +1474,16 @@ window.ESShared = (() => {
       cloudReady: false,
       cloudVersion: '',
       draft: {
-        title: 'BENGKEL PENGURUSAN DISIPLIN & TRANSFORMASI MINDA 2026',
-        serialPrefix: '00',
-        preset: 'disiplin',
+        title: '',
+        serialPrefix: '',
+        preset: 'custom',
         canvasW: 1024,
         canvasH: 768,
         customBgDataUrl: null,
         customBgImage: null,
         creatorName: savedCreatorName,
         adminDriveEmail: savedCreatorEmail,
-        driveFolderName: 'Sijil Terkumpul Peserta - SK Ranggu 2026',
+        driveFolderName: '',
         showIcOnCert: true,
         showSchoolHeader: false,
         coverOldName: false,
@@ -1672,7 +1681,7 @@ window.ESShared = (() => {
 
     // --- DRAWING CERTIFICATE BACKGROUND ---
     function drawCertBg(ctx, width, height, cfg, bgImg) {
-      const preset = cfg.preset || 'disiplin';
+      const preset = cfg.preset || 'custom';
       const certTitle = cfg.title || 'PROGRAM RASMI SEKOLAH';
 
       if (bgImg) {
@@ -1685,6 +1694,26 @@ window.ESShared = (() => {
           ctx.restore();
           drawOfficialKpmSkrgHeader(ctx, width / 2, 22);
         }
+        return;
+      }
+
+      if (preset === 'custom') {
+        ctx.save();
+        ctx.fillStyle = '#f8fbff';
+        ctx.fillRect(0, 0, width, height);
+        ctx.strokeStyle = '#7aa9dc';
+        ctx.lineWidth = Math.max(3, Math.round(width / 260));
+        ctx.setLineDash([18, 12]);
+        ctx.strokeRect(24, 24, width - 48, height - 48);
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#315d86';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = `800 ${Math.max(20, Math.round(width / 32))}px sans-serif`;
+        ctx.fillText('Muat naik gambar sijil anda', width / 2, height / 2 - 18);
+        ctx.font = `600 ${Math.max(13, Math.round(width / 60))}px sans-serif`;
+        ctx.fillText('PNG atau JPG • gambar ini akan disimpan bersama tiket anda', width / 2, height / 2 + 28);
+        ctx.restore();
         return;
       }
 
@@ -1926,9 +1955,9 @@ window.ESShared = (() => {
       state.draft.showIcOnCert = document.getElementById('showIcCheckbox').checked;
       state.draft.showSchoolHeader = document.getElementById('showSchoolHeaderCheckbox').checked;
       state.draft.coverOldName = false;
-      state.draft.eventDate = document.getElementById('certDateInput').value;
-      state.draft.eventTime = document.getElementById('certTimeInput').value;
-      state.draft.eventVenue = document.getElementById('certVenueInput').value;
+      state.draft.eventDate = document.getElementById('certDateInput')?.value || '';
+      state.draft.eventTime = document.getElementById('certTimeInput')?.value || '';
+      state.draft.eventVenue = document.getElementById('certVenueInput')?.value || '';
       document.getElementById('fontSizeVal').textContent = state.draft.nameFontSize;
       renderAdminCanvas();
     }
@@ -2023,7 +2052,10 @@ window.ESShared = (() => {
 
           state.draft.canvasW = targetW;
           state.draft.canvasH = targetH;
-          state.draft.customBgDataUrl = off.toDataURL('image/jpeg', 0.84);
+          state.draft.preset = 'custom';
+          state.draft.customBgDataUrl = file.type === 'image/png'
+            ? off.toDataURL('image/png')
+            : off.toDataURL('image/jpeg', 0.92);
           state.draft.customBgImage = img;
           delete state.draft.elements.role;
           state.draft.coverOldName = false;
@@ -2038,6 +2070,11 @@ window.ESShared = (() => {
             state.draft.elements.name = { id: 'name', label: 'Nama Guru', x: Math.round(targetW / 2), y: Math.round(targetH * 0.38), w: Math.round(targetW * 0.52), h: 36 };
             state.draft.elements.ic = { id: 'ic', label: 'No. Kad Pengenalan', x: Math.round(targetW / 2), y: Math.round(targetH * 0.415), w: 280, h: 24 };
           }
+          const status = document.getElementById('certUploadStatus');
+          if (status) {
+            status.textContent = `✅ ${file.name} telah dimuat naik dan akan disimpan bersama tiket anda.`;
+            status.className = 'text-[11px] font-bold text-emerald-700';
+          }
           renderAdminCanvas();
         };
         img.src = e.target.result;
@@ -2046,7 +2083,14 @@ window.ESShared = (() => {
     }
 
     function resetAutoCenter() {
-      changePresetTemplate(state.draft.preset);
+      const d = state.draft;
+      const portrait = d.canvasH >= d.canvasW;
+      d.elements.serial = { id: 'serial', label: 'No. Siri Sijil', x: Math.round(d.canvasW * 0.82), y: Math.max(18, Math.round(d.canvasH * 0.035)), w: 220, h: 26 };
+      d.elements.name = { id: 'name', label: 'Nama Peserta', x: Math.round(d.canvasW / 2), y: Math.round(d.canvasH * (portrait ? 0.33 : 0.38)), w: Math.round(d.canvasW * (portrait ? 0.57 : 0.52)), h: 36 };
+      d.elements.ic = { id: 'ic', label: 'No. Kad Pengenalan', x: Math.round(d.canvasW / 2), y: Math.round(d.canvasH * (portrait ? 0.355 : 0.415)), w: portrait ? 260 : 280, h: 24 };
+      delete d.elements.role;
+      ensureRoleElement(d);
+      renderAdminCanvas();
     }
 
     function getCanvasCoords(canvas, evt) {
@@ -2108,7 +2152,9 @@ window.ESShared = (() => {
     }
 
     function normalizeTicket(value) {
-      return (value || '').toUpperCase().replace(/\s+/g, '').trim();
+      const compact = String(value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (/^SKRG[A-Z0-9]{8}$/.test(compact)) return `SKRG-${compact.slice(4, 8)}-${compact.slice(8, 12)}`;
+      return String(value || '').toUpperCase().replace(/\s+/g, '').trim();
     }
 
     function preparePrivateQrView() {
@@ -2125,6 +2171,7 @@ window.ESShared = (() => {
       const result = document.getElementById('ticketRecordResult');
       const ticket = normalizeTicket(input?.value);
       let unit = state.certUnits.find(item => normalizeTicket(item.ticketCode) === ticket);
+      let openedFromLocalFallback = false;
       if (ticket) {
         message.textContent = '⏳ Membuka rekod bersama…';
         message.className = 'text-center text-xs font-bold';
@@ -2137,10 +2184,15 @@ window.ESShared = (() => {
           state.certUnits.unshift(unit);
           saveCertUnits();
         } catch(error) {
-          message.textContent = error.message;
-          message.className = 'text-center text-xs font-bold text-red-600';
-          result.classList.add('hidden');
-          return;
+          if (!unit) {
+            message.textContent = `${error.message} Semak nombor tiket dan sambungan Internet, kemudian cuba lagi.`;
+            message.className = 'text-center text-xs font-bold text-red-600';
+            result.classList.add('hidden');
+            return;
+          }
+          openedFromLocalFallback = true;
+          message.textContent = '⚠️ Rekod pusat belum dapat dicapai. Tiket sah pada peranti ini dan QR tempatan dibuka.';
+          message.className = 'text-center text-xs font-bold text-amber-700';
         }
       }
 
@@ -2155,7 +2207,7 @@ window.ESShared = (() => {
 
       if (input) input.value = unit.ticketCode;
       state.ticketAccessUnitId = unit.id;
-      if (message) {
+      if (message && !openedFromLocalFallback) {
         message.textContent = '✅ Tiket sah. Hanya rekod anda dipaparkan.';
         message.className = 'text-center text-xs font-bold text-emerald-700';
       }
@@ -2238,6 +2290,17 @@ window.ESShared = (() => {
       const d = state.draft;
       const creatorName = (d.creatorName || '').trim();
       const creatorEmail = (d.adminDriveEmail || '').trim();
+      const certificateTitle = (d.title || '').trim();
+      if (!certificateTitle) {
+        alert('⚠️ Sila namakan sijil atau program anda terlebih dahulu.');
+        document.getElementById('certRecordTitle')?.focus();
+        return null;
+      }
+      if (!d.customBgDataUrl || !d.customBgImage) {
+        alert('⚠️ Sila muat naik gambar sijil anda sendiri sebelum menjana tiket atau sijil peserta.');
+        document.getElementById('certUpload')?.closest('label')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return null;
+      }
       if (!creatorName) {
         alert('⚠️ Sila masukkan Nama Pencipta Sijil terlebih dahulu.');
         document.getElementById('creatorNameInput')?.focus();
@@ -2262,9 +2325,9 @@ window.ESShared = (() => {
       const newUnit = {
         id: newId,
         ticketCode: generatePrivateTicket(),
-        title: d.title.trim() || 'SIJIL PROGRAM SEKOLAH',
+        title: certificateTitle,
         creatorName,
-        serialPrefix: d.serialPrefix.trim() || 'SKR/842/2026/',
+        serialPrefix: d.serialPrefix.trim(),
         preset: d.preset,
         canvasW: d.canvasW,
         canvasH: d.canvasH,
@@ -3137,5 +3200,4 @@ window.ESShared = (() => {
 </html>
 
 
-
-
+    
