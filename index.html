@@ -1299,24 +1299,12 @@ window.ES_SHARED_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwMheuvW7_z
 window.ESShared = (() => {
   const endpoint = () => window.ES_SHARED_ENDPOINT || '';
   function nonce() { return Array.from(crypto.getRandomValues(new Uint8Array(24)), b => b.toString(16).padStart(2,'0')).join(''); }
-  function read(action, params = {}) {
-    return new Promise((resolve, reject) => {
-      if (!endpoint()) return reject(new Error('Sambungan rekod pusat belum diaktifkan.'));
-      const callback = 'esijil_' + nonce(), script = document.createElement('script');
-      const timer = setTimeout(() => finish(new Error('Rekod pusat tidak dapat dihubungi. Cuba lagi apabila internet stabil.')), 25000);
-      function finish(error, result) { clearTimeout(timer); delete window[callback]; script.remove(); error ? reject(error) : resolve(result); }
-      window[callback] = data => data.ok ? finish(null,data) : finish(new Error(data.error || 'Permintaan gagal.'));
-      script.onerror = () => finish(new Error('Sambungan rekod pusat gagal. Sila cuba lagi.'));
-      script.src = endpoint() + '?' + new URLSearchParams({...params,action,callback,_:nonce()});
-      document.head.append(script);
-    });
-  }
-  async function write(action, input) {
+  async function read(action, params = {}) {     if (!endpoint()) throw new Error('Sambungan rekod pusat belum diaktifkan.');     const controller = new AbortController();     const timer = setTimeout(() => controller.abort(),15000);     let result;     try {       const url = endpoint() + '?' + new URLSearchParams({...params,action,_:nonce()});       const response = await fetch(url,{method:'GET',mode:'cors',credentials:'omit',redirect:'follow',cache:'no-store',signal:controller.signal});       if (!response.ok) throw new Error('HTTP ' + response.status);       result = await response.json();     } catch(error) {       return readJsonp(action,params);     } finally { clearTimeout(timer); }     if (!result.ok) throw new Error(result.error || 'Permintaan gagal.');     return result;   }   function readJsonp(action, params = {}) {     return new Promise((resolve, reject) => {       if (!endpoint()) return reject(new Error('Sambungan rekod pusat belum diaktifkan.'));       const callback = 'esijil_' + nonce(), script = document.createElement('script');       const timer = setTimeout(() => finish(new Error('Rekod pusat tidak dapat dihubungi. Cuba lagi apabila internet stabil.')), 25000);       function finish(error, result) { clearTimeout(timer); delete window[callback]; script.remove(); error ? reject(error) : resolve(result); }       window[callback] = data => data.ok ? finish(null,data) : finish(new Error(data.error || 'Permintaan gagal.'));       script.onerror = () => finish(new Error('Sambungan rekod pusat gagal. Sila cuba lagi.'));       script.src = endpoint() + '?' + new URLSearchParams({...params,action,callback,_:nonce()});       document.head.append(script);     });   }   async function write(action, input) {
     const requestId = nonce();
     if (!endpoint()) throw new Error('Sambungan rekod pusat belum diaktifkan.');
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(),45000);
-    try { await fetch(endpoint(), {method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...input,action,requestId}),signal:controller.signal}); }
+    try { await fetch(endpoint(), {method:'POST',mode:'no-cors',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...input,action,requestId}),signal:controller.signal}); }
     finally { clearTimeout(timeout); }
     const until = Date.now() + 45000;
     while (Date.now() < until) {
