@@ -1,4 +1,4 @@
-const CACHE_NAME = 'admin-esijil-v24-cutout-logos';
+const CACHE_NAME = 'admin-esijil-v25-shared-drive-mail';
 const ASSETS = [
   './',
   './index.html',
